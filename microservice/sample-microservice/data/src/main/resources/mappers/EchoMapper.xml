@@ -1,0 +1,15 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyrax.microservice.sample.data.mapper.EchoMapper">
+
+    <resultMap id="echoEntityResultMap" type="com.hyrax.microservice.sample.data.entity.EchoEntity">
+        <id column="id" jdbcType="BIGINT" property="id" javaType="java.lang.Long"/>
+        <result column="message" jdbcType="VARCHAR" property="message" javaType="java.lang.String"/>
+    </resultMap>
+
+    <select id="findById" parameterType="java.lang.Long" resultType="com.hyrax.microservice.sample.data.entity.EchoEntity" resultMap="echoEntityResultMap">
+        SELECT id, message
+        FROM echo
+        WHERE id=#{id}
+    </select>
+</mapper>

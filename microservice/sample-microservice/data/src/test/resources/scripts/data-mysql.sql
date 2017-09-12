@@ -1,0 +1,1 @@
+INSERT INTO echo(id, message) VALUES (1, 'Echo test message');
