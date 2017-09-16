@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: development
   datasource:
     url: jdbc:mysql://localhost:3306/sample?autoReconnect=true&useSSL=false
     username: root
