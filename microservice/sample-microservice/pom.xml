@@ -15,8 +15,7 @@
 
     <modules>
         <module>data</module>
-        <module>service-api</module>
-        <module>service-impl</module>
+        <module>service</module>
         <module>rest-api</module>
         <module>rest-api-test</module>
     </modules>
@@ -30,12 +29,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hyrax.microservice.sample</groupId>
-                <artifactId>sample-service-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hyrax.microservice.sample</groupId>
-                <artifactId>sample-service-impl</artifactId>
+                <artifactId>sample-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
