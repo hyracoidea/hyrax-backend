@@ -36,6 +36,8 @@
         <modelmapper.version>1.1.0</modelmapper.version>
         <guava.version>23.0</guava.version>
 
+        <docker-maven-plugin-spotify.version>1.0.0</docker-maven-plugin-spotify.version>
+
         <hamcrest-date.version>2.0.4</hamcrest-date.version>
     </properties>
 
@@ -129,6 +131,23 @@
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin-spotify.version}</version>
+                    <configuration>
+                        <imageName>${docker.image.name}</imageName>
+                        <dockerDirectory>${basedir}/src/main/docker</dockerDirectory>
+                        <resources>
+                            <resource>
+                                <targetPath>/</targetPath>
+                                <directory>${project.build.directory}</directory>
+                                <include>${project.build.finalName}.jar</include>
+                            </resource>
+                        </resources>
+                    </configuration>
                 </plugin>
 
                 <plugin>
