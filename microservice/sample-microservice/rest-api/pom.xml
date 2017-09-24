@@ -11,6 +11,10 @@
 
     <artifactId>sample-rest-api</artifactId>
 
+    <properties>
+        <docker.image.name>hyracoidea/sample-microservice</docker.image.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.hyrax.microservice.sample</groupId>
@@ -20,6 +24,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
@@ -50,6 +58,10 @@
              <plugin>
                  <groupId>org.springframework.boot</groupId>
                  <artifactId>spring-boot-maven-plugin</artifactId>
+             </plugin>
+             <plugin>
+                 <groupId>com.spotify</groupId>
+                 <artifactId>docker-maven-plugin</artifactId>
              </plugin>
          </plugins>
      </build>

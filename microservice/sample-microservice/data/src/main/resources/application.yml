@@ -2,13 +2,14 @@ spring:
   profiles:
     active: development
   datasource:
-    url: jdbc:mysql://localhost:3306/sample?autoReconnect=true&useSSL=false
-    username: root
-    password: root
+    url: jdbc:mysql://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?autoReconnect=true&useSSL=false
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
     driver-class-name: com.mysql.jdbc.Driver
     initialize: true
+    continue-on-error: false
     platform: mysql
-    schema: classpath:/scripts/schema-${spring.datasource.platform}.sql
+    schema: classpath:/scripts/schema.sql
     data: classpath:/scripts/data-${spring.datasource.platform}.sql
     hikari:
       minimum-idle: 1
