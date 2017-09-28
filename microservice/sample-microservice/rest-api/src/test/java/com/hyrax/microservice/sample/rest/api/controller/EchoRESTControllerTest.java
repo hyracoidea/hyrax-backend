@@ -1,6 +1,6 @@
 package com.hyrax.microservice.sample.rest.api.controller;
 
-import com.hyrax.microservice.sample.rest.api.response.EchoResponse;
+import com.hyrax.client.sample.api.response.EchoResponse;
 import com.hyrax.microservice.sample.rest.api.response.ErrorResponse;
 import com.hyrax.microservice.sample.service.api.EchoService;
 import com.hyrax.microservice.sample.service.domain.Echo;

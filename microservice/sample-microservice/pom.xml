@@ -20,6 +20,10 @@
         <module>rest-api-test</module>
     </modules>
 
+    <properties>
+        <com.hyrax.client.sample.version>1.0-SNAPSHOT</com.hyrax.client.sample.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -31,6 +35,12 @@
                 <groupId>com.hyrax.microservice.sample</groupId>
                 <artifactId>sample-service</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hyrax.client.sample</groupId>
+                <artifactId>sample-client-api</artifactId>
+                <version>${com.hyrax.client.sample.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
