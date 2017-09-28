@@ -1,6 +1,6 @@
 package com.hyrax.microservice.sample.rest.api.conversion;
 
-import com.hyrax.microservice.sample.rest.api.response.EchoResponse;
+import com.hyrax.client.sample.api.response.EchoResponse;
 import com.hyrax.microservice.sample.service.domain.Echo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
