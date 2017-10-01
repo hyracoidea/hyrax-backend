@@ -38,7 +38,9 @@
 
         <docker-maven-plugin-spotify.version>1.0.0</docker-maven-plugin-spotify.version>
 
+        <rest-assured.version>2.9.0</rest-assured.version>
         <hamcrest-date.version>2.0.4</hamcrest-date.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <dependencyManagement>
@@ -59,6 +61,16 @@
                 <version>${guava.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.jayway.restassured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest-assured.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.exparity</groupId>
                 <artifactId>hamcrest-date</artifactId>
@@ -113,7 +125,7 @@
                                         <excludes>
                                             <exclude>org.apache.maven.plugins:maven-verifier-plugin</exclude>
                                         </excludes>
-                                        <message>Please consider using the maven-invoker-plugin (http://maven.apache.org/plugins/maven-invoker-plugin/)!</message>
+                                        <message>Please consider using the maven-invoker-plugin(http://maven.apache.org/plugins/maven-invoker-plugin/)!</message>
                                     </bannedPlugins>
                                 </rules>
                             </configuration>

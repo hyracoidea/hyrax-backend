@@ -1,11 +1,10 @@
 package com.hyrax.microservice.sample.rest.api.controller;
 
+import com.hyrax.client.common.api.response.ErrorResponse;
 import com.hyrax.client.sample.api.response.EchoResponse;
-import com.hyrax.microservice.sample.rest.api.response.ErrorResponse;
 import com.hyrax.microservice.sample.service.api.EchoService;
 import com.hyrax.microservice.sample.service.domain.Echo;
 import com.hyrax.microservice.sample.service.exception.EchoNotFoundException;
-import org.exparity.hamcrest.date.ZonedDateTimeMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,14 +25,10 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EchoRESTControllerTest {
+public class EchoRESTControllerTest extends AbstractRESTControllerTest {
 
     private static final long NON_EXISTING_ECHO_ID = -1L;
     private static final long EXISTING_ECHO_ID = 1L;
-
-    private static final String EXCEPTION_MESSAGE = "Test exception message";
-
-    private static final long PERIOD_IN_SECONDS = 5;
 
     @Mock
     private EchoService echoService;
@@ -43,6 +37,11 @@ public class EchoRESTControllerTest {
     private ConversionService conversionService;
 
     private EchoRESTController echoRESTController;
+
+    @Override
+    protected BaseRESTController getRESTControllerUnderTest() {
+        return echoRESTController;
+    }
 
     @Before
     public void setup() {
@@ -94,42 +93,25 @@ public class EchoRESTControllerTest {
     }
 
     @Test
-    public void handleResourceNotFoundException() {
+    public void handleNotFound() {
         // Given
         final EchoNotFoundException echoNotFoundException = new EchoNotFoundException(EXCEPTION_MESSAGE);
+        final ErrorResponse expectedErrorResponse = ErrorResponse.builder()
+                .exceptionMessage(EXCEPTION_MESSAGE)
+                .exceptionType(echoNotFoundException.getClass().getTypeName())
+                .httpStatus(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .httpStatusCode(HttpStatus.NOT_FOUND.value())
+                .time(ZonedDateTime.now())
+                .build();
 
         // When
-        final ResponseEntity<ErrorResponse> result = echoRESTController.handleResourceNotFoundException(echoNotFoundException);
+        final ResponseEntity<ErrorResponse> result = echoRESTController.handleNotFound(echoNotFoundException);
 
         // Then
         assertThat(result, notNullValue());
         assertThat(result.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
 
-        assertErrorResponse(result.getBody(), buildErrorResponse(EXCEPTION_MESSAGE, echoNotFoundException.getClass().getTypeName(), ZonedDateTime.now()));
-    }
-
-    @Test
-    public void handleGeneralServerException() {
-        // Given
-        final Exception exception = new Exception(EXCEPTION_MESSAGE);
-
-        // When
-        final ResponseEntity<ErrorResponse> result = echoRESTController.handleGeneralServerException(exception);
-
-        // Then
-        assertThat(result, notNullValue());
-        assertThat(result.getStatusCode(), equalTo(HttpStatus.INTERNAL_SERVER_ERROR));
-
-        assertErrorResponse(result.getBody(), buildErrorResponse(EXCEPTION_MESSAGE, exception.getClass().getTypeName(), ZonedDateTime.now()));
-    }
-
-    private void assertErrorResponse(final ErrorResponse actual, final ErrorResponse expected) {
-        assertThat(actual, notNullValue());
-        assertThat(expected, notNullValue());
-
-        assertThat(actual.getErrorMessage(), equalTo(expected.getErrorMessage()));
-        assertThat(actual.getExceptionType(), equalTo(expected.getExceptionType()));
-        assertThat(actual.getTime(), ZonedDateTimeMatchers.within(PERIOD_IN_SECONDS, ChronoUnit.SECONDS, expected.getTime()));
+        assertErrorResponse(result.getBody(), expectedErrorResponse);
     }
 
     private Echo buildEcho(final long echoId) {
@@ -141,14 +123,6 @@ public class EchoRESTControllerTest {
     private EchoResponse buildEchoResponse(final long echoId) {
         return EchoResponse.builder()
                 .id(echoId)
-                .build();
-    }
-
-    private ErrorResponse buildErrorResponse(final String errorMessage, final String exceptionType, final ZonedDateTime time) {
-        return ErrorResponse.builder()
-                .errorMessage(errorMessage)
-                .exceptionType(exceptionType)
-                .time(time)
                 .build();
     }
 }

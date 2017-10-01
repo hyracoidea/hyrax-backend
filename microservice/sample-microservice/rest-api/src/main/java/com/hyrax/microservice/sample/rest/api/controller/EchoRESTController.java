@@ -1,7 +1,7 @@
 package com.hyrax.microservice.sample.rest.api.controller;
 
+import com.hyrax.client.common.api.response.ErrorResponse;
 import com.hyrax.client.sample.api.response.EchoResponse;
-import com.hyrax.microservice.sample.rest.api.response.ErrorResponse;
 import com.hyrax.microservice.sample.service.api.EchoService;
 import com.hyrax.microservice.sample.service.domain.Echo;
 import com.hyrax.microservice.sample.service.exception.EchoNotFoundException;
@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.ZonedDateTime;
-
 @RestController
-public class EchoRESTController {
+public class EchoRESTController extends BaseRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EchoRESTController.class);
 
@@ -28,6 +26,7 @@ public class EchoRESTController {
 
     @Autowired
     public EchoRESTController(final EchoService echoService, final ConversionService conversionService) {
+        super(LOGGER);
         this.echoService = echoService;
         this.conversionService = conversionService;
     }
@@ -40,29 +39,9 @@ public class EchoRESTController {
         return ResponseEntity.ok(conversionService.convert(echo, EchoResponse.class));
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, EchoNotFoundException.class})
-    protected ResponseEntity<ErrorResponse> handleResourceNotFoundException(final Exception e) {
+    @ExceptionHandler(EchoNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleNotFound(final Exception e) {
         logException(e);
         return createErrorResponse(HttpStatus.NOT_FOUND, e);
-    }
-
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ErrorResponse> handleGeneralServerException(final Exception e) {
-        logException(e);
-        return createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);
-    }
-
-    private void logException(final Exception e) {
-        LOGGER.error(e.getMessage(), e);
-    }
-
-    private ResponseEntity<ErrorResponse> createErrorResponse(final HttpStatus httpStatus, final Exception e) {
-        return ResponseEntity.status(httpStatus)
-                .body(ErrorResponse.builder()
-                        .errorMessage(e.getMessage())
-                        .exceptionType(e.getClass().getTypeName())
-                        .time(ZonedDateTime.now())
-                        .build()
-                );
     }
 }

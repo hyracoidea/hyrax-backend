@@ -1,0 +1,5 @@
+{
+  "exceptionType": "org.springframework.web.method.annotation.MethodArgumentTypeMismatchException",
+  "httpStatus": "Bad Request",
+  "httpStatusCode": 400
+}
