@@ -1,0 +1,5 @@
+{
+  "exceptionType": "com.hyrax.microservice.sample.service.exception.EchoNotFoundException",
+  "httpStatus": "Not Found",
+  "httpStatusCode": 404
+}
