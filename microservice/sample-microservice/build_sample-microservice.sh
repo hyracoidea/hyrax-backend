@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+../mvnw clean install --non-recursive
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 ../mvnw -pl data clean install
 
 if [ $? -ne 0 ]; then
