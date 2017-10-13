@@ -28,4 +28,5 @@ hs_err_pid*
 #Target
 *target/
 
+!client/.mvn/wrapper/maven-wrapper.jar
 !microservice/.mvn/wrapper/maven-wrapper.jar

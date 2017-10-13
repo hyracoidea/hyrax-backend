@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
-cd ../
-sh ./build_parent_module.sh
-cd sample-microservice
+../mvnw -pl data clean install
 
-../mvnw -pl '!rest-api, !rest-api-test' clean install
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+../mvnw -pl service clean install
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 ../mvnw -pl rest-api clean package docker:build
+
+if [ $? -ne 0 ]; then
+    exit 1
+else
+    exit 0
+fi
