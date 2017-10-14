@@ -1,3 +1,5 @@
+### Travis [![Build Status](https://travis-ci.org/hyracoidea/hyrax-backend.svg?branch=master)](https://travis-ci.org/hyracoidea/hyrax-backend)
+
 # Hyrax
 
 ```
