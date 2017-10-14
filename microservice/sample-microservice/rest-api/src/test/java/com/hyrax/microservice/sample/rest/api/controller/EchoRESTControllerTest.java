@@ -39,7 +39,7 @@ public class EchoRESTControllerTest extends AbstractRESTControllerTest {
     private EchoRESTController echoRESTController;
 
     @Override
-    protected BaseRESTController getRESTControllerUnderTest() {
+    protected AbstractRESTController getRESTControllerUnderTest() {
         return echoRESTController;
     }
 

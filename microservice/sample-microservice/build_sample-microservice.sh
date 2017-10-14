@@ -18,7 +18,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-../mvnw -pl rest-api clean package docker:build
+../mvnw -pl rest-api clean install docker:build
 
 if [ $? -ne 0 ]; then
     exit 1

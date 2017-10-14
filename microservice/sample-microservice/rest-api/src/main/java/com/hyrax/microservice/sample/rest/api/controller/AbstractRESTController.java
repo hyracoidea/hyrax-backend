@@ -9,12 +9,12 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.time.ZonedDateTime;
 
-abstract class BaseRESTController {
+abstract class AbstractRESTController {
 
-    private final Logger LOGGER;
+    private final Logger logger;
 
-    public BaseRESTController(final Logger logger) {
-        LOGGER = logger;
+    AbstractRESTController(final Logger logger) {
+        this.logger = logger;
     }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class, IllegalArgumentException.class})
@@ -30,7 +30,7 @@ abstract class BaseRESTController {
     }
 
     protected void logException(final Exception e) {
-        LOGGER.error(e.getMessage(), e);
+        logger.error(e.getMessage(), e);
     }
 
     protected ResponseEntity<ErrorResponse> createErrorResponse(final HttpStatus httpStatus, final Exception e) {

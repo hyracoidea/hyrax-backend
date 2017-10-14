@@ -17,11 +17,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class EchoRESTController extends BaseRESTController {
+public class EchoRESTController extends AbstractRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EchoRESTController.class);
 
     private final EchoService echoService;
+
     private final ConversionService conversionService;
 
     @Autowired

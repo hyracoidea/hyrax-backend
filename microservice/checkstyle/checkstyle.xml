@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+    <module name="TreeWalker">
+        <module name="AbstractClassName"/>
+        <module name="AvoidEscapedUnicodeCharacters"/>
+        <module name="AvoidInlineConditionals"/>
+        <module name="AvoidStarImport"/>
+        <module name="BooleanExpressionComplexity"/>
+        <module name="CatchParameterName"/>
+        <module name="ClassDataAbstractionCoupling"/>
+        <module name="ClassFanOutComplexity"/>
+        <module name="ConstantName"/>
+        <module name="DeclarationOrder"/>
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock"/>
+        <module name="EmptyForInitializerPad"/>
+        <module name="EmptyForIteratorPad"/>
+        <module name="EmptyLineSeparator"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="EqualsHashCode"/>
+        <module name="ExecutableStatementCount"/>
+        <module name="FinalClass"/>
+        <module name="FinalLocalVariable"/>
+        <module name="FinalParameters"/>
+        <module name="GenericWhitespace"/>
+        <module name="IllegalCatch"/>
+        <module name="IllegalImport"/>
+        <module name="IllegalInstantiation"/>
+        <module name="IllegalThrows"/>
+        <module name="IllegalToken"/>
+        <module name="IllegalTokenText"/>
+        <module name="IllegalType"/>
+        <module name="Indentation">
+            
+        </module>
+        <module name="InnerAssignment"/>
+        <module name="InnerTypeLast"/>
+        <module name="InterfaceIsType"/>
+        <module name="InterfaceTypeParameterName"/>
+        <module name="JavaNCSS"/>
+        <module name="LeftCurly"/>
+        <module name="LineLength">
+            <property name="max" value="180"/>
+        </module>
+        <module name="LocalFinalVariableName"/>
+        <module name="LocalVariableName"/>
+        <module name="MagicNumber"/>
+        <module name="MethodCount"/>
+        <module name="MethodLength"/>
+        <module name="MethodName"/>
+        <module name="MethodParamPad"/>
+        <module name="MethodTypeParameterName"/>
+        <module name="MultipleStringLiterals"/>
+        <module name="MultipleVariableDeclarations"/>
+        <module name="MutableException"/>
+        <module name="NeedBraces"/>
+        <module name="NestedForDepth"/>
+        <module name="NestedIfDepth"/>
+        <module name="NestedTryDepth"/>
+        <module name="NPathComplexity"/>
+        <module name="OneStatementPerLine"/>
+        <module name="OneTopLevelClass"/>
+        <module name="OperatorWrap"/>
+        <module name="OuterTypeFilename"/>
+        <module name="OuterTypeNumber"/>
+        <module name="OverloadMethodsDeclarationOrder"/>
+        <module name="ParameterName"/>
+        <module name="ParameterNumber"/>
+        <module name="ParenPad"/>
+        <module name="RedundantImport"/>
+        <module name="RedundantModifier"/>
+        <module name="RequireThis"/>
+        <module name="ReturnCount"/>
+        <module name="RightCurly"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StaticVariableName"/>
+        <module name="StringLiteralEquality"/>
+        <module name="ThrowsCount"/>
+        <module name="TypecastParenPad"/>
+        <module name="TypeName"/>
+        <module name="UnnecessaryParentheses"/>
+        <module name="UnusedImports"/>
+        <module name="UpperEll"/>
+        <module name="VariableDeclarationUsageDistance"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
+    </module>
+</module>
