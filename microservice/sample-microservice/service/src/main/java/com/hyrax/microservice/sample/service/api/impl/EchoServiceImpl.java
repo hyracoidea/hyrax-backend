@@ -17,6 +17,7 @@ import java.util.Optional;
 public class EchoServiceImpl implements EchoService {
 
     private final EchoMapper echoMapper;
+
     private final ModelMapper modelMapper;
 
     @Autowired

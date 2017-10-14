@@ -63,7 +63,7 @@ abstract class AbstractRESTControllerTest {
         assertErrorResponse(result.getBody(), expectedErrorResponse);
     }
 
-    protected abstract BaseRESTController getRESTControllerUnderTest();
+    protected abstract AbstractRESTController getRESTControllerUnderTest();
 
     protected void assertErrorResponse(final ErrorResponse actual, final ErrorResponse expected) {
         assertThat(actual, notNullValue());
