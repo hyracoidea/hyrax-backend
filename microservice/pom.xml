@@ -38,6 +38,7 @@
         <commons-logging.version>1.2</commons-logging.version>
 
         <docker-maven-plugin-spotify.version>1.0.0</docker-maven-plugin-spotify.version>
+        <io.springfox.version>2.7.0</io.springfox.version>
 
         <maven-checkstyle-plugin.version>2.17</maven-checkstyle-plugin.version>
         <findbugs-maven-plugin.version>3.0.2</findbugs-maven-plugin.version>
@@ -73,6 +74,18 @@
                 <artifactId>commons-logging</artifactId>
                 <version>${commons-logging.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${io.springfox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${io.springfox.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>com.jayway.restassured</groupId>
