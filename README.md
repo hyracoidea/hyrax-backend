@@ -6,3 +6,27 @@
 Hyrax is a visual project management application that focuses on the agile software development methodology.
 
 ```
+
+# Build the project and run rest-api tests
+
+```
+bash build_and_run_rest_api_test.sh
+```
+
+# Start the micro-services(from microservice folder)
+
+```
+bash start_microservices.sh
+```
+
+# Stop the micro-services(from microservice folder)
+
+```
+bash shutdown_microservices.sh
+```
+
+# REST-API documentation(sample-microservice)
+
+```
+http://localhost:8090/sample/swagger-ui.html
+```
