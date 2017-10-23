@@ -1,0 +1,28 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Hyrax - Sample",
+		"_postman_id": "44fb36c4-21e7-e402-d7bf-5d249a935580",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Echo",
+			"request": {
+				"url": "http://localhost:8090/sample/echo/1",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
