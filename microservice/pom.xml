@@ -17,6 +17,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>sample-microservice</module>
+        <module>account-microservice</module>
     </modules>
 
     <properties>
