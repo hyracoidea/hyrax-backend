@@ -98,7 +98,7 @@ public class AccountMapperIT {
 
     private AccountEntity buildExistingAccountEntity() {
         return AccountEntity.builder()
-                .id(1L)
+                .accountId(1L)
                 .firstName(FIRST_NAME)
                 .lastName(LAST_NAME)
                 .email(EMAIL)

@@ -8,11 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true, exclude = "passwordHash")
-public class AccountEntity extends AbstractEntity<Long> {
+@EqualsAndHashCode
+@ToString(exclude = "passwordHash")
+public class AccountEntity {
+
+    private Long accountId;
 
     private String firstName;
 
@@ -21,13 +24,4 @@ public class AccountEntity extends AbstractEntity<Long> {
     private String email;
 
     private String passwordHash;
-
-    @Builder
-    public AccountEntity(final Long id, final String firstName, final String lastName, final String email, final String passwordHash) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.passwordHash = passwordHash;
-    }
 }

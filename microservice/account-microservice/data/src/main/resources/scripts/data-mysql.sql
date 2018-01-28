@@ -1,1 +1,1 @@
-INSERT INTO ACCOUNT(Id, FirstName, LastName, Email, PasswordHash) VALUES (1, 'FirstName', 'LastName', 'hyrax@email.com', '$2a$10$UtAtQeSXNV7EFZJW/yc53ucDaKQxVI1HjYKTf9TdfGnz4hVsB1J4m');
+INSERT INTO account(account_id, first_name, last_name, email, password_hash) VALUES (1, 'FirstName', 'LastName', 'hyrax@email.com', '$2a$10$UtAtQeSXNV7EFZJW/yc53ucDaKQxVI1HjYKTf9TdfGnz4hVsB1J4m');
