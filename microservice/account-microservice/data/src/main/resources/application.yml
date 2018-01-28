@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: development
+  datasource:
+    url: jdbc:mysql://localhost:3306/hyrax_account?autoReconnect=true&useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+    initialize: true
+    continue-on-error: false
+    platform: mysql
+    schema: classpath:/scripts/schema.sql
+    data: classpath:/scripts/data-${spring.datasource.platform}.sql
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 20
+    type: com.zaxxer.hikari.HikariDataSource
+
+mybatis:
+    mapperLocations: classpath*:**/mappers/*.xml

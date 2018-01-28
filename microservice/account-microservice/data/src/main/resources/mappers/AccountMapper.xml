@@ -1,0 +1,23 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyrax.microservice.account.data.mapper.AccountMapper">
+
+    <resultMap id="accountEntityResultMap" type="com.hyrax.microservice.account.data.entity.AccountEntity">
+        <id column="account_id" jdbcType="BIGINT" property="accountId" javaType="java.lang.Long"/>
+        <result column="first_name" jdbcType="VARCHAR" property="firstName" javaType="java.lang.String"/>
+        <result column="last_name" jdbcType="VARCHAR" property="lastName" javaType="java.lang.String"/>
+        <result column="email" jdbcType="VARCHAR" property="email" javaType="java.lang.String"/>
+        <result column="password_hash" jdbcType="VARCHAR" property="passwordHash" javaType="java.lang.String"/>
+    </resultMap>
+
+    <select id="selectByEmail" parameterType="java.lang.String" resultType="com.hyrax.microservice.account.data.entity.AccountEntity" resultMap="accountEntityResultMap">
+        select account_id, first_name, last_name, email, password_hash
+        from account
+        where email=#{email}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="accountId">
+        insert into account (first_name, last_name, email, password_hash)
+        values (#{firstName}, #{lastName}, #{email}, #{passwordHash})
+    </insert>
+</mapper>
