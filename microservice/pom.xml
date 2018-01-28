@@ -37,6 +37,7 @@
         <modelmapper.version>1.1.0</modelmapper.version>
         <guava.version>23.0</guava.version>
         <commons-logging.version>1.2</commons-logging.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
 
         <docker-maven-plugin-spotify.version>1.0.0</docker-maven-plugin-spotify.version>
         <io.springfox.version>2.7.0</io.springfox.version>
@@ -51,10 +52,22 @@
         <rest-assured.version>2.9.0</rest-assured.version>
         <hamcrest-date.version>2.0.4</hamcrest-date.version>
         <junit.version>4.12</junit.version>
+        <junit-dataprovider.version>1.13.1</junit-dataprovider.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring-boot-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikari-cp.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
                 <artifactId>jackson-datatype-jsr310</artifactId>
@@ -74,6 +87,11 @@
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
                 <version>${commons-logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
 
             <dependency>
@@ -97,6 +115,11 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.java</groupId>
+                <artifactId>junit-dataprovider</artifactId>
+                <version>${junit-dataprovider.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.exparity</groupId>
@@ -239,12 +262,12 @@
                                             <limit>
                                                 <counter>LINE</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.80</minimum>
+                                                <minimum>0.75</minimum>
                                             </limit>
                                             <limit>
                                                 <counter>BRANCH</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.80</minimum>
+                                                <minimum>0.75</minimum>
                                             </limit>
                                         </limits>
                                         <excludes>
@@ -256,6 +279,10 @@
 
                                             <exclude>com.hyrax.microservice.*.rest.api.application.*</exclude>
                                             <exclude>com.hyrax.microservice.*.rest.api.configuration.*</exclude>
+                                            <exclude>com.hyrax.microservice.*.rest.api.request.*</exclude>
+                                            <exclude>com.hyrax.microservice.*.rest.api.response.*</exclude>
+                                            <exclude>com.hyrax.microservice.*.rest.api.exception.*</exclude>
+                                            <exclude>com.hyrax.microservice.*.rest.api.*.*Result</exclude>
                                         </excludes>
                                     </rule>
                                 </rules>

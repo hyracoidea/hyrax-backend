@@ -1,0 +1,1 @@
+INSERT INTO ACCOUNT(Id, FirstName, LastName, Email, PasswordHash) VALUES (1, 'TestFirstName', 'TestLastName', 'integration_test@email.com', '$2a$10$UtAtQeSXNV7EFZJW/yc53ucDaKQxVI1HjYKTf9TdfGnz4hVsB1J4m');

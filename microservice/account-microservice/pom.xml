@@ -19,5 +19,20 @@
         <module>rest-api-test</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+
+            <dependency>
+                <groupId>com.hyrax.microservice.account</groupId>
+                <artifactId>account-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hyrax.microservice.account</groupId>
+                <artifactId>account-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
