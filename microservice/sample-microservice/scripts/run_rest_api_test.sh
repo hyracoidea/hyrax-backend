@@ -13,6 +13,8 @@ while [ "$actualHealthCheckEndpointResponse" != "$expectedHealthCheckEndpointRes
         callTheHealthCheckEndpoint
     done
 
+cd ../
+
 ../mvnw -pl rest-api-test clean verify
 
 if [ $? -eq 0 ]
@@ -21,3 +23,5 @@ then
 else
     exit 1
 fi
+
+cd scripts

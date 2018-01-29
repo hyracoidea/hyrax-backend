@@ -1,14 +1,12 @@
 #!/usr/bin/env bash
 
-cd common-client
-sh ./build_common-client.sh
+sh build_sample_microservice.sh
 
 if [ $? -ne 0 ]; then
     exit 1
 fi
 
-cd ../sample-client
-sh ./build_sample-client.sh
+sh start_sample_microservice.sh
 
 if [ $? -ne 0 ]; then
     exit 1

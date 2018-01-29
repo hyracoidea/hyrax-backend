@@ -4,7 +4,7 @@ services:
 
   mysql:
     image: mysql:5.7
-    container_name: mysql
+    container_name: hyrax_mysql
     ports:
       - 3307:3306
     environment:
@@ -13,10 +13,9 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
 
-  sample-microservice:
-    image: hyracoidea/sample-microservice
-    container_name: sample-microservice
-    restart: on-failure
+  sample_microservice:
+    image: hyracoidea/sample_microservice
+    container_name: sample_microservice
     depends_on:
       - mysql
     ports:
