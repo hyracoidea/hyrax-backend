@@ -12,7 +12,7 @@
     <artifactId>sample-rest-api</artifactId>
 
     <properties>
-        <docker.image.name>hyracoidea/sample-microservice</docker.image.name>
+        <docker.image.name>hyracoidea/sample_microservice</docker.image.name>
     </properties>
 
     <dependencies>

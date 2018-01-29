@@ -14,7 +14,7 @@ cache:
     - $HOME/.m2
 
 script:
-  - bash build_and_run_rest_api_test.sh
+  - sh build_and_run_rest_api_test.sh
 
 notifications:
   email:
