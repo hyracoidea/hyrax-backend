@@ -11,6 +11,10 @@
 
     <artifactId>account-rest-api</artifactId>
 
+    <properties>
+        <docker.image.name>hyracoidea/account_microservice</docker.image.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.hyrax.microservice.account</groupId>
@@ -52,4 +56,17 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

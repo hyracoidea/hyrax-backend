@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-cd ../sample-microservice
+sh start_account_microservice.sh
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 sh run_rest_api_test.sh
 
 if [ $? -ne 0 ]; then
@@ -8,5 +13,3 @@ if [ $? -ne 0 ]; then
 else
     exit 0
 fi
-
-cd scripts
