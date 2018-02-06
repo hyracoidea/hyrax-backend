@@ -1,0 +1,8 @@
+{
+    "requestValidationDetails": [
+        {
+            "field": "firstName",
+            "message": "First name should contain at least 2 and at most 100 characters"
+        }
+    ]
+}
