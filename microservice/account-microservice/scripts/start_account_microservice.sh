@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-cd ../sample-microservice
-sh start_sample_microservice_and_run_rest_api_test.sh
+cd ../rest-api
+docker-compose up&
+cd ../
 
 if [ $? -ne 0 ]; then
     exit 1
