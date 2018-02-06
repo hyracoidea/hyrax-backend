@@ -1,0 +1,8 @@
+{
+    "requestValidationDetails": [
+        {
+            "field": "email",
+            "message": "Email must be consist of characters, digits, special characters and must contain only one @ symbol"
+        }
+    ]
+}
