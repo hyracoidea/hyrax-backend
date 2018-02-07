@@ -22,6 +22,7 @@ public class AccountRequestToAccountConverterTest {
 
     private static final String FIRST_NAME = "FirstName";
     private static final String LAST_NAME = "LastName";
+    private static final String USERNAME = "username";
     private static final String EMAIL = "email@email.com";
     private static final String PASSWORD = "password";
     private static final String PASSWORD_HASH = "ABCDEFGH1234";
@@ -67,6 +68,7 @@ public class AccountRequestToAccountConverterTest {
         return AccountRequest.builder()
                 .firstName(FIRST_NAME)
                 .lastName(LAST_NAME)
+                .username(USERNAME)
                 .email(EMAIL)
                 .password(PASSWORD)
                 .passwordConfirmation(PASSWORD)
@@ -77,6 +79,7 @@ public class AccountRequestToAccountConverterTest {
         return Account.builder()
                 .firstName(FIRST_NAME)
                 .lastName(LAST_NAME)
+                .username(USERNAME)
                 .email(EMAIL)
                 .passwordHash(PASSWORD_HASH)
                 .build();

@@ -6,5 +6,7 @@ public interface AccountMapper {
 
     AccountEntity selectByEmail(String email);
 
+    AccountEntity selectByUsername(String username);
+
     void insert(AccountEntity accountEntity);
 }

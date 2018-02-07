@@ -1,0 +1,8 @@
+{
+    "requestValidationDetails": [
+        {
+            "field": "username",
+            "message": "Username should contain at least 2 and at most 100 characters"
+        }
+    ]
+}

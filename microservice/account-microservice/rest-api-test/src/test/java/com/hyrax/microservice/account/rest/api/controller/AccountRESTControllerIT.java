@@ -29,12 +29,13 @@ public class AccountRESTControllerIT extends AbstractRESTControllerIT {
 
     @After
     public void cleanDatabase() {
+        dslContext.execute("DELETE FROM account WHERE username = 'hyrax'");
         dslContext.execute("DELETE FROM account WHERE email = 'hyrax2018@email.com'");
     }
 
     @Test
     @UseDataProvider("data")
-    public void createAccountShouldRespondRequestValidationFailed(final String testCaseFileName) {
+    public void createAccountWithDataProvider(final String testCaseFileName, final int expectedHttpStatusCode) {
         // Given
         final String request = JsonFileReader.read(REQUEST_FOLDER, testCaseFileName);
         final String expectedResponse = JsonFileReader.read(RESPONSE_FOLDER, testCaseFileName);
@@ -46,26 +47,9 @@ public class AccountRESTControllerIT extends AbstractRESTControllerIT {
         // Then
         response.then()
                 .contentType(ContentType.JSON)
-                .statusCode(HttpStatus.SC_UNPROCESSABLE_ENTITY);
+                .statusCode(expectedHttpStatusCode);
         assertThat(response.getBody().prettyPrint(), equalTo(expectedResponse));
-    }
-
-    @Test
-    public void createAccountShouldRespondConflict() {
-        // Given
-        final String testCaseFileName = "conflict_with_existing_email.json";
-        final String request = JsonFileReader.read(REQUEST_FOLDER, testCaseFileName);
-        final String expectedResponse = JsonFileReader.read(RESPONSE_FOLDER, testCaseFileName);
-
-        // When
-        final Response response = createRequestSpecificationWith(request).when()
-                .post(REST_ENDPOINT_PATH_ACCOUNT);
-
-        // Then
-        response.then()
-                .contentType(ContentType.JSON)
-                .statusCode(HttpStatus.SC_CONFLICT);
-        assertThat(response.getBody().prettyPrint(), equalTo(expectedResponse));
+        verifyDatabase(false);
     }
 
     @Test
@@ -82,28 +66,34 @@ public class AccountRESTControllerIT extends AbstractRESTControllerIT {
         response.then()
                 .statusCode(HttpStatus.SC_NO_CONTENT);
         assertThat(response.getBody().prettyPrint().isEmpty(), is(true));
-        verifyDatabase();
+        verifyDatabase(true);
     }
 
     @DataProvider
     public static Object[][] data() {
         return new Object[][]{
-                {"request_validation_failed_with_missing_first_name.json"},
-                {"request_validation_failed_with_too_long_first_name.json"},
+                {"request_validation_failed_with_missing_first_name.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+                {"request_validation_failed_with_too_long_first_name.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
 
-                {"request_validation_failed_with_missing_last_name.json"},
-                {"request_validation_failed_with_too_long_last_name.json"},
+                {"request_validation_failed_with_missing_last_name.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+                {"request_validation_failed_with_too_long_last_name.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
 
-                {"request_validation_failed_with_missing_email.json"},
-                {"request_validation_failed_with_invalid_email.json"},
+                {"request_validation_failed_with_missing_username.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+                {"request_validation_failed_with_too_long_username.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
 
-                {"request_validation_failed_with_missing_password.json"},
-                {"request_validation_failed_with_invalid_password.json"},
+                {"request_validation_failed_with_missing_email.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+                {"request_validation_failed_with_invalid_email.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
 
-                {"request_validation_failed_with_missing_passwordConfirmation.json"},
-                {"request_validation_failed_with_invalid_passwordConfirmation.json"},
+                {"request_validation_failed_with_missing_password.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+                {"request_validation_failed_with_invalid_password.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
 
-                {"request_validation_failed_with_different_invalid_passwords.json"},
+                {"request_validation_failed_with_missing_passwordConfirmation.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+                {"request_validation_failed_with_invalid_passwordConfirmation.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+
+                {"request_validation_failed_with_different_invalid_passwords.json", HttpStatus.SC_UNPROCESSABLE_ENTITY},
+
+                {"conflict_with_existing_username.json", HttpStatus.SC_CONFLICT},
+                {"conflict_with_existing_email.json", HttpStatus.SC_CONFLICT}
         };
     }
 
@@ -116,17 +106,25 @@ public class AccountRESTControllerIT extends AbstractRESTControllerIT {
                 .body(request);
     }
 
-    private void verifyDatabase() {
+    private void verifyDatabase(boolean existsRecord) {
         Result<Record> result = dslContext.select()
                 .from("account")
-                .where("email = 'hyrax2018@email.com'")
+                .where("email = 'hyrax2018@email.com' or username = 'hyrax'")
                 .fetch();
 
-        assertThat(result.isNotEmpty(), is(true));
-        assertThat(result.get(0), notNullValue());
-        assertThat(result.get(0).getValue("first_name"), equalTo("HyraxFirstName"));
-        assertThat(result.get(0).getValue("last_name"), equalTo("HyraxLastName"));
-        assertThat(result.get(0).getValue("email"), equalTo("hyrax2018@email.com"));
-        assertThat(result.get(0).getValue("password_hash").toString().length(), is(60));
+        if (existsRecord) {
+            assertThat(result.isNotEmpty(), is(true));
+            assertThat(result.size(), is(1));
+            assertThat(result.get(0), notNullValue());
+            assertThat(result.get(0).getValue("first_name"), equalTo("HyraxFirstName"));
+            assertThat(result.get(0).getValue("last_name"), equalTo("HyraxLastName"));
+            assertThat(result.get(0).getValue("username"), equalTo("hyrax"));
+            assertThat(result.get(0).getValue("email"), equalTo("hyrax2018@email.com"));
+            assertThat(result.get(0).getValue("password_hash").toString().length(), is(60));
+        } else {
+            assertThat(result.isEmpty(), is(true));
+        }
+
+
     }
 }
