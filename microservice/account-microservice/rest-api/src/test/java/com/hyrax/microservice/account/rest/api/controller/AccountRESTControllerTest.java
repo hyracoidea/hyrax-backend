@@ -9,7 +9,7 @@ import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingR
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.account.service.api.AccountService;
 import com.hyrax.microservice.account.service.domain.Account;
-import com.hyrax.microservice.account.service.exception.EmailAlreadyExistsException;
+import com.hyrax.microservice.account.service.exception.AccountAlreadyExistsException;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,14 +37,17 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class AccountRESTControllerTest {
 
     private static final String EMAIL = "email@email.com";
+    private static final String USERNAME = "username";
 
     private static final String TEST_EXCEPTION_MESSAGE = "Test exception message";
-    private static final String EMAIL_ALREADY_EXIST_EXCEPTION_MESSAGE = "Email already exists: " + EMAIL;
+    private static final String EMAIL_OR_USERNAME_ALREADY_EXIST_EXCEPTION_MESSAGE = String.format("Account already exists with this username=%s or this email=%s", USERNAME, EMAIL);
 
     private final AccountRequest accountRequest = AccountRequest.builder()
+            .username(USERNAME)
             .email(EMAIL)
             .build();
     private final Account account = Account.builder()
+            .username(USERNAME)
             .email(EMAIL)
             .build();
 
@@ -84,15 +87,15 @@ public class AccountRESTControllerTest {
         // Then
     }
 
-    @Test(expected = EmailAlreadyExistsException.class)
+    @Test(expected = AccountAlreadyExistsException.class)
     public void createAccountShouldThrowEmailAlreadyExistsExceptionWhenEmailAlreadyExists() {
         // Given
-        final EmailAlreadyExistsException emailAlreadyExistsException = new EmailAlreadyExistsException(EMAIL_ALREADY_EXIST_EXCEPTION_MESSAGE);
+        final AccountAlreadyExistsException accountAlreadyExistsException = new AccountAlreadyExistsException(EMAIL_OR_USERNAME_ALREADY_EXIST_EXCEPTION_MESSAGE);
 
         given(bindingResultProcessor.process(bindingResult)).willReturn(processedBindingResult);
         given(processedBindingResult.hasValidationErrors()).willReturn(false);
         given(conversionService.convert(accountRequest, Account.class)).willReturn(account);
-        doThrow(emailAlreadyExistsException).when(accountService).saveAccount(account);
+        doThrow(accountAlreadyExistsException).when(accountService).saveAccount(account);
 
         // When
         accountRESTController.createAccount(accountRequest, bindingResult);
@@ -140,17 +143,17 @@ public class AccountRESTControllerTest {
     }
 
     @Test
-    public void handleEmailAlreadyExistsException() {
+    public void handleAccountAlreadyExistsException() {
         // Given
 
         // When
-        final ResponseEntity<ErrorResponse> response = accountRESTController.handleEmailAlreadyExistsException(new EmailAlreadyExistsException(EMAIL_ALREADY_EXIST_EXCEPTION_MESSAGE));
+        final ResponseEntity<ErrorResponse> response = accountRESTController.handleAccountAlreadyExistsException(new AccountAlreadyExistsException(EMAIL_OR_USERNAME_ALREADY_EXIST_EXCEPTION_MESSAGE));
 
         // Then
         assertThat(response, notNullValue());
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
         assertThat(response.getBody(), notNullValue());
-        assertThat(response.getBody().getMessage(), equalTo(EMAIL_ALREADY_EXIST_EXCEPTION_MESSAGE));
+        assertThat(response.getBody().getMessage(), equalTo(EMAIL_OR_USERNAME_ALREADY_EXIST_EXCEPTION_MESSAGE));
     }
 
     @Test

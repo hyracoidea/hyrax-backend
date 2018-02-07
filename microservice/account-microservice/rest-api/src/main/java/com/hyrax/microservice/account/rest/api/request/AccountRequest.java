@@ -5,6 +5,7 @@ import com.hyrax.microservice.account.rest.api.validation.annotation.FirstName;
 import com.hyrax.microservice.account.rest.api.validation.annotation.LastName;
 import com.hyrax.microservice.account.rest.api.validation.annotation.MatchesPassword;
 import com.hyrax.microservice.account.rest.api.validation.annotation.Password;
+import com.hyrax.microservice.account.rest.api.validation.annotation.Username;
 import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
@@ -20,6 +21,9 @@ public class AccountRequest {
 
     @LastName
     private final String lastName;
+
+    @Username
+    private final String username;
 
     @Email
     private final String email;

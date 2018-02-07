@@ -8,7 +8,7 @@ import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingR
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.account.service.api.AccountService;
 import com.hyrax.microservice.account.service.domain.Account;
-import com.hyrax.microservice.account.service.exception.EmailAlreadyExistsException;
+import com.hyrax.microservice.account.service.exception.AccountAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +69,8 @@ public class AccountRESTController {
                 );
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    protected ResponseEntity<ErrorResponse> handleEmailAlreadyExistsException(final EmailAlreadyExistsException e) {
+    @ExceptionHandler(AccountAlreadyExistsException.class)
+    protected ResponseEntity<ErrorResponse> handleAccountAlreadyExistsException(final AccountAlreadyExistsException e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ErrorResponse.builder()

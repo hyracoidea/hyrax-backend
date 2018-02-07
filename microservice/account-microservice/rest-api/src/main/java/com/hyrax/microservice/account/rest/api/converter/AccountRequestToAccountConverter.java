@@ -27,6 +27,7 @@ public class AccountRequestToAccountConverter implements Converter<AccountReques
             account = Account.builder()
                     .firstName(accountRequest.getFirstName())
                     .lastName(accountRequest.getLastName())
+                    .username(accountRequest.getUsername())
                     .email(accountRequest.getEmail())
                     .passwordHash(passwordEncoder.encode(accountRequest.getPassword()))
                     .build();

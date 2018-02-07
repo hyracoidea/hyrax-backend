@@ -1,7 +1,7 @@
 {
-  "firstName": "HyraxFirstName",
-  "lastName": "HyraxLastName",
-  "username": "hyrax",
+  "firstName": "firstName",
+  "lastName": "lastName",
+  "username": "hyrax_username",
   "email": "hyrax2018@email.com",
   "password": "Password2018",
   "passwordConfirmation": "Password2018"

@@ -1,6 +1,7 @@
 {
   "firstName": "firstName",
   "lastName": "lastName",
+  "username": "hyrax",
   "email": "hyrax@email.com",
   "password": "Password2018",
   "passwordConfirmation": "Password2018"
