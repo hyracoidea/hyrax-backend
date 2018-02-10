@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS account (
   username VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
+  authority VARCHAR(5) NOT NULL,
 
   PRIMARY KEY (account_id),
   UNIQUE KEY (username),

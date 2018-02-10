@@ -1,6 +1,6 @@
 package com.hyrax.microservice.account.rest.api.converter;
 
-import com.hyrax.microservice.account.rest.api.request.AccountRequest;
+import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
 import com.hyrax.microservice.account.service.domain.Account;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +26,7 @@ public class AccountRequestToAccountConverterTest {
     private static final String EMAIL = "email@email.com";
     private static final String PASSWORD = "password";
     private static final String PASSWORD_HASH = "ABCDEFGH1234";
+    private static final String AUTHORITY = "USER";
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -82,6 +83,7 @@ public class AccountRequestToAccountConverterTest {
                 .username(USERNAME)
                 .email(EMAIL)
                 .passwordHash(PASSWORD_HASH)
+                .authority(AUTHORITY)
                 .build();
     }
 }

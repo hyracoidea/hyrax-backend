@@ -1,6 +1,6 @@
 package com.hyrax.microservice.account.rest.api.converter;
 
-import com.hyrax.microservice.account.rest.api.response.RequestValidationDetail;
+import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationDetail;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

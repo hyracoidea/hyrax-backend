@@ -26,6 +26,7 @@ public class AccountMapperIT {
     private static final String FIRST_NAME = "TestFirstName";
     private static final String LAST_NAME = "TestLastName";
     private static final String PASSWORD_HASH = "$2a$10$UtAtQeSXNV7EFZJW/yc53ucDaKQxVI1HjYKTf9TdfGnz4hVsB1J4m";
+    private static final String AUTHORITY = "USER";
 
     @Autowired
     private AccountMapper accountMapper;
@@ -149,12 +150,13 @@ public class AccountMapperIT {
 
     private AccountEntity buildExistingAccountEntity() {
         return AccountEntity.builder()
-                .accountId(1L)
+                .accountId(2L)
                 .username(USERNAME)
                 .firstName(FIRST_NAME)
                 .lastName(LAST_NAME)
                 .email(EMAIL)
                 .passwordHash(PASSWORD_HASH)
+                .authority(AUTHORITY)
                 .build();
     }
 
@@ -165,6 +167,7 @@ public class AccountMapperIT {
                 .lastName(LAST_NAME)
                 .email(NON_EXISTING_EMAIL)
                 .passwordHash(PASSWORD_HASH)
+                .authority(AUTHORITY)
                 .build();
     }
 }

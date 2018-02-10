@@ -291,8 +291,9 @@
 
                                             <exclude>com.hyrax.microservice.*.rest.api.application.*</exclude>
                                             <exclude>com.hyrax.microservice.*.rest.api.configuration.*</exclude>
-                                            <exclude>com.hyrax.microservice.*.rest.api.request.*</exclude>
-                                            <exclude>com.hyrax.microservice.*.rest.api.response.*</exclude>
+                                            <exclude>com.hyrax.microservice.*.rest.api.domain.*</exclude>
+                                            <exclude>com.hyrax.microservice.*.rest.api.*.request.*</exclude>
+                                            <exclude>com.hyrax.microservice.*.rest.api.*.response.*</exclude>
                                             <exclude>com.hyrax.microservice.*.rest.api.exception.*</exclude>
                                             <exclude>com.hyrax.microservice.*.rest.api.*.*Result</exclude>
                                         </excludes>

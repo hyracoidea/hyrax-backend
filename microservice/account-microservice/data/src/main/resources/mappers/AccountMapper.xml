@@ -9,22 +9,23 @@
         <result column="username" jdbcType="VARCHAR" property="username" javaType="java.lang.String"/>
         <result column="email" jdbcType="VARCHAR" property="email" javaType="java.lang.String"/>
         <result column="password_hash" jdbcType="VARCHAR" property="passwordHash" javaType="java.lang.String"/>
+        <result column="authority" jdbcType="VARCHAR" property="authority" javaType="java.lang.String" />
     </resultMap>
 
     <select id="selectByUsername" parameterType="java.lang.String" resultType="com.hyrax.microservice.account.data.entity.AccountEntity" resultMap="accountEntityResultMap">
-        select account_id, first_name, last_name, username, email, password_hash
+        select account_id, first_name, last_name, username, email, password_hash, authority
         from account
         where username=#{username}
     </select>
 
     <select id="selectByEmail" parameterType="java.lang.String" resultType="com.hyrax.microservice.account.data.entity.AccountEntity" resultMap="accountEntityResultMap">
-        select account_id, first_name, last_name, username, email, password_hash
+        select account_id, first_name, last_name, username, email, password_hash, authority
         from account
         where email=#{email}
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="accountId">
-        insert into account (first_name, last_name, username, email, password_hash)
-        values (#{firstName}, #{lastName}, #{username}, #{email}, #{passwordHash})
+        insert into account (first_name, last_name, username, email, password_hash, authority)
+        values (#{firstName}, #{lastName}, #{username}, #{email}, #{passwordHash}, #{authority})
     </insert>
 </mapper>

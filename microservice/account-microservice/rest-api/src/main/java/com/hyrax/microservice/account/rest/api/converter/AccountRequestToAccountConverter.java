@@ -1,6 +1,7 @@
 package com.hyrax.microservice.account.rest.api.converter;
 
-import com.hyrax.microservice.account.rest.api.request.AccountRequest;
+import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
+import com.hyrax.microservice.account.rest.api.domain.Authority;
 import com.hyrax.microservice.account.service.domain.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
@@ -30,6 +31,7 @@ public class AccountRequestToAccountConverter implements Converter<AccountReques
                     .username(accountRequest.getUsername())
                     .email(accountRequest.getEmail())
                     .passwordHash(passwordEncoder.encode(accountRequest.getPassword()))
+                    .authority(Authority.USER.name())
                     .build();
         }
 
