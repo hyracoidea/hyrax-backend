@@ -1,10 +1,13 @@
 package com.hyrax.microservice.account.rest.api.controller;
 
-import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
+import com.hyrax.microservice.account.rest.api.domain.Authority;
 import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
 import com.hyrax.microservice.account.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationDetail;
 import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationResponse;
+import com.hyrax.microservice.account.rest.api.domain.response.SecuredAccountResponse;
+import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
+import com.hyrax.microservice.account.rest.api.exception.ResourceNotFoundException;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingResultProcessor;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.account.service.api.AccountService;
@@ -23,6 +26,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -36,19 +40,39 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 @RunWith(MockitoJUnitRunner.class)
 public class AccountRESTControllerTest {
 
+    private static final String FIRST_NAME = "FirstName";
+    private static final String LAST_NAME = "LastName";
     private static final String EMAIL = "email@email.com";
     private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String PASSWORD_HASH = "ABCDEFGH1234";
+    private static final String AUTHORITY_AS_STRING = "USER";
+
 
     private static final String TEST_EXCEPTION_MESSAGE = "Test exception message";
     private static final String EMAIL_OR_USERNAME_ALREADY_EXIST_EXCEPTION_MESSAGE = String.format("Account already exists with this username=%s or this email=%s", USERNAME, EMAIL);
+    private static final String ACCOUNT_DOES_NOT_EXIST_EXCEPTION_MESSAGE = String.format("Account not found with this username=%s", USERNAME);
 
     private final AccountRequest accountRequest = AccountRequest.builder()
+            .firstName(FIRST_NAME)
+            .lastName(LAST_NAME)
             .username(USERNAME)
             .email(EMAIL)
+            .password(PASSWORD)
+            .passwordConfirmation(PASSWORD)
             .build();
     private final Account account = Account.builder()
+            .firstName(FIRST_NAME)
+            .lastName(LAST_NAME)
             .username(USERNAME)
             .email(EMAIL)
+            .passwordHash(PASSWORD_HASH)
+            .authority(AUTHORITY_AS_STRING)
+            .build();
+    private final SecuredAccountResponse securedAccountResponse = SecuredAccountResponse.builder()
+            .username(USERNAME)
+            .password(PASSWORD_HASH)
+            .authority(Authority.USER)
             .build();
 
     @Mock
@@ -71,6 +95,36 @@ public class AccountRESTControllerTest {
     @Before
     public void init() {
         accountRESTController = new AccountRESTController(accountService, conversionService, bindingResultProcessor);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void retrieveSecuredAccountResponseShouldThrowResourceNotFoundExceptionWhenParameterUsernameDoesNotExist() {
+        // Given
+        given(accountService.findAccountByUsername(USERNAME)).willReturn(Optional.empty());
+
+        // When
+        accountRESTController.retrieveSecuredAccountResponse(USERNAME);
+
+        // Then
+    }
+
+    @Test
+    public void retrieveSecuredAccountResponseShouldReturnHttpStatusOKWhenParameterUsernameExists() {
+        // Given
+        given(accountService.findAccountByUsername(USERNAME)).willReturn(Optional.ofNullable(account));
+        given(conversionService.convert(account, SecuredAccountResponse.class)).willReturn(securedAccountResponse);
+
+        // When
+        final ResponseEntity<SecuredAccountResponse> result = accountRESTController.retrieveSecuredAccountResponse(USERNAME);
+
+        // Then
+        assertThat(result, notNullValue());
+        assertThat(result.getStatusCode(), equalTo(HttpStatus.OK));
+        assertThat(result.getBody(), equalTo(securedAccountResponse));
+
+        then(accountService).should().findAccountByUsername(USERNAME);
+        then(conversionService).should().convert(account, SecuredAccountResponse.class);
+        verifyNoMoreInteractions(accountService, conversionService);
     }
 
     @Test(expected = RequestValidationException.class)
@@ -154,6 +208,20 @@ public class AccountRESTControllerTest {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CONFLICT));
         assertThat(response.getBody(), notNullValue());
         assertThat(response.getBody().getMessage(), equalTo(EMAIL_OR_USERNAME_ALREADY_EXIST_EXCEPTION_MESSAGE));
+    }
+
+    @Test
+    public void handleResourceNotFoundException() {
+        // Given
+
+        // When
+        final ResponseEntity<ErrorResponse> response = accountRESTController.handleResourceNotFoundException(new ResourceNotFoundException(ACCOUNT_DOES_NOT_EXIST_EXCEPTION_MESSAGE));
+
+        // Then
+        assertThat(response, notNullValue());
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
+        assertThat(response.getBody(), notNullValue());
+        assertThat(response.getBody().getMessage(), equalTo(ACCOUNT_DOES_NOT_EXIST_EXCEPTION_MESSAGE));
     }
 
     @Test

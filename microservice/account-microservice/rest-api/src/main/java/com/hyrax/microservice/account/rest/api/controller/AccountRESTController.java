@@ -1,9 +1,11 @@
 package com.hyrax.microservice.account.rest.api.controller;
 
-import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
 import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
 import com.hyrax.microservice.account.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationResponse;
+import com.hyrax.microservice.account.rest.api.domain.response.SecuredAccountResponse;
+import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
+import com.hyrax.microservice.account.rest.api.exception.ResourceNotFoundException;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingResultProcessor;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.account.service.api.AccountService;
@@ -18,15 +20,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/account")
 public class AccountRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountRESTController.class);
@@ -44,7 +47,22 @@ public class AccountRESTController {
         this.bindingResultProcessor = bindingResultProcessor;
     }
 
-    @PostMapping
+    @GetMapping(path = "/admin/account/{username}")
+    public ResponseEntity<SecuredAccountResponse> retrieveSecuredAccountResponse(@PathVariable final String username) {
+        LOGGER.info("Received username={} for retrieving secured account response", username);
+
+        final Optional<Account> account = accountService.findAccountByUsername(username);
+
+        if (account.isPresent()) {
+            return ResponseEntity.ok(conversionService.convert(account.get(), SecuredAccountResponse.class));
+        } else {
+            final String message = String.format("Account not found with this username=%s", username);
+            LOGGER.error(message);
+            throw new ResourceNotFoundException(message);
+        }
+    }
+
+    @PostMapping(path = "/account")
     public ResponseEntity<Void> createAccount(@Valid @RequestBody final AccountRequest accountRequest, final BindingResult bindingResult) {
         LOGGER.info("Received account request for creation: {}", accountRequest);
 
@@ -73,6 +91,16 @@ public class AccountRESTController {
     protected ResponseEntity<ErrorResponse> handleAccountAlreadyExistsException(final AccountAlreadyExistsException e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleResourceNotFoundException(final ResourceNotFoundException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
                         .build()
