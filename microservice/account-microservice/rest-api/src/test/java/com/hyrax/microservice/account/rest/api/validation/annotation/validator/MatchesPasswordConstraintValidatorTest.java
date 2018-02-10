@@ -1,6 +1,6 @@
 package com.hyrax.microservice.account.rest.api.validation.annotation.validator;
 
-import com.hyrax.microservice.account.rest.api.request.AccountRequest;
+import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
 import com.hyrax.microservice.account.rest.api.validation.annotation.MatchesPassword;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;

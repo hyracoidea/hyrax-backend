@@ -26,4 +26,6 @@ public class AccountEntity {
     private String email;
 
     private String passwordHash;
+
+    private String authority;
 }

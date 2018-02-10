@@ -1,7 +1,7 @@
 package com.hyrax.microservice.account.rest.api.validation.bindingresult;
 
 import com.google.common.collect.Lists;
-import com.hyrax.microservice.account.rest.api.response.RequestValidationDetail;
+import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Component;

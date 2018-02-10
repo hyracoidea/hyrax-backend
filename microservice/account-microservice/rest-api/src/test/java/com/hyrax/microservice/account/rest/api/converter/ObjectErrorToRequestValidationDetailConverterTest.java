@@ -1,6 +1,6 @@
 package com.hyrax.microservice.account.rest.api.converter;
 
-import com.hyrax.microservice.account.rest.api.response.RequestValidationDetail;
+import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationDetail;
 import org.junit.Test;
 import org.springframework.validation.ObjectError;
 

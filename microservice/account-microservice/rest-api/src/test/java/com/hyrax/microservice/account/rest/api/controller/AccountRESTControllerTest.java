@@ -1,10 +1,10 @@
 package com.hyrax.microservice.account.rest.api.controller;
 
 import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
-import com.hyrax.microservice.account.rest.api.request.AccountRequest;
-import com.hyrax.microservice.account.rest.api.response.ErrorResponse;
-import com.hyrax.microservice.account.rest.api.response.RequestValidationDetail;
-import com.hyrax.microservice.account.rest.api.response.RequestValidationResponse;
+import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
+import com.hyrax.microservice.account.rest.api.domain.response.ErrorResponse;
+import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationDetail;
+import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationResponse;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingResultProcessor;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.account.service.api.AccountService;

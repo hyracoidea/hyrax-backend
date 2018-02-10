@@ -1,4 +1,4 @@
-package com.hyrax.microservice.account.rest.api.request;
+package com.hyrax.microservice.account.rest.api.domain.request;
 
 import com.hyrax.microservice.account.rest.api.validation.annotation.Email;
 import com.hyrax.microservice.account.rest.api.validation.annotation.FirstName;

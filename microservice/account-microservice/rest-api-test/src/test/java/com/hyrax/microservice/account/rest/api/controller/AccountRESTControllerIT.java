@@ -121,6 +121,7 @@ public class AccountRESTControllerIT extends AbstractRESTControllerIT {
             assertThat(result.get(0).getValue("username"), equalTo("hyrax"));
             assertThat(result.get(0).getValue("email"), equalTo("hyrax2018@email.com"));
             assertThat(result.get(0).getValue("password_hash").toString().length(), is(60));
+            assertThat(result.get(0).getValue("authority"), equalTo("USER"));
         } else {
             assertThat(result.isEmpty(), is(true));
         }

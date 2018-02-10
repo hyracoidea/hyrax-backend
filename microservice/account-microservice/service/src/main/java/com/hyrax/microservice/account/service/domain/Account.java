@@ -22,4 +22,6 @@ public class Account {
     private String email;
 
     private String passwordHash;
+
+    private String authority;
 }

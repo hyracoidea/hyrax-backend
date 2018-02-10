@@ -1,6 +1,6 @@
 package com.hyrax.microservice.account.rest.api.validation.bindingresult;
 
-import com.hyrax.microservice.account.rest.api.response.RequestValidationDetail;
+import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationDetail;
 import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
