@@ -20,6 +20,10 @@
             <groupId>com.hyrax.microservice.account</groupId>
             <artifactId>account-service</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hyrax.spring.boot.starter.authentication</groupId>
+            <artifactId>authentication-spring-boot-starter</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

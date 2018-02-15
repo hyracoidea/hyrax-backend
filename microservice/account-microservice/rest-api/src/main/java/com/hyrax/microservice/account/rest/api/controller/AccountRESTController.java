@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,6 +47,7 @@ public class AccountRESTController {
         this.bindingResultProcessor = bindingResultProcessor;
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping(path = "/admin/account/{username}")
     public ResponseEntity<SecuredAccountResponse> retrieveSecuredAccountResponse(@PathVariable final String username) {
         LOGGER.info("Received username={} for retrieving secured account response", username);
@@ -105,18 +106,6 @@ public class AccountRESTController {
                         .message(e.getMessage())
                         .build()
                 );
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<Void> handleHttpMessageNotReadableException(final HttpMessageNotReadableException e) {
-        logException(e);
-        return ResponseEntity.badRequest().build();
-    }
-
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Void> handleGeneralServerException(final Exception e) {
-        logException(e);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     private void logException(final Exception e) {

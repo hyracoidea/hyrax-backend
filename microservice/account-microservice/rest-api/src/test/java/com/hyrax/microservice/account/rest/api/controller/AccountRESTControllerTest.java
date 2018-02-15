@@ -22,7 +22,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
@@ -222,29 +221,5 @@ public class AccountRESTControllerTest {
         assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
         assertThat(response.getBody(), notNullValue());
         assertThat(response.getBody().getMessage(), equalTo(ACCOUNT_DOES_NOT_EXIST_EXCEPTION_MESSAGE));
-    }
-
-    @Test
-    public void handleHttpMessageNotReadableException() {
-        // Given
-
-        // When
-        final ResponseEntity<Void> response = accountRESTController.handleHttpMessageNotReadableException(new HttpMessageNotReadableException(TEST_EXCEPTION_MESSAGE));
-
-        // Then
-        assertThat(response, notNullValue());
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-    }
-
-    @Test
-    public void handleGeneralServerException() {
-        // Given
-
-        // When
-        final ResponseEntity<Void> response = accountRESTController.handleGeneralServerException(new Exception());
-
-        // Then
-        assertThat(response, notNullValue());
-        assertThat(response.getStatusCode(), equalTo(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 }
