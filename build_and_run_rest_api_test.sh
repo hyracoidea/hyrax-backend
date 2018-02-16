@@ -13,6 +13,15 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+cd ../../spring-boot-starter/scripts
+sh build_parent_module.sh
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+sh build_spring_boot_starters.sh
+
 cd ../../microservice/scripts
 sh build_parent_module.sh
 
