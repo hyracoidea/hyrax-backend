@@ -1,0 +1,21 @@
+server:
+  port: 8081
+  context-path: /hyrax/api
+
+
+spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+  output:
+    ansi:
+      enabled: DETECT
+
+
+logging:
+  file: logs/project-microservice.log
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    org.springframework.web: ERROR
