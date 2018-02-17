@@ -18,6 +18,7 @@
     <modules>
         <module>sample-microservice</module>
         <module>account-microservice</module>
+        <module>project-microservice</module>
     </modules>
 
     <properties>
