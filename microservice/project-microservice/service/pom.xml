@@ -13,4 +13,24 @@
     <artifactId>project-service</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>com.hyrax.microservice.project</groupId>
+            <artifactId>project-data</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 </project>

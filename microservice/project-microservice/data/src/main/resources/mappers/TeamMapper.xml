@@ -1,0 +1,22 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyrax.microservice.project.data.mapper.TeamMapper">
+
+    <resultMap id="teamEntityResultMap" type="com.hyrax.microservice.project.data.entity.TeamEntity">
+        <id column="team_id" jdbcType="BIGINT" property="teamId" javaType="java.lang.Long"/>
+        <result column="name" jdbcType="VARCHAR" property="name" javaType="java.lang.String"/>
+        <result column="description" jdbcType="VARCHAR" property="description" javaType="java.lang.String" />
+        <result column="owner_username" jdbcType="VARCHAR" property="ownerUsername" javaType="java.lang.String" />
+    </resultMap>
+
+    <select id="selectByName" parameterType="java.lang.String" resultType="com.hyrax.microservice.project.data.entity.TeamEntity" resultMap="teamEntityResultMap">
+        select team_id, name, description, owner_username
+        from team
+        where name=#{name}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="teamId">
+        insert into team (name, description, owner_username)
+        values (#{name}, #{description}, #{ownerUsername})
+    </insert>
+</mapper>
