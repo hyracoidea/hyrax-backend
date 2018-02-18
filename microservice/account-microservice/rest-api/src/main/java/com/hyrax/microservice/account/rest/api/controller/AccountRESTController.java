@@ -4,6 +4,7 @@ import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
 import com.hyrax.microservice.account.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.SecuredAccountResponse;
+import com.hyrax.microservice.account.rest.api.domain.response.UsernameWrapperResponse;
 import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
 import com.hyrax.microservice.account.rest.api.exception.ResourceNotFoundException;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingResultProcessor;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -61,6 +63,20 @@ public class AccountRESTController {
             LOGGER.error(message);
             throw new ResourceNotFoundException(message);
         }
+    }
+
+    @GetMapping(path = "/account/usernames")
+    public ResponseEntity<UsernameWrapperResponse> retrieveAllUsernames() {
+        ResponseEntity<UsernameWrapperResponse> response = ResponseEntity.noContent().build();
+
+        final List<String> usernames = accountService.findAllUsernames();
+        if (!usernames.isEmpty()) {
+            response = ResponseEntity.ok(UsernameWrapperResponse.builder()
+                    .usernames(usernames)
+                    .build()
+            );
+        }
+        return response;
     }
 
     @PostMapping(path = "/account")
