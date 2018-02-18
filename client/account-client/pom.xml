@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>client-parent</artifactId>
+        <groupId>com.hyrax.client</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.hyrax.client.account</groupId>
+    <artifactId>account-client</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>client-api</module>
+        <module>client-api-impl</module>
+        <module>client-spring-boot-autoconfigure</module>
+        <module>client-spring-boot-starter</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.hyrax.client.account</groupId>
+                <artifactId>account-client-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hyrax.client.account</groupId>
+                <artifactId>account-client-api-impl</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hyrax.client.account</groupId>
+                <artifactId>account-client-spring-boot-autoconfigure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
