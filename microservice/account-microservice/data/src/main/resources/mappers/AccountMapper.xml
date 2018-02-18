@@ -12,6 +12,12 @@
         <result column="authority" jdbcType="VARCHAR" property="authority" javaType="java.lang.String" />
     </resultMap>
 
+    <select id="selectAll" resultType="com.hyrax.microservice.account.data.entity.AccountEntity" resultMap="accountEntityResultMap">
+        select account_id, first_name, last_name, username, email, password_hash, authority
+        from account
+        where authority = 'USER'
+    </select>
+
     <select id="selectByUsername" parameterType="java.lang.String" resultType="com.hyrax.microservice.account.data.entity.AccountEntity" resultMap="accountEntityResultMap">
         select account_id, first_name, last_name, username, email, password_hash, authority
         from account

@@ -14,8 +14,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -44,6 +46,15 @@ public class AccountServiceImpl implements AccountService {
     @Transactional(readOnly = true)
     public boolean existAccountByUsername(final String username) {
         return findAccountByUsername(username).isPresent();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> findAllUsernames() {
+        return accountMapper.selectAll()
+                .parallelStream()
+                .map(AccountEntity::getUsername)
+                .collect(Collectors.toList());
     }
 
     @Override
