@@ -2,6 +2,7 @@ package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.request.TeamMemberAdditionRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.TeamMemberUsernameWrapperResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.TeamMemberService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
@@ -12,13 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/team/member")
 public class TeamMemberRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamMemberRESTController.class);
@@ -33,7 +34,15 @@ public class TeamMemberRESTController {
         this.authenticationUserDetailsHelper = authenticationUserDetailsHelper;
     }
 
-    @PostMapping
+    @GetMapping(path = "/team/{teamName}/members")
+    public ResponseEntity<TeamMemberUsernameWrapperResponse> retrieveTeamMemberUsernames(@PathVariable final String teamName) {
+        return ResponseEntity.ok(TeamMemberUsernameWrapperResponse.builder()
+                .teamMemberUsernames(teamMemberService.findAllUsernameByTeamName(teamName))
+                .build()
+        );
+    }
+
+    @PostMapping(path = "/team/member")
     public ResponseEntity<Void> addTeamMemberToTeam(@RequestBody final TeamMemberAdditionRequest request) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received team member addition request: {} from {}", request, requestedBy);
