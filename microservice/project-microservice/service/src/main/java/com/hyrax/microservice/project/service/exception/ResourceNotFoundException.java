@@ -1,4 +1,4 @@
-package com.hyrax.microservice.project.rest.api.exception;
+package com.hyrax.microservice.project.service.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 
