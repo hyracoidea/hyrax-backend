@@ -43,6 +43,12 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<String> findAllUsernameByTeamName(final String teamName) {
+        return teamMemberMapper.selectAllUsernameByTeamName(teamName);
+    }
+
+    @Override
     @Transactional
     public void add(final String username, final String teamName, final String requestedBy) {
         final List<String> existingUsernames = retrieveUsernames();
