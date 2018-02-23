@@ -1,0 +1,15 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyrax.microservice.project.data.mapper.TeamMemberMapper">
+
+    <select id="selectAllUsernameByTeamName" parameterType="java.lang.String" resultType="java.lang.String">
+        select username
+        from team_member
+        where team_name=#{teamName}
+    </select>
+
+    <insert id="insert">
+        insert into team_member (team_name, username)
+        values (#{teamName}, #{username})
+    </insert>
+</mapper>
