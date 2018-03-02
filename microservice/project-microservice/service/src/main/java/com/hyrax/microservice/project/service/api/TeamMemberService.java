@@ -7,4 +7,6 @@ public interface TeamMemberService {
     List<String> findAllUsernameByTeamName(String teamName);
 
     void add(String username, String teamName, String requestedBy);
+
+    void remove(String username, String teamName, String requestedBy);
 }

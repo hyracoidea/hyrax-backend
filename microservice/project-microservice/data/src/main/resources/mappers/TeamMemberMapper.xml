@@ -12,4 +12,9 @@
         insert into team_member (team_name, username)
         values (#{teamName}, #{username})
     </insert>
+
+    <delete id="delete">
+        delete from team_member
+        where team_name = #{teamName} and username = #{username}
+    </delete>
 </mapper>
