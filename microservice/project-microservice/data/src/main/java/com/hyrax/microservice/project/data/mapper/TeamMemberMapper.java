@@ -9,4 +9,6 @@ public interface TeamMemberMapper {
     List<String> selectAllUsernameByTeamName(String teamName);
 
     void insert(@Param("username") String username, @Param("teamName") String teamName);
+
+    void delete(@Param("username") String username, @Param("teamName") String teamName);
 }
