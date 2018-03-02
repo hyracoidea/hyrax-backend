@@ -7,4 +7,6 @@ public interface TeamMapper {
     TeamEntity selectByName(String name);
 
     void insert(TeamEntity teamEntity);
+
+    void delete(String teamName);
 }

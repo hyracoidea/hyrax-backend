@@ -19,4 +19,9 @@
         insert into team (name, description, owner_username)
         values (#{name}, #{description}, #{ownerUsername})
     </insert>
+
+    <delete id="delete">
+        delete from team
+        where name = #{teamName}
+    </delete>
 </mapper>

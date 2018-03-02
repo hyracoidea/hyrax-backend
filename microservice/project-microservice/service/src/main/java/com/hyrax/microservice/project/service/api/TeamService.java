@@ -12,4 +12,6 @@ public interface TeamService {
     Optional<Team> findByName(String name);
 
     void save(Team team) throws TeamAlreadyExistsException;
+
+    void remove(String teamName, String requestedBy);
 }

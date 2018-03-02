@@ -3,9 +3,11 @@ package com.hyrax.microservice.project.service.api.impl;
 import com.google.common.base.Preconditions;
 import com.hyrax.microservice.project.data.entity.TeamEntity;
 import com.hyrax.microservice.project.data.mapper.TeamMapper;
+import com.hyrax.microservice.project.data.mapper.TeamMemberMapper;
 import com.hyrax.microservice.project.service.api.TeamService;
 import com.hyrax.microservice.project.service.domain.Team;
 import com.hyrax.microservice.project.service.exception.TeamAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.TeamRemovalOperationNotAllowedException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +28,14 @@ public class TeamServiceImpl implements TeamService {
 
     private final TeamMapper teamMapper;
 
+    private final TeamMemberMapper teamMemberMapper;
+
     private final ModelMapper modelMapper;
 
     @Autowired
-    public TeamServiceImpl(final TeamMapper teamMapper, final ModelMapper modelMapper) {
+    public TeamServiceImpl(final TeamMapper teamMapper, final TeamMemberMapper teamMemberMapper, final ModelMapper modelMapper) {
         this.teamMapper = teamMapper;
+        this.teamMemberMapper = teamMemberMapper;
         this.modelMapper = modelMapper;
     }
 
@@ -66,6 +71,21 @@ public class TeamServiceImpl implements TeamService {
             }
         } catch (final DuplicateKeyException e) {
             throwTeamAlreadyExistsException(team.getName(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void remove(final String teamName, final String requestedBy) {
+        final Optional<Team> result = findByName(teamName);
+
+        if (result.isPresent()) {
+            if (result.get().getOwnerUsername().equals(requestedBy)) {
+                teamMemberMapper.deleteAllByTeamName(teamName);
+                teamMapper.delete(teamName);
+            } else {
+                throw new TeamRemovalOperationNotAllowedException(requestedBy);
+            }
         }
     }
 

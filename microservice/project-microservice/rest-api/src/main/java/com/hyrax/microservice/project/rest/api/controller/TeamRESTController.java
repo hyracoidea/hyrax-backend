@@ -10,6 +10,7 @@ import com.hyrax.microservice.project.rest.api.validation.bindingresult.Processe
 import com.hyrax.microservice.project.service.api.TeamService;
 import com.hyrax.microservice.project.service.domain.Team;
 import com.hyrax.microservice.project.service.exception.TeamAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.TeamOperationNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,6 +66,16 @@ public class TeamRESTController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping(path = "/{teamName}")
+    public ResponseEntity<Void> removeTeam(@PathVariable final String teamName) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received team removal request, teamName={} requestedBy={}", teamName, requestedBy);
+
+        teamService.remove(teamName, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @ExceptionHandler(RequestValidationException.class)
     protected ResponseEntity<RequestValidationResponse> handleRequestValidationException(final RequestValidationException e) {
         logException(e);
@@ -77,6 +90,16 @@ public class TeamRESTController {
     protected ResponseEntity<ErrorResponse> handleTeamAlreadyExistsException(final TeamAlreadyExistsException e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(TeamOperationNotAllowedException.class)
+    protected ResponseEntity<ErrorResponse> handleTeamOperationNotAllowedException(final TeamOperationNotAllowedException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
                         .build()
