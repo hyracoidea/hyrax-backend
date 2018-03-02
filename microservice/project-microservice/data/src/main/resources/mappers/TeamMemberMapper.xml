@@ -17,4 +17,9 @@
         delete from team_member
         where team_name = #{teamName} and username = #{username}
     </delete>
+
+    <delete id="deleteAllByTeamName">
+        delete from team_member
+        where team_name = #{teamName}
+    </delete>
 </mapper>

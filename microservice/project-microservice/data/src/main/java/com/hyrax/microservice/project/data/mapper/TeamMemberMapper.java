@@ -11,4 +11,6 @@ public interface TeamMemberMapper {
     void insert(@Param("username") String username, @Param("teamName") String teamName);
 
     void delete(@Param("username") String username, @Param("teamName") String teamName);
+
+    void deleteAllByTeamName(String teamName);
 }
