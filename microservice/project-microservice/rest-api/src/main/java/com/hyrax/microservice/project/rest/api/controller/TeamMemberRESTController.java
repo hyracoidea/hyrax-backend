@@ -6,8 +6,8 @@ import com.hyrax.microservice.project.rest.api.domain.response.TeamMemberUsernam
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.TeamMemberService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
-import com.hyrax.microservice.project.service.exception.TeamMemberIsAlreadyAddedException;
-import com.hyrax.microservice.project.service.exception.TeamMemberOperationNotAllowedException;
+import com.hyrax.microservice.project.service.exception.team.member.TeamMemberIsAlreadyAddedException;
+import com.hyrax.microservice.project.service.exception.team.member.TeamMemberOperationNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.hyrax.microservice.project.service.exception;
+package com.hyrax.microservice.project.service.exception.board;
 
 public class BoardRemovalOperationNotAllowedException extends BoardOperationNotAllowedException {
 

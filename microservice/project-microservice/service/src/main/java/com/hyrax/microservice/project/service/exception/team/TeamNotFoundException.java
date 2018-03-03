@@ -1,4 +1,6 @@
-package com.hyrax.microservice.project.service.exception;
+package com.hyrax.microservice.project.service.exception.team;
+
+import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 
 public class TeamNotFoundException extends ResourceNotFoundException {
 

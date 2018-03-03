@@ -9,8 +9,8 @@ import com.hyrax.microservice.project.rest.api.validation.bindingresult.BindingR
 import com.hyrax.microservice.project.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.project.service.api.TeamService;
 import com.hyrax.microservice.project.service.domain.Team;
-import com.hyrax.microservice.project.service.exception.TeamAlreadyExistsException;
-import com.hyrax.microservice.project.service.exception.TeamOperationNotAllowedException;
+import com.hyrax.microservice.project.service.exception.team.TeamAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.team.TeamOperationNotAllowedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

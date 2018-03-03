@@ -2,6 +2,8 @@ DROP TABLE IF EXISTS team_member;
 
 DROP TABLE IF EXISTS team;
 
+DROP TABLE IF EXISTS board_member;
+
 DROP TABLE IF EXISTS board;
 
 
@@ -30,4 +32,12 @@ CREATE TABLE IF NOT EXISTS board (
 
     PRIMARY KEY (board_id),
     UNIQUE KEY (board_name)
+);
+
+CREATE TABLE IF NOT EXISTS board_member (
+  board_name VARCHAR(255) NOT NULL,
+  username VARCHAR(255) NOT NULL,
+
+  FOREIGN KEY (board_name) REFERENCES board(board_name),
+  UNIQUE KEY (board_name, username)
 );
