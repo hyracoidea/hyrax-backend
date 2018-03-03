@@ -1,7 +1,7 @@
 package com.hyrax.microservice.project.service.api;
 
 import com.hyrax.microservice.project.service.domain.Team;
-import com.hyrax.microservice.project.service.exception.TeamAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.team.TeamAlreadyExistsException;
 
 import java.util.Optional;
 
