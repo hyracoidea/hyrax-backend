@@ -4,11 +4,13 @@ import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.exception.BoardAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.BoardOperationNotAllowedException;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,10 +38,30 @@ public class BoardRESTController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping
+    public ResponseEntity<Void> remove(@PathVariable final String boardName) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received board removal request = [boardName={} requestedBy={}]", boardName, requestedBy);
+
+        boardService.remove(boardName, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @ExceptionHandler(BoardAlreadyExistsException.class)
     protected ResponseEntity<ErrorResponse> handleBoardAlreadyExistsException(final BoardAlreadyExistsException e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(BoardOperationNotAllowedException.class)
+    protected ResponseEntity<ErrorResponse> handleBoardOperationNotAllowedException(final BoardOperationNotAllowedException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
                         .build()
