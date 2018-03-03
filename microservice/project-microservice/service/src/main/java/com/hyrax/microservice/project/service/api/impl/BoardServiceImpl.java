@@ -14,8 +14,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +38,15 @@ public class BoardServiceImpl implements BoardService {
             board = modelMapper.map(boardEntity, Board.class);
         }
         return Optional.ofNullable(board);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Board> findAllByUsername(final String username) {
+        return boardMapper.selectAllBoardByUsername(username)
+                .stream()
+                .map(boardEntity -> modelMapper.map(boardEntity, Board.class))
+                .collect(Collectors.toList());
     }
 
 
