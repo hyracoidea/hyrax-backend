@@ -2,8 +2,26 @@
 
 <mapper namespace="com.hyrax.microservice.project.data.mapper.BoardMapper">
 
+    <resultMap id="boardEntityResultMap" type="com.hyrax.microservice.project.data.entity.BoardEntity">
+        <id column="team_id" jdbcType="BIGINT" property="boardId" javaType="java.lang.Long"/>
+        <result column="board_name" jdbcType="VARCHAR" property="boardName" javaType="java.lang.String"/>
+        <result column="owner_username" jdbcType="VARCHAR" property="ownerUsername" javaType="java.lang.String" />
+    </resultMap>
+
+    <select id="selectByBoardName" parameterType="java.lang.String" resultType="com.hyrax.microservice.project.data.entity.BoardEntity" resultMap="boardEntityResultMap">
+        select board_id, board_name, owner_username
+        from board
+        where board_name = #{boardName}
+    </select>
+
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="boardId">
         insert into board (board_name, owner_username)
         values (#{boardName}, #{ownerUsername})
     </insert>
+
+    <delete id="delete">
+        delete from board
+        where board_name = #{boardName}
+    </delete>
 </mapper>
