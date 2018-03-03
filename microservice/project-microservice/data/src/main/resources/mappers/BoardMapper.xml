@@ -14,6 +14,13 @@
         where board_name = #{boardName}
     </select>
 
+    <select id="selectAllBoardByUsername" parameterType="java.lang.String" resultType="com.hyrax.microservice.project.data.entity.BoardEntity" resultMap="boardEntityResultMap">
+        select distinct b.board_id, b.board_name, b.owner_username
+        from board b inner join board_member bm
+        on b.board_name = bm.board_name
+        where owner_username = #{username} or username = #{username}
+    </select>
+
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="boardId">
         insert into board (board_name, owner_username)
