@@ -2,6 +2,12 @@
 
 <mapper namespace="com.hyrax.microservice.project.data.mapper.ColumnMapper">
 
+    <resultMap id="columnEntityResultMap" type="com.hyrax.microservice.project.data.entity.ColumnEntity">
+        <id column="column_id" jdbcType="BIGINT" property="columnId" javaType="java.lang.Long"/>
+        <result column="column_name" jdbcType="VARCHAR" property="columnName" javaType="java.lang.String"/>
+        <result column="column_index" jdbcType="BIGINT" property="columnIndex" javaType="java.lang.Long" />
+    </resultMap>
+
     <sql id="getBoardId">
         select board_id
         from board
@@ -14,6 +20,14 @@
         on b.board_id = c.board_id
         where b.board_name = #{boardName}
     </sql>
+
+    <select id="selectAllByBoardName" parameterType="java.lang.String" resultType="com.hyrax.microservice.project.data.entity.ColumnEntity" resultMap="columnEntityResultMap">
+        select c.column_id, c.column_name, c.column_index
+        from board b inner join board_column c
+        on b.board_id = c.board_id
+        where b.board_name = #{boardName}
+        order by c.column_index
+    </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="columnId">
         insert into board_column (board_id, column_name, column_index)

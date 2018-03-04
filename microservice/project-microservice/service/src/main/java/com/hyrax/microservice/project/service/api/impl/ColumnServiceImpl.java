@@ -4,15 +4,20 @@ import com.hyrax.microservice.project.data.mapper.ColumnMapper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.api.ColumnService;
 import com.hyrax.microservice.project.service.domain.Board;
+import com.hyrax.microservice.project.service.domain.Column;
 import com.hyrax.microservice.project.service.exception.board.BoardNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAlreadyExistsException;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,6 +28,17 @@ public class ColumnServiceImpl implements ColumnService {
     private final BoardService boardService;
 
     private final ColumnMapper columnMapper;
+
+    private final ModelMapper modelMapper;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Column> findAllByBoardName(final String boardName) {
+        return columnMapper.selectAllByBoardName(boardName)
+                .stream()
+                .map(columnEntity -> modelMapper.map(columnEntity, Column.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Transactional

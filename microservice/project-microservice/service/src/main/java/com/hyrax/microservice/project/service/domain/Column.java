@@ -13,8 +13,6 @@ public class Column {
 
     private Long columnId;
 
-    private Long boardId;
-
     private String columnName;
 
     private Long columnIndex;
