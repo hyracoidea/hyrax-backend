@@ -1,0 +1,23 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyrax.microservice.project.data.mapper.ColumnMapper">
+
+    <sql id="getBoardId">
+        select board_id
+        from board
+        where board_name = #{boardName}
+    </sql>
+
+    <sql id="createColumnIndex">
+        select count(c.column_id)
+        from board b inner join board_column c
+        on b.board_id = c.board_id
+        where b.board_name = #{boardName}
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="columnId">
+        insert into board_column (board_id, column_name, column_index)
+        select (<include refid="getBoardId"/>), #{columnName}, (<include refid="createColumnIndex"/>) + 1
+    </insert>
+
+</mapper>
