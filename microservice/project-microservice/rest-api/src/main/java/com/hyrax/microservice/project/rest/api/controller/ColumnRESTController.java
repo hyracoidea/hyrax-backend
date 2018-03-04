@@ -1,5 +1,7 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
+import com.hyrax.microservice.project.rest.api.domain.response.ColumnResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.ColumnResponseWrapper;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.ColumnService;
@@ -9,12 +11,16 @@ import com.hyrax.microservice.project.service.exception.column.ColumnOperationNo
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -25,6 +31,20 @@ public class ColumnRESTController {
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
     private final ColumnService columnService;
+
+    private final ConversionService conversionService;
+
+    @GetMapping(path = "/board/{boardName}/column")
+    public ResponseEntity<ColumnResponseWrapper> retrieveAll(@PathVariable final String boardName) {
+        return ResponseEntity.ok()
+                .body(ColumnResponseWrapper.builder()
+                        .columnResponses(columnService.findAllByBoardName(boardName)
+                                .stream()
+                                .map(column -> conversionService.convert(column, ColumnResponse.class))
+                                .collect(Collectors.toList())
+                        )
+                        .build());
+    }
 
     @PostMapping(path = "/board/{boardName}/column/{columnName}")
     public ResponseEntity<Void> create(@PathVariable final String boardName, @PathVariable final String columnName) {
