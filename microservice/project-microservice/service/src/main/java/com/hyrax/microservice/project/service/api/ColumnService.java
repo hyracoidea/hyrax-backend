@@ -9,4 +9,6 @@ public interface ColumnService {
     List<Column> findAllByBoardName(String boardName);
 
     void create(String boardName, String columnName, String requestedBy);
+
+    void updateIndex(String boardName, String columnName, String requestedBy, long from, long to);
 }
