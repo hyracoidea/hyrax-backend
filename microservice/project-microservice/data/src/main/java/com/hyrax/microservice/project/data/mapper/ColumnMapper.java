@@ -10,4 +10,6 @@ public interface ColumnMapper {
     List<ColumnEntity> selectAllByBoardName(@Param("boardName") String boardName);
 
     void insert(@Param("boardName") String boardName, @Param("columnName") String columnName);
+
+    void updateIndex(@Param("boardName") String boardName, @Param("columnName") String columnName, @Param("newColumnIndex") Long newColumnIndex);
 }

@@ -1,5 +1,7 @@
 package com.hyrax.microservice.project.service.api.impl;
 
+import com.google.common.collect.Lists;
+import com.hyrax.microservice.project.data.entity.ColumnEntity;
 import com.hyrax.microservice.project.data.mapper.ColumnMapper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.api.ColumnService;
@@ -8,7 +10,9 @@ import com.hyrax.microservice.project.service.domain.Column;
 import com.hyrax.microservice.project.service.exception.board.BoardNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.column.ColumnUpdateOperationNotAllowedException;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,5 +63,65 @@ public class ColumnServiceImpl implements ColumnService {
         } else {
             throw new ColumnAdditionOperationNotAllowedException(requestedBy);
         }
+    }
+
+    @Override
+    @Transactional
+    public void updateIndex(final String boardName, final String columnName, final String requestedBy, final long from, final long to) {
+
+        final Board board = boardService.findByBoardName(boardName).orElseThrow(() -> new BoardNotFoundException(boardName));
+
+        if (board.getOwnerUsername().equals(requestedBy)) {
+
+            final List<ColumnEntity> before = Lists.newArrayList();
+            final List<ColumnEntity> after = Lists.newArrayList();
+            if (from < to) {
+                populateByFromLeftToRight(boardName, columnName, to, before, after);
+            } else if (from > to) {
+                populateByFromRightToLeft(boardName, columnName, to, before, after);
+            }
+
+            if (from != to) {
+                updateColumnsByIndex(boardName, before, NumberUtils.LONG_ZERO);
+                updateColumnsByIndex(boardName, after, to);
+                columnMapper.updateIndex(boardName, columnName, to);
+            }
+        } else {
+            throw new ColumnUpdateOperationNotAllowedException(requestedBy);
+        }
+    }
+
+    private void populateByFromLeftToRight(final String boardName, final String columnName, final Long newColumnIndex,
+                                           final List<ColumnEntity> before, final List<ColumnEntity> after) {
+        columnMapper.selectAllByBoardName(boardName)
+                .stream()
+                .filter(column -> !columnName.equals(column.getColumnName()))
+                .forEach(column -> {
+                    if (column.getColumnIndex() <= newColumnIndex) {
+                        before.add(column);
+                    } else {
+                        after.add(column);
+                    }
+                });
+    }
+
+    private void populateByFromRightToLeft(final String boardName, final String columnName, final Long newColumnIndex,
+                                           final List<ColumnEntity> before, final List<ColumnEntity> after) {
+        columnMapper.selectAllByBoardName(boardName)
+                .stream()
+                .filter(column -> !columnName.equals(column.getColumnName()))
+                .forEach(column -> {
+                    if (column.getColumnIndex() < newColumnIndex) {
+                        before.add(column);
+                    } else {
+                        after.add(column);
+                    }
+                });
+    }
+
+    private void updateColumnsByIndex(final String boardName, final List<ColumnEntity> columns, final Long startIndex) {
+        final AtomicLong index = new AtomicLong(startIndex);
+
+        columns.forEach(column -> columnMapper.updateIndex(boardName, column.getColumnName(), index.incrementAndGet()));
     }
 }

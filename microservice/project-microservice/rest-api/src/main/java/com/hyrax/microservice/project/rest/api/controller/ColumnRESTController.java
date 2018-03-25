@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
@@ -52,6 +54,18 @@ public class ColumnRESTController {
         LOGGER.info("Received column creation request [boardName={} columnName={} requestedBy={}]", boardName, columnName, requestedBy);
 
         columnService.create(boardName, columnName, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/board/{boardName}/column/{columnName}/order")
+    public ResponseEntity<Void> updateColumnIndex(@PathVariable final String boardName, @PathVariable final String columnName,
+                                                  @RequestParam final long from, @RequestParam final long to) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received column order updating request [boardName={} columnName={} from={} to={} requestedBy={}]",
+                boardName, columnName, from, to, requestedBy);
+
+        columnService.updateIndex(boardName, columnName, requestedBy, from, to);
 
         return ResponseEntity.noContent().build();
     }

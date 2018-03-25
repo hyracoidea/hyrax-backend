@@ -34,4 +34,10 @@
         select (<include refid="getBoardId"/>), #{columnName}, (<include refid="createColumnIndex"/>) + 1
     </insert>
 
+    <update id="updateIndex">
+        update board_column c inner join board b
+        on c.board_id = b.board_id and board_name = #{boardName} and column_name = #{columnName}
+        set column_index = #{newColumnIndex}
+    </update>
+
 </mapper>
