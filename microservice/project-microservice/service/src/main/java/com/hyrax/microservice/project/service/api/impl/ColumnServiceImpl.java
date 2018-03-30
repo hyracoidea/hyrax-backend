@@ -3,6 +3,7 @@ package com.hyrax.microservice.project.service.api.impl;
 import com.google.common.collect.Lists;
 import com.hyrax.microservice.project.data.entity.ColumnEntity;
 import com.hyrax.microservice.project.data.mapper.ColumnMapper;
+import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.api.ColumnService;
 import com.hyrax.microservice.project.service.domain.Board;
@@ -35,6 +36,8 @@ public class ColumnServiceImpl implements ColumnService {
     private final BoardService boardService;
 
     private final ColumnMapper columnMapper;
+
+    private final TaskMapper taskMapper;
 
     private final ModelMapper modelMapper;
 
@@ -100,6 +103,7 @@ public class ColumnServiceImpl implements ColumnService {
         final Optional<String> ownerUsername = boardService.findByBoardName(boardName).map(Board::getOwnerUsername);
 
         if (ownerUsername.isPresent() && ownerUsername.get().equals(requestedBy)) {
+            taskMapper.deleteAllByBoardNameAndColumnName(boardName, columnName);
             columnMapper.delete(boardName, columnName);
         } else {
             throw new ColumnRemovalOperationNotAllowedException(requestedBy);

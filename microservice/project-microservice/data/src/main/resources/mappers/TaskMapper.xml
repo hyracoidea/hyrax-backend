@@ -33,4 +33,25 @@
         select (<include refid="getBoardId"/>), (<include refid="getColumnId"/>), #{taskName}, #{description}
     </insert>
 
+    <delete id="delete">
+        delete t from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id and t.task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteAllByBoardNameAndColumnName">
+        delete t from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id
+    </delete>
+
+    <delete id="deleteAllByBoardName">
+        delete t from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id
+    </delete>
+
 </mapper>

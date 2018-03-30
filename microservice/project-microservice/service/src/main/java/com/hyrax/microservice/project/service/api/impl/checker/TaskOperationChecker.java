@@ -16,10 +16,12 @@ public class TaskOperationChecker {
 
     private final BoardMemberService boardMemberService;
 
-    public boolean canCreateTask(final String boardName, final String username) {
+    public boolean isOperationAllowed(final String boardName, final String username) {
         final Optional<String> ownerUsername = boardService.findByBoardName(boardName).map(board -> board.getOwnerUsername());
         final List<String> memberUsernames = boardMemberService.findAllUsernameByBoardName(boardName);
 
         return (ownerUsername.isPresent() && ownerUsername.get().equals(username)) || (memberUsernames.contains(username));
     }
+
+
 }

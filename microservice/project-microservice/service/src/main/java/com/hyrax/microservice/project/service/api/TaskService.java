@@ -9,4 +9,6 @@ public interface TaskService {
     List<Task> findAllByBoardNameAndColumnName(String boardName, String columnName);
 
     void create(String boardName, String columnName, String taskName, String description, String requestedBy);
+
+    void remove(String boardName, String columnName, Long taskId, String requestedBy);
 }
