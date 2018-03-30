@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,6 +67,16 @@ public class ColumnRESTController {
                 boardName, columnName, from, to, requestedBy);
 
         columnService.updateIndex(boardName, columnName, requestedBy, from, to);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(path = "/board/{boardName}/column/{columnName}")
+    public ResponseEntity<Void> delete(@PathVariable final String boardName, @PathVariable final String columnName) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received column removal request [boardName={} columnName={} requestedBy={}]", boardName, columnName, requestedBy);
+
+        columnService.remove(boardName, columnName, requestedBy);
 
         return ResponseEntity.noContent().build();
     }

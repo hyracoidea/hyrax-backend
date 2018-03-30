@@ -11,4 +11,6 @@ public interface ColumnService {
     void create(String boardName, String columnName, String requestedBy);
 
     void updateIndex(String boardName, String columnName, String requestedBy, long from, long to);
+
+    void remove(String boardName, String columnName, String requestedBy);
 }
