@@ -7,6 +7,7 @@ import com.hyrax.microservice.project.service.domain.Task;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.task.TaskAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskRemovalOperationNotAllowedException;
+import com.hyrax.microservice.project.service.exception.task.TaskUpdateOperationNotAllowedException;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -56,6 +57,18 @@ public class TaskServiceImpl implements TaskService {
             }
         } else {
             throw new TaskAdditionOperationNotAllowedException(requestedBy);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void update(final String boardName, final String columnName, final Long taskId, final String taskName, final String description, final String requestedBy) {
+        final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
+
+        if (isOperationAllowed) {
+            taskMapper.update(boardName, columnName, taskId, taskName, description);
+        } else {
+            throw new TaskUpdateOperationNotAllowedException(requestedBy);
         }
     }
 
