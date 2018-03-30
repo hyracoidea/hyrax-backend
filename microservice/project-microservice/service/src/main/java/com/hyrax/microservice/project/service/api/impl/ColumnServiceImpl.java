@@ -10,6 +10,7 @@ import com.hyrax.microservice.project.service.domain.Column;
 import com.hyrax.microservice.project.service.exception.board.BoardNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.column.ColumnRemovalOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.column.ColumnUpdateOperationNotAllowedException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -88,6 +90,19 @@ public class ColumnServiceImpl implements ColumnService {
             }
         } else {
             throw new ColumnUpdateOperationNotAllowedException(requestedBy);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void remove(final String boardName, final String columnName, final String requestedBy) {
+
+        final Optional<String> ownerUsername = boardService.findByBoardName(boardName).map(Board::getOwnerUsername);
+
+        if (ownerUsername.isPresent() && ownerUsername.get().equals(requestedBy)) {
+            columnMapper.delete(boardName, columnName);
+        } else {
+            throw new ColumnRemovalOperationNotAllowedException(requestedBy);
         }
     }
 

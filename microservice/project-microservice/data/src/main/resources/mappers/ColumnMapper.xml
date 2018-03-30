@@ -40,4 +40,16 @@
         set column_index = #{newColumnIndex}
     </update>
 
+    <delete id="delete">
+        delete c from board_column c inner join board b
+        on c.board_id = b.board_id
+        where b.board_name = #{boardName} and c.column_name = #{columnName}
+    </delete>
+
+    <delete id="deleteAllByBoardName">
+        delete c from board_column c inner join board b
+        on c.board_id = b.board_id
+        where b.board_name = #{boardName}
+    </delete>
+
 </mapper>

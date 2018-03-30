@@ -12,4 +12,8 @@ public interface ColumnMapper {
     void insert(@Param("boardName") String boardName, @Param("columnName") String columnName);
 
     void updateIndex(@Param("boardName") String boardName, @Param("columnName") String columnName, @Param("newColumnIndex") Long newColumnIndex);
+
+    void delete(@Param("boardName") String boardName, @Param("columnName") String columnName);
+
+    void deleteAllByBoardName(@Param("boardName") String boardName);
 }
