@@ -10,5 +10,7 @@ public interface TaskService {
 
     void create(String boardName, String columnName, String taskName, String description, String requestedBy);
 
+    void update(String boardName, String columnName, Long taskId, String taskName, String description, String requestedBy);
+
     void remove(String boardName, String columnName, Long taskId, String requestedBy);
 }

@@ -1,6 +1,7 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.request.TaskCreationRequest;
+import com.hyrax.microservice.project.rest.api.domain.request.TaskUpdateRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.TaskResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.wrapper.TaskResponseWrapper;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -57,6 +59,19 @@ public class TaskRESTController {
                 boardName, columnName, taskCreationRequest.getTaskName(), taskCreationRequest.getDescription(), requestedBy);
 
         taskService.create(boardName, columnName, taskCreationRequest.getTaskName(), taskCreationRequest.getDescription(), requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}")
+    public ResponseEntity<Void> update(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,
+                                       @RequestBody final TaskUpdateRequest taskUpdateRequest) {
+
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received task update request [boardName={} columnName={} taskId={} taskName={} description={} requestedBy={}]",
+                boardName, columnName, taskId, taskUpdateRequest.getTaskName(), taskUpdateRequest.getDescription(), requestedBy);
+
+        taskService.update(boardName, columnName, taskId, taskUpdateRequest.getTaskName(), taskUpdateRequest.getDescription(), requestedBy);
 
         return ResponseEntity.noContent().build();
     }
