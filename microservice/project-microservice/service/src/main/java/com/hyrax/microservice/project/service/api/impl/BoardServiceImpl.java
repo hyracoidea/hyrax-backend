@@ -3,6 +3,7 @@ package com.hyrax.microservice.project.service.api.impl;
 import com.hyrax.microservice.project.data.entity.BoardEntity;
 import com.hyrax.microservice.project.data.mapper.BoardMapper;
 import com.hyrax.microservice.project.data.mapper.ColumnMapper;
+import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.domain.Board;
 import com.hyrax.microservice.project.service.exception.board.BoardAlreadyExistsException;
@@ -29,6 +30,8 @@ public class BoardServiceImpl implements BoardService {
     private final BoardMapper boardMapper;
 
     private final ColumnMapper columnMapper;
+
+    private final TaskMapper taskMapper;
 
     private final ModelMapper modelMapper;
 
@@ -75,6 +78,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (result.isPresent()) {
             if (result.get().getOwnerUsername().equals(requestedBy)) {
+                taskMapper.deleteAllByBoardName(boardName);
                 columnMapper.deleteAllByBoardName(boardName);
                 boardMapper.delete(boardName);
             } else {
