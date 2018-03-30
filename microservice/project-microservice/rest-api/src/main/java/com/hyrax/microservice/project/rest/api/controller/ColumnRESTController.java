@@ -1,7 +1,7 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.response.ColumnResponse;
-import com.hyrax.microservice.project.rest.api.domain.response.ColumnResponseWrapper;
+import com.hyrax.microservice.project.rest.api.domain.response.wrapper.ColumnResponseWrapper;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.ColumnService;

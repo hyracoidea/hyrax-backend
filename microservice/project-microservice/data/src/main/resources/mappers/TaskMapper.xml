@@ -2,6 +2,12 @@
 
 <mapper namespace="com.hyrax.microservice.project.data.mapper.TaskMapper">
 
+    <resultMap id="taskEntityResultMap" type="com.hyrax.microservice.project.data.entity.TaskEntity">
+        <id column="task_id" jdbcType="BIGINT" property="taskId" javaType="java.lang.Long"/>
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" javaType="java.lang.String"/>
+        <result column="description" jdbcType="VARCHAR" property="description" javaType="java.lang.String"/>
+    </resultMap>
+
     <sql id="getBoardId">
         select b.board_id
         from board b inner join board_column c
@@ -13,6 +19,14 @@
         from board b inner join board_column c
         on b.board_id = c.board_id and column_name = #{columnName}
     </sql>
+
+    <select id="selectAllByBoardNameAndColumnName" resultType="com.hyrax.microservice.project.data.entity.TaskEntity" resultMap="taskEntityResultMap">
+        select t.task_id, t.task_name, t.description
+        from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id
+    </select>
 
     <insert id="insert" useGeneratedKeys="true">
         insert into task (board_id, column_id, task_name, description)

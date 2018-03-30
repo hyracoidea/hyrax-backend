@@ -1,5 +1,6 @@
-package com.hyrax.microservice.project.rest.api.domain.response;
+package com.hyrax.microservice.project.rest.api.domain.response.wrapper;
 
+import com.hyrax.microservice.project.rest.api.domain.response.ColumnResponse;
 import lombok.Builder;
 import lombok.Data;
 
