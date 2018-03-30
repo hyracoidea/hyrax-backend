@@ -2,7 +2,7 @@ package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.request.TeamMemberAdditionRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
-import com.hyrax.microservice.project.rest.api.domain.response.TeamMemberUsernameWrapperResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.wrapper.TeamMemberUsernameWrapperResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.TeamMemberService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;

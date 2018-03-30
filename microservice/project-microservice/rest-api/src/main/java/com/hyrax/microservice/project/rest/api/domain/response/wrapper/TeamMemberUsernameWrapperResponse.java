@@ -1,4 +1,4 @@
-package com.hyrax.microservice.project.rest.api.domain.response;
+package com.hyrax.microservice.project.rest.api.domain.response.wrapper;
 
 import lombok.Builder;
 import lombok.Data;
