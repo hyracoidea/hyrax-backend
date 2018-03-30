@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS team;
 
 DROP TABLE IF EXISTS board_member;
 
+DROP TABLE IF EXISTS task;
+
 DROP TABLE IF EXISTS board_column;
 
 DROP TABLE IF EXISTS board;
@@ -53,4 +55,16 @@ CREATE TABLE IF NOT EXISTS board_column (
     PRIMARY KEY (column_id),
     FOREIGN KEY (board_id) REFERENCES board(board_id),
     UNIQUE KEY (board_id, column_name)
+);
+
+CREATE TABLE IF NOT EXISTS task (
+    task_id BIGINT NOT NULL AUTO_INCREMENT,
+    board_id BIGINT NOT NULL,
+    column_id BIGINT NOT NULL,
+    task_name VARCHAR(255) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+
+    PRIMARY KEY (task_id),
+    FOREIGN KEY (board_id) REFERENCES board(board_id),
+    FOREIGN KEY (column_id) REFERENCES board_column(column_id)
 );
