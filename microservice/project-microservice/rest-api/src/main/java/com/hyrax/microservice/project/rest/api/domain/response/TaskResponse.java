@@ -13,4 +13,6 @@ public class TaskResponse {
 
     private final String description;
 
+    private final Long taskIndex;
+
 }

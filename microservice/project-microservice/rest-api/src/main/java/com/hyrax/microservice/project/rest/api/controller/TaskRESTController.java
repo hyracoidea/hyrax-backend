@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
@@ -72,6 +73,32 @@ public class TaskRESTController {
                 boardName, columnName, taskId, taskUpdateRequest.getTaskName(), taskUpdateRequest.getDescription(), requestedBy);
 
         taskService.update(boardName, columnName, taskId, taskUpdateRequest.getTaskName(), taskUpdateRequest.getDescription(), requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}/order")
+    public ResponseEntity<Void> updateTaskIndex(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,
+                                                @RequestParam final long from, @RequestParam final long to) {
+
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received task order update request [boardName={} columnName={} taskId={} from={} to={} requestedBy={}]",
+                boardName, columnName, taskId, from, to, requestedBy);
+
+        taskService.updateIndex(boardName, columnName, taskId, from, to, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}/newcolumn/{newColumnName}")
+    public ResponseEntity<Void> updateTaskColumnId(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,
+                                                   @PathVariable final String newColumnName) {
+
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received task moving update request [boardName={} columnName={} taskId={} newColumnName={} requestedBy={}]",
+                boardName, columnName, taskId, newColumnName, requestedBy);
+
+        taskService.updatePositionInColumn(boardName, columnName, taskId, newColumnName, requestedBy);
 
         return ResponseEntity.noContent().build();
     }

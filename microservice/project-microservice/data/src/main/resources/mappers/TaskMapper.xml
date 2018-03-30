@@ -6,31 +6,57 @@
         <id column="task_id" jdbcType="BIGINT" property="taskId" javaType="java.lang.Long"/>
         <result column="task_name" jdbcType="VARCHAR" property="taskName" javaType="java.lang.String"/>
         <result column="description" jdbcType="VARCHAR" property="description" javaType="java.lang.String"/>
+        <result column="task_index" jdbcType="BIGINT" property="taskIndex" javaType="java.lang.Long"/>
     </resultMap>
 
     <sql id="getBoardId">
-        select b.board_id
+        select distinct b.board_id
         from board b inner join board_column c
         on b.board_id = c.board_id and board_name = #{boardName}
     </sql>
 
-    <sql id="getColumnId">
-        select c.column_id
+    <sql id="getColumnIdByColumnName">
+        select distinct c.column_id
         from board b inner join board_column c
         on b.board_id = c.board_id and column_name = #{columnName}
     </sql>
 
-    <select id="selectAllByBoardNameAndColumnName" resultType="com.hyrax.microservice.project.data.entity.TaskEntity" resultMap="taskEntityResultMap">
-        select t.task_id, t.task_name, t.description
+    <sql id="getColumnIdByNewColumnName">
+        select distinct c.column_id
+        from board b inner join board_column c
+        on b.board_id = c.board_id and column_name = #{newColumnName}
+    </sql>
+
+    <sql id="sumTaskIndexByColumnName">
+        select count(t.task_id)
         from board b inner join board_column c
         on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
         inner join task t
         on b.board_id = t.board_id and c.column_id = t.column_id
+    </sql>
+
+    <sql id="getLastTaskIndexByNewColumnName">
+        select t.task_index
+        from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{newColumnName}
+        inner join (select * from task) t
+        on b.board_id = t.board_id and c.column_id = t.column_id
+        order by t.task_index desc
+        limit 1
+    </sql>
+
+    <select id="selectAllByBoardNameAndColumnName" resultType="com.hyrax.microservice.project.data.entity.TaskEntity" resultMap="taskEntityResultMap">
+        select t.task_id, t.task_name, t.description, t.task_index
+        from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id
+        order by t.task_index
     </select>
 
     <insert id="insert" useGeneratedKeys="true">
-        insert into task (board_id, column_id, task_name, description)
-        select (<include refid="getBoardId"/>), (<include refid="getColumnId"/>), #{taskName}, #{description}
+        insert into task (board_id, column_id, task_name, description, task_index)
+        select (<include refid="getBoardId"/>), (<include refid="getColumnIdByColumnName"/>), #{taskName}, #{description}, (<include refid="sumTaskIndexByColumnName"/>) + 1
     </insert>
 
     <update id="update">
@@ -39,6 +65,22 @@
         inner join task t
         on b.board_id = t.board_id and c.column_id = t.column_id and t.task_id = #{taskId}
         set t.task_name = #{taskName}, t.description = #{description}
+    </update>
+
+    <update id="updateIndex">
+        update board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id and t.task_id = #{taskId}
+        set t.task_index = #{newTaskIndex}
+    </update>
+    
+    <update id="updatePositionInColumn">
+        update board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id and t.task_id = #{taskId}
+        set t.task_index = IFNULL((<include refid="getLastTaskIndexByNewColumnName"/>) + 1, 1), t.column_id = (<include refid="getColumnIdByNewColumnName"/>)
     </update>
 
     <delete id="delete">

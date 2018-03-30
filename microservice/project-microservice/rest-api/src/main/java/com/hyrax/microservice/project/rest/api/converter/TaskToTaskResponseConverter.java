@@ -14,6 +14,7 @@ public class TaskToTaskResponseConverter implements Converter<Task, TaskResponse
                 .taskId(task.getTaskId())
                 .taskName(task.getTaskName())
                 .description(task.getDescription())
+                .taskIndex(task.getTaskIndex())
                 .build();
     }
 }

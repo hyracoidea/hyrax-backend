@@ -15,6 +15,12 @@ public interface TaskMapper {
     void update(@Param("boardName") String boardName, @Param("columnName") String columnName, @Param("taskId") Long taskId,
                 @Param("taskName") String taskName, @Param("description") String description);
 
+    void updateIndex(@Param("boardName") String boardName, @Param("columnName") String columnName,
+                     @Param("taskId") Long taskId, @Param("newTaskIndex") Long newTaskIndex);
+
+    void updatePositionInColumn(@Param("boardName") String boardName, @Param("columnName") String columnName,
+                                @Param("taskId") Long taskId, @Param("newColumnName") String newColumnName);
+
     void delete(@Param("boardName") String boardName, @Param("columnName") String columnName, @Param("taskId") Long taskId);
 
     void deleteAllByBoardName(@Param("boardName") String boardName);
