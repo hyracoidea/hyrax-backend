@@ -16,4 +16,6 @@ public class TaskEntity {
     private String taskName;
 
     private String description;
+
+    private Long taskIndex;
 }
