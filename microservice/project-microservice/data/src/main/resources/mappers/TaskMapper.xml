@@ -1,0 +1,22 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hyrax.microservice.project.data.mapper.TaskMapper">
+
+    <sql id="getBoardId">
+        select b.board_id
+        from board b inner join board_column c
+        on b.board_id = c.board_id and board_name = #{boardName}
+    </sql>
+
+    <sql id="getColumnId">
+        select c.column_id
+        from board b inner join board_column c
+        on b.board_id = c.board_id and column_name = #{columnName}
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true">
+        insert into task (board_id, column_id, task_name, description)
+        select (<include refid="getBoardId"/>), (<include refid="getColumnId"/>), #{taskName}, #{description}
+    </insert>
+
+</mapper>
