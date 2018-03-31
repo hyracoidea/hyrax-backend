@@ -12,6 +12,8 @@ import com.hyrax.microservice.account.rest.api.validation.bindingresult.Processe
 import com.hyrax.microservice.account.service.api.AccountService;
 import com.hyrax.microservice.account.service.domain.Account;
 import com.hyrax.microservice.account.service.exception.AccountAlreadyExistsException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+@Api(description = "Operations about accounts")
 @RestController
 public class AccountRESTController {
 
@@ -80,6 +83,7 @@ public class AccountRESTController {
     }
 
     @PostMapping(path = "/account")
+    @ApiOperation(httpMethod = "POST", value = "Resource to create a new account")
     public ResponseEntity<Void> createAccount(@Valid @RequestBody final AccountRequest accountRequest, final BindingResult bindingResult) {
         LOGGER.info("Received account request for creation: {}", accountRequest);
 
