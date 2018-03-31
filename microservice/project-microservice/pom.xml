@@ -37,6 +37,11 @@
                 <artifactId>authentication-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.hyrax.spring.boot.starter.swagger</groupId>
+                <artifactId>swagger-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.hyrax.client.account</groupId>
