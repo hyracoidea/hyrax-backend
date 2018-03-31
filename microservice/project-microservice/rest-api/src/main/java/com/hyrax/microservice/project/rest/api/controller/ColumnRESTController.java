@@ -8,6 +8,8 @@ import com.hyrax.microservice.project.service.api.ColumnService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.column.ColumnOperationNotAllowedException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
 
+@Api(description = "Operations about columns")
 @RestController
 @AllArgsConstructor
 public class ColumnRESTController {
@@ -38,6 +41,7 @@ public class ColumnRESTController {
     private final ConversionService conversionService;
 
     @GetMapping(path = "/board/{boardName}/column")
+    @ApiOperation(httpMethod = "GET", value = "Resource to list all the columns by the given board name")
     public ResponseEntity<ColumnResponseWrapper> retrieveAll(@PathVariable final String boardName) {
         return ResponseEntity.ok()
                 .body(ColumnResponseWrapper.builder()
@@ -50,6 +54,7 @@ public class ColumnRESTController {
     }
 
     @PostMapping(path = "/board/{boardName}/column/{columnName}")
+    @ApiOperation(httpMethod = "POST", value = "Resource to create the given column for the given board")
     public ResponseEntity<Void> create(@PathVariable final String boardName, @PathVariable final String columnName) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received column creation request [boardName={} columnName={} requestedBy={}]", boardName, columnName, requestedBy);
@@ -60,6 +65,7 @@ public class ColumnRESTController {
     }
 
     @PutMapping(path = "/board/{boardName}/column/{columnName}/order")
+    @ApiOperation(httpMethod = "POST", value = "Resource to modify the position of the given column")
     public ResponseEntity<Void> updateColumnIndex(@PathVariable final String boardName, @PathVariable final String columnName,
                                                   @RequestParam final long from, @RequestParam final long to) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
@@ -72,6 +78,7 @@ public class ColumnRESTController {
     }
 
     @DeleteMapping(path = "/board/{boardName}/column/{columnName}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to delete the given column from the given board")
     public ResponseEntity<Void> delete(@PathVariable final String boardName, @PathVariable final String columnName) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received column removal request [boardName={} columnName={} requestedBy={}]", boardName, columnName, requestedBy);

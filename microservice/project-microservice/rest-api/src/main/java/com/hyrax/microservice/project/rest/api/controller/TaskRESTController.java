@@ -9,6 +9,8 @@ import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetail
 import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.task.TaskOperationNotAllowedException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
 
+@Api(description = "Operations about tasks")
 @RestController
 @AllArgsConstructor
 public class TaskRESTController {
@@ -40,6 +43,7 @@ public class TaskRESTController {
     private final ConversionService conversionService;
 
     @GetMapping(path = "/board/{boardName}/column/{columnName}/task")
+    @ApiOperation(httpMethod = "GET", value = "Resource to list all the tasks on the given board and the given column")
     public ResponseEntity<TaskResponseWrapper> retrieveAll(@PathVariable final String boardName, @PathVariable final String columnName) {
         return ResponseEntity.ok()
                 .body(TaskResponseWrapper.builder()
@@ -52,6 +56,7 @@ public class TaskRESTController {
     }
 
     @PostMapping(path = "/board/{boardName}/column/{columnName}/task")
+    @ApiOperation(httpMethod = "POST", value = "Resource to create a new task for the given column")
     public ResponseEntity<Void> create(@PathVariable final String boardName, @PathVariable final String columnName,
                                        @RequestBody final TaskCreationRequest taskCreationRequest) {
 
@@ -65,6 +70,7 @@ public class TaskRESTController {
     }
 
     @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}")
+    @ApiOperation(httpMethod = "PUT", value = "Resource to update the name or the description of the existing task")
     public ResponseEntity<Void> update(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,
                                        @RequestBody final TaskUpdateRequest taskUpdateRequest) {
 
@@ -78,6 +84,7 @@ public class TaskRESTController {
     }
 
     @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}/order")
+    @ApiOperation(httpMethod = "PUT", value = "Resource to update the position of the task in the given column")
     public ResponseEntity<Void> updateTaskIndex(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,
                                                 @RequestParam final long from, @RequestParam final long to) {
 
@@ -91,6 +98,7 @@ public class TaskRESTController {
     }
 
     @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}/newcolumn/{newColumnName}")
+    @ApiOperation(httpMethod = "PUT", value = "Resource to move the task between columns")
     public ResponseEntity<Void> updateTaskColumnId(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,
                                                    @PathVariable final String newColumnName) {
 
@@ -104,6 +112,7 @@ public class TaskRESTController {
     }
 
     @DeleteMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to remove the given task")
     public ResponseEntity<Void> delete(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received task removal request [boardName={} columnName={} taskId={} requestedBy={}]", boardName, columnName, taskId, requestedBy);
