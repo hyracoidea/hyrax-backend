@@ -11,6 +11,10 @@ spring:
     ansi:
       enabled: DETECT
 
+swagger:
+  api:
+    basePackage: com.hyrax.microservice.account.rest.api.controller
+    authRequired: true
 
 logging:
   file: logs/account-microservice.log
