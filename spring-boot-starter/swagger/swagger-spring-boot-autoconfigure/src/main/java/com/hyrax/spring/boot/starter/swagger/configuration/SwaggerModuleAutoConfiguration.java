@@ -1,6 +1,9 @@
-package com.hyrax.microservice.project.rest.api.configuration;
+package com.hyrax.spring.boot.starter.swagger.configuration;
 
 import com.google.common.collect.Lists;
+import com.hyrax.spring.boot.starter.swagger.properties.SwaggerProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ParameterBuilder;
@@ -16,26 +19,27 @@ import java.util.List;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig {
+@EnableConfigurationProperties(SwaggerProperties.class)
+public class SwaggerModuleAutoConfiguration {
 
     @Bean
-    public Docket api() {
+    @ConditionalOnMissingBean
+    public Docket api(final SwaggerProperties swaggerProperties) {
         return new Docket(DocumentationType.SWAGGER_2)
-                .globalOperationParameters(globalOperationParameters())
+                .globalOperationParameters(globalOperationParameters(swaggerProperties))
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.hyrax.microservice.project.rest.api.controller"))
+                .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))
                 .paths(PathSelectors.any())
                 .build();
     }
 
-    private List<Parameter> globalOperationParameters() {
+    private List<Parameter> globalOperationParameters(final SwaggerProperties swaggerProperties) {
         return Lists.newArrayList(new ParameterBuilder()
                 .name("Authorization")
                 .description("Authorization header")
                 .modelRef(new ModelRef("string"))
                 .parameterType("header")
-                .required(true)
+                .required(swaggerProperties.isAuthRequired())
                 .build());
     }
-
 }
