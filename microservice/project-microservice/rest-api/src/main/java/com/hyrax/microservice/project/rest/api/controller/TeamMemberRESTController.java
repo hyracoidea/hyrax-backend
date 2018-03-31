@@ -8,6 +8,8 @@ import com.hyrax.microservice.project.service.api.TeamMemberService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberIsAlreadyAddedException;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberOperationNotAllowedException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Api(description = "Operations about tasks")
 public class TeamMemberRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamMemberRESTController.class);
@@ -37,6 +40,7 @@ public class TeamMemberRESTController {
     }
 
     @GetMapping(path = "/team/{teamName}/members")
+    @ApiOperation(httpMethod = "GET", value = "Resource to list all team members for the given team")
     public ResponseEntity<TeamMemberUsernameWrapperResponse> retrieveTeamMemberUsernames(@PathVariable final String teamName) {
         return ResponseEntity.ok(TeamMemberUsernameWrapperResponse.builder()
                 .teamMemberUsernames(teamMemberService.findAllUsernameByTeamName(teamName))
@@ -45,6 +49,7 @@ public class TeamMemberRESTController {
     }
 
     @PostMapping(path = "/team/member")
+    @ApiOperation(httpMethod = "POST", value = "Resource to add a new member to the given team")
     public ResponseEntity<Void> addTeamMemberToTeam(@RequestBody final TeamMemberAdditionRequest request) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received team member addition request: {} from {}", request, requestedBy);
@@ -55,6 +60,7 @@ public class TeamMemberRESTController {
     }
 
     @DeleteMapping(path = "/team/{teamName}/member/{username}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to remove a team member from the given team")
     public ResponseEntity<Void> removeTeamMember(@PathVariable final String teamName, @PathVariable final String username) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received team member deletion request=[username={} teamName={} requestedBy={}]", username, teamName, requestedBy);

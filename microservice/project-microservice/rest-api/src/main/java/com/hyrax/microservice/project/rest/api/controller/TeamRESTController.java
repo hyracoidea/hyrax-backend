@@ -11,6 +11,8 @@ import com.hyrax.microservice.project.service.api.TeamService;
 import com.hyrax.microservice.project.service.domain.Team;
 import com.hyrax.microservice.project.service.exception.team.TeamAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.team.TeamOperationNotAllowedException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@Api(description = "Operations about teams")
 @RestController
 @RequestMapping(path = "/team")
 public class TeamRESTController {
@@ -52,6 +55,7 @@ public class TeamRESTController {
     }
 
     @PostMapping
+    @ApiOperation(httpMethod = "POST", value = "Resource to create a team")
     public ResponseEntity<Void> createTeam(@Valid @RequestBody final TeamCreationRequest teamCreationRequest, final BindingResult bindingResult) {
         LOGGER.info("Received team creation request={} from {}", teamCreationRequest, authenticationUserDetailsHelper.getUsername());
 
@@ -67,6 +71,7 @@ public class TeamRESTController {
     }
 
     @DeleteMapping(path = "/{teamName}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to delete a team")
     public ResponseEntity<Void> removeTeam(@PathVariable final String teamName) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received team removal request, teamName={} requestedBy={}", teamName, requestedBy);

@@ -1,12 +1,14 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.response.BoardResponse;
-import com.hyrax.microservice.project.rest.api.domain.response.wrapper.BoardResponseWrapper;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.wrapper.BoardResponseWrapper;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.exception.board.BoardAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.board.BoardOperationNotAllowedException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.stream.Collectors;
 
+@Api(description = "Operations about boards")
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "/board")
@@ -37,6 +40,7 @@ public class BoardRESTController {
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
     @GetMapping
+    @ApiOperation(httpMethod = "GET", value = "Resource to list all the boards by the user")
     public ResponseEntity<BoardResponseWrapper> retrieveAll() {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
 
@@ -51,6 +55,7 @@ public class BoardRESTController {
     }
 
     @PostMapping(path = "/{boardName}")
+    @ApiOperation(httpMethod = "POST", value = "Resource to create the given board")
     public ResponseEntity<Void> create(@PathVariable final String boardName) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received board creation request = [boardName={} requestedBy={}]", boardName, requestedBy);
@@ -61,6 +66,7 @@ public class BoardRESTController {
     }
 
     @DeleteMapping(path = "/{boardName}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to remove the given board")
     public ResponseEntity<Void> remove(@PathVariable final String boardName) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received board removal request = [boardName={} requestedBy={}]", boardName, requestedBy);

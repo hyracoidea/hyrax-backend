@@ -3,9 +3,11 @@ package com.hyrax.microservice.project.rest.api.controller;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.BoardMemberService;
+import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.board.member.BoardMemberIsAlreadyAddedException;
 import com.hyrax.microservice.project.service.exception.board.member.BoardMemberOperationNotAllowedException;
-import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(description = "Operations about board members")
 @RestController
 @AllArgsConstructor
 public class BoardMemberRESTController {
@@ -27,6 +30,7 @@ public class BoardMemberRESTController {
     private final BoardMemberService boardMemberService;
 
     @PostMapping(path = "/board/{boardName}/member/{username}")
+    @ApiOperation(httpMethod = "POST", value = "Resource to add a member to the given board")
     public ResponseEntity<Void> addTeamMemberToTeam(@PathVariable final String boardName, @PathVariable final String username) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received board member addition request [boardName={} username={} requestedBy={}]", boardName, username, requestedBy);
