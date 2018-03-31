@@ -8,6 +8,8 @@ DROP TABLE IF EXISTS task;
 
 DROP TABLE IF EXISTS board_column;
 
+DROP TABLE IF EXISTS label;
+
 DROP TABLE IF EXISTS board;
 
 
@@ -68,4 +70,17 @@ CREATE TABLE IF NOT EXISTS task (
     PRIMARY KEY (task_id),
     FOREIGN KEY (board_id) REFERENCES board(board_id),
     FOREIGN KEY (column_id) REFERENCES board_column(column_id)
+);
+
+CREATE TABLE IF NOT EXISTS label (
+    label_id BIGINT NOT NULL AUTO_INCREMENT,
+    board_id BIGINT NOT NULL,
+    label_name VARCHAR(255) NOT NULL,
+    red TINYINT UNSIGNED NOT NULL,
+    green TINYINT UNSIGNED NOT NULL,
+    blue TINYINT UNSIGNED NOT NULL,
+
+    PRIMARY KEY (label_id),
+    FOREIGN KEY (board_id) REFERENCES board(board_id),
+    UNIQUE KEY (board_id, label_name)
 );
