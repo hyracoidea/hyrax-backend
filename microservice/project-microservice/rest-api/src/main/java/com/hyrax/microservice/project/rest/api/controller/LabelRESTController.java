@@ -2,13 +2,14 @@ package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.request.LabelColorRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.LabelResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.RequestValidationResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.wrapper.LabelResponseWrapper;
 import com.hyrax.microservice.project.rest.api.exception.RequestValidationException;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.rest.api.validation.bindingresult.BindingResultProcessor;
 import com.hyrax.microservice.project.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.project.service.api.LabelService;
-import com.hyrax.microservice.project.service.domain.LabelColor;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionToTaskException;
 import com.hyrax.microservice.project.service.exception.label.LabelAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.label.LabelOperationNotAllowedException;
@@ -22,11 +23,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -42,6 +45,19 @@ public class LabelRESTController {
 
     private final ConversionService conversionService;
 
+    @GetMapping(path = "/board/{boardName}/label")
+    @ApiOperation(httpMethod = "GET", value = "Resource to list all the labels by the given board name")
+    public ResponseEntity<LabelResponseWrapper> retrieveAll(@PathVariable final String boardName) {
+        return ResponseEntity.ok()
+                .body(LabelResponseWrapper.builder()
+                        .labelResponses(labelService.findAllByBoardName(boardName)
+                                .stream()
+                                .map(label -> conversionService.convert(label, LabelResponse.class))
+                                .collect(Collectors.toList())
+                        )
+                        .build());
+    }
+
     @PostMapping(path = "/board/{boardName}/label/{labelName}")
     @ApiOperation(httpMethod = "POST", value = "Resource to create a new label for the given board")
     public ResponseEntity<Void> create(@PathVariable final String boardName, @PathVariable final String labelName,
@@ -53,7 +69,7 @@ public class LabelRESTController {
         final ProcessedBindingResult processedBindingResult = bindingResultProcessor.process(bindingResult);
 
         if (!processedBindingResult.hasValidationErrors()) {
-            labelService.create(boardName, labelName, conversionService.convert(labelColorRequest, LabelColor.class), requestedBy);
+            labelService.create(boardName, labelName, conversionService.convert(labelColorRequest, com.hyrax.microservice.project.service.domain.LabelColor.class), requestedBy);
         } else {
             throw new RequestValidationException(processedBindingResult);
         }

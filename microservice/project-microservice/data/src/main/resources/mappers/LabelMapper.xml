@@ -2,11 +2,25 @@
 
 <mapper namespace="com.hyrax.microservice.project.data.mapper.LabelMapper">
 
+    <resultMap id="labelEntityResultMap" type="com.hyrax.microservice.project.data.entity.LabelEntity">
+        <id column="label_id" jdbcType="BIGINT" property="labelId" javaType="java.lang.Long"/>
+        <result column="label_name" jdbcType="VARCHAR" property="labelName" javaType="java.lang.String"/>
+        <result column="red" jdbcType="VARCHAR" property="red" javaType="java.lang.Integer"/>
+        <result column="green" jdbcType="BIGINT" property="green" javaType="java.lang.Integer"/>
+        <result column="blue" jdbcType="BIGINT" property="blue" javaType="java.lang.Integer"/>
+    </resultMap>
+
     <sql id="getBoardId">
         select board_id
         from board
         where board_name = #{boardName}
     </sql>
+
+    <select id="selectAllByBoardName" resultType="com.hyrax.microservice.project.data.entity.LabelEntity" resultMap="labelEntityResultMap">
+        select l.label_id, l.label_name, l.red, l.green, l.blue
+        from board b inner join label l
+        on b.board_id = l.board_id and b.board_name = #{boardName}
+    </select>
 
     <insert id="insert" useGeneratedKeys="true">
         insert into label (board_id, label_name, red, green, blue)
