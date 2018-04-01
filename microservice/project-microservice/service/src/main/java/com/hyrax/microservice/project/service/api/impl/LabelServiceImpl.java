@@ -3,12 +3,14 @@ package com.hyrax.microservice.project.service.api.impl;
 import com.hyrax.microservice.project.data.mapper.LabelMapper;
 import com.hyrax.microservice.project.service.api.LabelService;
 import com.hyrax.microservice.project.service.api.impl.checker.LabelOperationChecker;
+import com.hyrax.microservice.project.service.domain.Label;
 import com.hyrax.microservice.project.service.domain.LabelColor;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionToTaskException;
 import com.hyrax.microservice.project.service.exception.label.LabelAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.label.LabelRemovalOperationNotAllowedException;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,15 +18,29 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class LabelServiceImpl implements LabelService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LabelServiceImpl.class);
 
+    private final ModelMapper modelMapper;
+
     private final LabelMapper labelMapper;
 
     private final LabelOperationChecker labelOperationChecker;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Label> findAllByBoardName(final String boardName) {
+        return labelMapper.selectAllByBoardName(boardName)
+                .stream()
+                .map(labelEntity -> modelMapper.map(labelEntity, Label.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Transactional

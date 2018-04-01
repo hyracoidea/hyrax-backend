@@ -1,8 +1,13 @@
 package com.hyrax.microservice.project.data.mapper;
 
+import com.hyrax.microservice.project.data.entity.LabelEntity;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface LabelMapper {
+
+    List<LabelEntity> selectAllByBoardName(@Param("boardName") String boardName);
 
     void insert(@Param("boardName") String boardName, @Param("labelName") String labelName,
                 @Param("red") int red, @Param("green") int green, @Param("blue") int blue);
