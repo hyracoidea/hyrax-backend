@@ -20,6 +20,7 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,6 +68,17 @@ public class LabelRESTController {
         LOGGER.info("Received label addition to task request [boardName={} taskId={} labelId={} requestedBy={}]", boardName, taskId, labelId, requestedBy);
 
         labelService.addLabelToTask(boardName, taskId, labelId, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(path = "/board/{boardName}/label/{labelId}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to remove the given label")
+    public ResponseEntity<Void> delete(@PathVariable final String boardName, @PathVariable final Long labelId) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received label removal request [boardName={} labelId={} requestedBy={}]", boardName, labelId, requestedBy);
+
+        labelService.remove(boardName, labelId, requestedBy);
 
         return ResponseEntity.noContent().build();
     }

@@ -18,4 +18,9 @@
         select (<include refid="getBoardId"/>), #{taskId}, #{labelId}
     </insert>
 
+    <delete id="delete">
+        delete l from board b inner join label l
+        on b.board_id = l.board_id and b.board_name = #{boardName} and l.label_id = #{labelId}
+    </delete>
+
 </mapper>

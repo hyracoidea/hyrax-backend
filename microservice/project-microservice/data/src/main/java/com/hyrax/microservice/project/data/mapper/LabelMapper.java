@@ -8,4 +8,6 @@ public interface LabelMapper {
                 @Param("red") int red, @Param("green") int green, @Param("blue") int blue);
 
     void addLabelToTask(@Param("boardName") String boardName, @Param("taskId") Long taskId, @Param("labelId") Long labelId);
+
+    void delete(@Param("boardName") String boardName, @Param("labelId") Long labelId);
 }
