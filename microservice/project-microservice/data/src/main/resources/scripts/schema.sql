@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS team;
 
 DROP TABLE IF EXISTS board_member;
 
+DROP TABLE IF EXISTS task_label;
+
 DROP TABLE IF EXISTS task;
 
 DROP TABLE IF EXISTS board_column;
@@ -83,4 +85,15 @@ CREATE TABLE IF NOT EXISTS label (
     PRIMARY KEY (label_id),
     FOREIGN KEY (board_id) REFERENCES board(board_id),
     UNIQUE KEY (board_id, label_name)
+);
+
+CREATE TABLE IF NOT EXISTS task_label (
+    board_id BIGINT NOT NULL,
+    task_id BIGINT NOT NULL,
+    label_id BIGINT NOT NULL,
+
+    FOREIGN KEY (board_id) REFERENCES board(board_id),
+    FOREIGN KEY (task_id) REFERENCES task(task_id),
+    FOREIGN KEY (label_id) REFERENCES label(label_id),
+    UNIQUE KEY (board_id, task_id, label_id)
 );

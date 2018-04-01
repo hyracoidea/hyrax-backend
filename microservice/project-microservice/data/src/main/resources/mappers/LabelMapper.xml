@@ -13,4 +13,9 @@
         select (<include refid="getBoardId"/>), #{labelName}, #{red}, #{green}, #{blue}
     </insert>
 
+    <insert id="addLabelToTask">
+        insert into task_label (board_id, task_id, label_id)
+        select (<include refid="getBoardId"/>), #{taskId}, #{labelId}
+    </insert>
+
 </mapper>
