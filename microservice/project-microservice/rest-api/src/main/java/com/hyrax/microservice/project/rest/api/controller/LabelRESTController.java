@@ -9,6 +9,7 @@ import com.hyrax.microservice.project.rest.api.validation.bindingresult.BindingR
 import com.hyrax.microservice.project.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.project.service.api.LabelService;
 import com.hyrax.microservice.project.service.domain.LabelColor;
+import com.hyrax.microservice.project.service.exception.label.LabelAdditionToTaskException;
 import com.hyrax.microservice.project.service.exception.label.LabelAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.label.LabelOperationNotAllowedException;
 import io.swagger.annotations.ApiOperation;
@@ -59,12 +60,33 @@ public class LabelRESTController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping(path = "/board/{boardName}/label/{labelId}/task/{taskId}")
+    @ApiOperation(httpMethod = "POST", value = "Resource to add the given label for the given task")
+    public ResponseEntity<Void> addLabelToTask(@PathVariable final String boardName, @PathVariable final Long taskId, @PathVariable final Long labelId) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received label addition to task request [boardName={} taskId={} labelId={} requestedBy={}]", boardName, taskId, labelId, requestedBy);
+
+        labelService.addLabelToTask(boardName, taskId, labelId, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @ExceptionHandler(RequestValidationException.class)
     protected ResponseEntity<RequestValidationResponse> handleRequestValidationException(final RequestValidationException e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(RequestValidationResponse.builder()
                         .requestValidationDetails(e.getProcessedBindingResult().getRequestValidationDetails())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(LabelAdditionToTaskException.class)
+    protected ResponseEntity<ErrorResponse> handleLabelAdditionToTaskException(final LabelAdditionToTaskException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
                         .build()
                 );
     }
