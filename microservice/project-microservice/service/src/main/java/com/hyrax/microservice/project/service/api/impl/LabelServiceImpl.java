@@ -7,6 +7,7 @@ import com.hyrax.microservice.project.service.domain.LabelColor;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionToTaskException;
 import com.hyrax.microservice.project.service.exception.label.LabelAlreadyExistsException;
+import com.hyrax.microservice.project.service.exception.label.LabelRemovalOperationNotAllowedException;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,17 @@ public class LabelServiceImpl implements LabelService {
             }
         } else {
             throw new LabelAdditionOperationNotAllowedException(requestedBy);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void remove(final String boardName, final Long labelId, final String requestedBy) {
+        final boolean isOperationAllowed = labelOperationChecker.isOperationAllowed(boardName, requestedBy);
+        if (isOperationAllowed) {
+            labelMapper.delete(boardName, labelId);
+        } else {
+            throw new LabelRemovalOperationNotAllowedException(requestedBy);
         }
     }
 }
