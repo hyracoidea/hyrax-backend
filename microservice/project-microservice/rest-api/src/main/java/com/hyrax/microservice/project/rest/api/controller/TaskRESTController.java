@@ -106,7 +106,7 @@ public class TaskRESTController {
         LOGGER.info("Received task order update request [boardName={} columnName={} taskId={} from={} to={} requestedBy={}]",
                 boardName, columnName, taskId, from, to, requestedBy);
 
-        taskService.updateIndex(boardName, columnName, taskId, from, to, requestedBy);
+        taskService.updatePosition(boardName, columnName, taskId, from, to, requestedBy);
 
         return ResponseEntity.noContent().build();
     }
@@ -120,7 +120,7 @@ public class TaskRESTController {
         LOGGER.info("Received task moving update request [boardName={} columnName={} taskId={} newColumnName={} requestedBy={}]",
                 boardName, columnName, taskId, newColumnName, requestedBy);
 
-        taskService.updatePositionInColumn(boardName, columnName, taskId, newColumnName, requestedBy);
+        taskService.updatePositionBetweenColumns(boardName, columnName, taskId, newColumnName, requestedBy);
 
         return ResponseEntity.noContent().build();
     }

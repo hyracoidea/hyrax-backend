@@ -14,9 +14,9 @@ public interface TaskService {
 
     void update(String boardName, String columnName, Long taskId, String taskName, String description, String requestedBy);
 
-    void updateIndex(String boardName, String columnName, Long taskId, long from, long to, String requestedBy);
+    void updatePosition(String boardName, String columnName, Long taskId, long from, long to, String requestedBy);
 
-    void updatePositionInColumn(String boardName, String columnName, Long taskId, String newColumnName, String requestedBy);
+    void updatePositionBetweenColumns(String boardName, String columnName, Long taskId, String newColumnName, String requestedBy);
 
     void remove(String boardName, String columnName, Long taskId, String requestedBy);
 }
