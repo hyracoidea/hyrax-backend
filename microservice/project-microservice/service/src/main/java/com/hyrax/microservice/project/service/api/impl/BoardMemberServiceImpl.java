@@ -1,6 +1,6 @@
 package com.hyrax.microservice.project.service.api.impl;
 
-import com.hyrax.microservice.project.data.mapper.BoardMemberMapper;
+import com.hyrax.microservice.project.data.dao.BoardDAO;
 import com.hyrax.microservice.project.service.api.BoardMemberService;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.domain.Board;
@@ -24,14 +24,14 @@ public class BoardMemberServiceImpl implements BoardMemberService {
 
     private static final String BOARD_MEMBER_ALREADY_ADDED_ERROR_MESSAGE_TEMPLATE = "Board member is already added: %s";
 
-    private final BoardMemberMapper boardMemberMapper;
+    private final BoardDAO boardDAO;
 
     private final BoardService boardService;
 
     @Override
     @Transactional(readOnly = true)
     public List<String> findAllUsernameByBoardName(final String boardName) {
-        return boardMemberMapper.selectAllUsernameByBoardName(boardName);
+        return boardDAO.findAllBoardMemberNameByBoardName(boardName);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class BoardMemberServiceImpl implements BoardMemberService {
         validateByRole(requestedBy, board.getOwnerUsername(), boardMemberUsernames);
 
         try {
-            boardMemberMapper.insert(username, boardName);
+            boardDAO.addMemberToBoard(boardName, username);
         } catch (final DuplicateKeyException e) {
             final String errorMessage = String.format(BOARD_MEMBER_ALREADY_ADDED_ERROR_MESSAGE_TEMPLATE, username);
             LOGGER.error(errorMessage, e);

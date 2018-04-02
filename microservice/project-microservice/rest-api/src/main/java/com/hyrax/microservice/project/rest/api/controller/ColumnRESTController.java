@@ -1,8 +1,8 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.response.ColumnResponse;
-import com.hyrax.microservice.project.rest.api.domain.response.wrapper.ColumnResponseWrapper;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.wrapper.ColumnResponseWrapper;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.ColumnService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
@@ -65,9 +65,9 @@ public class ColumnRESTController {
     }
 
     @PutMapping(path = "/board/{boardName}/column/{columnName}/order")
-    @ApiOperation(httpMethod = "POST", value = "Resource to modify the position of the given column")
-    public ResponseEntity<Void> updateColumnIndex(@PathVariable final String boardName, @PathVariable final String columnName,
-                                                  @RequestParam final long from, @RequestParam final long to) {
+    @ApiOperation(httpMethod = "PUT", value = "Resource to modify the position of the given column")
+    public ResponseEntity<Void> updateColumnPosition(@PathVariable final String boardName, @PathVariable final String columnName,
+                                                     @RequestParam final long from, @RequestParam final long to) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received column order updating request [boardName={} columnName={} from={} to={} requestedBy={}]",
                 boardName, columnName, from, to, requestedBy);

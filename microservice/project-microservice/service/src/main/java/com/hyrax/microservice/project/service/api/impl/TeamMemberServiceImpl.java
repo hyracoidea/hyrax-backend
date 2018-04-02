@@ -4,28 +4,26 @@ import com.google.common.collect.Lists;
 import com.hyrax.client.account.api.response.HyraxResponse;
 import com.hyrax.client.account.api.response.UsernameWrapperResponse;
 import com.hyrax.client.account.api.service.AccountRESTService;
+import com.hyrax.microservice.project.data.dao.TeamDAO;
 import com.hyrax.microservice.project.data.entity.TeamEntity;
-import com.hyrax.microservice.project.data.mapper.TeamMapper;
-import com.hyrax.microservice.project.data.mapper.TeamMemberMapper;
 import com.hyrax.microservice.project.service.api.TeamMemberService;
-import com.hyrax.microservice.project.service.api.TeamService;
-import com.hyrax.microservice.project.service.domain.Team;
+import com.hyrax.microservice.project.service.exception.UsernameNotFoundException;
+import com.hyrax.microservice.project.service.exception.team.TeamNotFoundException;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberIsAlreadyAddedException;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberNotFoundException;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberRemovalOperationNotAllowedException;
-import com.hyrax.microservice.project.service.exception.team.TeamNotFoundException;
-import com.hyrax.microservice.project.service.exception.UsernameNotFoundException;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TeamMemberServiceImpl implements TeamMemberService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamMemberServiceImpl.class);
@@ -34,41 +32,28 @@ public class TeamMemberServiceImpl implements TeamMemberService {
 
     private final AccountRESTService accountRESTService;
 
-    private final TeamMapper teamMapper;
-
-    private final TeamService teamService;
-
-    private final TeamMemberMapper teamMemberMapper;
-
-    @Autowired
-    public TeamMemberServiceImpl(final AccountRESTService accountRESTService, final TeamMapper teamMapper, final TeamService teamService,
-                                 final TeamMemberMapper teamMemberMapper) {
-        this.accountRESTService = accountRESTService;
-        this.teamMapper = teamMapper;
-        this.teamService = teamService;
-        this.teamMemberMapper = teamMemberMapper;
-    }
+    private final TeamDAO teamDAO;
 
     @Override
     @Transactional(readOnly = true)
     public List<String> findAllUsernameByTeamName(final String teamName) {
-        return teamMemberMapper.selectAllUsernameByTeamName(teamName);
+        return teamDAO.findAllTeamMemberNameByTeamName(teamName);
     }
 
     @Override
     @Transactional
     public void add(final String username, final String teamName, final String requestedBy) {
         final List<String> existingUsernames = retrieveUsernames();
-        final List<String> teamMemberUsernames = teamMemberMapper.selectAllUsernameByTeamName(teamName);
-        final TeamEntity team = teamMapper.selectByName(teamName);
+        final List<String> teamMemberUsernames = findAllUsernameByTeamName(teamName);
+        final Optional<TeamEntity> team = teamDAO.findByTeamName(teamName);
 
         validateUsernamesByExistence(username, requestedBy, existingUsernames);
         validateByTeamExistence(team, teamName);
-        validateByTeamMemberAdditionRole(requestedBy, team.getOwnerUsername(), teamMemberUsernames);
+        validateByTeamMemberAdditionRole(requestedBy, team.get().getOwnerUsername(), teamMemberUsernames);
         validateByAlreadyTeamMember(username, teamMemberUsernames);
 
         try {
-            teamMemberMapper.insert(username, teamName);
+            teamDAO.addMemberToTeam(teamName, username);
         } catch (final DuplicateKeyException e) {
             LOGGER.error(String.format(TEAM_MEMBER_ALREADY_ADDED_ERROR_MESSAGE_TEMPLATE, username), e);
             throw new TeamMemberIsAlreadyAddedException(username);
@@ -79,11 +64,11 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     @Override
     @Transactional
     public void remove(final String username, final String teamName, final String requestedBy) {
-        final Team team = teamService.findByName(teamName).orElseThrow(() -> new TeamNotFoundException(teamName));
+        final TeamEntity team = teamDAO.findByTeamName(teamName).orElseThrow(() -> new TeamNotFoundException(teamName));
         final String teamOwnerUsername = team.getOwnerUsername();
 
         if (canRemoveYourself(username, requestedBy, teamOwnerUsername) || canRemoveOtherMembers(username, requestedBy, teamOwnerUsername)) {
-            teamMemberMapper.delete(username, teamName);
+            teamDAO.deleteMemberFromTeam(teamName, username);
         } else {
             throw new TeamMemberRemovalOperationNotAllowedException(requestedBy);
         }
@@ -105,10 +90,8 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         }
     }
 
-    private void validateByTeamExistence(final TeamEntity teamEntity, final String teamName) {
-        if (Objects.isNull(teamEntity)) {
-            throw new TeamNotFoundException(teamName);
-        }
+    private void validateByTeamExistence(final Optional<TeamEntity> teamEntity, final String teamName) {
+        teamEntity.orElseThrow(() -> new TeamNotFoundException(teamName));
     }
 
     private void validateByTeamMemberAdditionRole(final String requestedBy, final String teamOwnerUsername, final List<String> teamMemberUsernames) {

@@ -1,10 +1,7 @@
 package com.hyrax.microservice.project.service.api.impl;
 
+import com.hyrax.microservice.project.data.dao.BoardDAO;
 import com.hyrax.microservice.project.data.entity.BoardEntity;
-import com.hyrax.microservice.project.data.mapper.BoardMapper;
-import com.hyrax.microservice.project.data.mapper.ColumnMapper;
-import com.hyrax.microservice.project.data.mapper.LabelMapper;
-import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.domain.Board;
 import com.hyrax.microservice.project.service.exception.board.BoardAlreadyExistsException;
@@ -18,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,13 +24,7 @@ public class BoardServiceImpl implements BoardService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BoardServiceImpl.class);
 
-    private final BoardMapper boardMapper;
-
-    private final ColumnMapper columnMapper;
-
-    private final TaskMapper taskMapper;
-
-    private final LabelMapper labelMapper;
+    private final BoardDAO boardDAO;
 
     private final ModelMapper modelMapper;
 
@@ -42,9 +32,9 @@ public class BoardServiceImpl implements BoardService {
     @Transactional(readOnly = true)
     public Optional<Board> findByBoardName(final String boardName) {
         Board board = null;
-        final BoardEntity boardEntity = boardMapper.selectByBoardName(boardName);
-        if (Objects.nonNull(boardEntity)) {
-            board = modelMapper.map(boardEntity, Board.class);
+        final Optional<BoardEntity> boardEntity = boardDAO.findByBoardName(boardName);
+        if (boardEntity.isPresent()) {
+            board = modelMapper.map(boardEntity.get(), Board.class);
         }
         return Optional.ofNullable(board);
     }
@@ -52,7 +42,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional(readOnly = true)
     public List<Board> findAllByUsername(final String username) {
-        return boardMapper.selectAllBoardByUsername(username)
+        return boardDAO.findAllByUsername(username)
                 .stream()
                 .map(boardEntity -> modelMapper.map(boardEntity, Board.class))
                 .collect(Collectors.toList());
@@ -64,7 +54,7 @@ public class BoardServiceImpl implements BoardService {
     public void create(final String boardName, final String ownerUsername) {
         try {
             LOGGER.info("Trying to save the board = [boardName={} ownerUsername={}]", boardName, ownerUsername);
-            boardMapper.insert(boardName, ownerUsername);
+            boardDAO.save(boardName, ownerUsername);
             LOGGER.info("Board saving was successful [boardName={} ownerUsername={}]", boardName, ownerUsername);
         } catch (final DuplicateKeyException e) {
             final String errorMessage = String.format("Board already exists with this name=%s", boardName);
@@ -81,10 +71,7 @@ public class BoardServiceImpl implements BoardService {
 
         if (result.isPresent()) {
             if (result.get().getOwnerUsername().equals(requestedBy)) {
-                labelMapper.deleteAllLabelFromTasksByBoard(boardName);
-                taskMapper.deleteAllByBoardName(boardName);
-                columnMapper.deleteAllByBoardName(boardName);
-                boardMapper.delete(boardName);
+                boardDAO.deleteByBoardName(boardName);
             } else {
                 throw new BoardRemovalOperationNotAllowedException(requestedBy);
             }

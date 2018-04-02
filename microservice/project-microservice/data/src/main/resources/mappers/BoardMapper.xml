@@ -3,7 +3,7 @@
 <mapper namespace="com.hyrax.microservice.project.data.mapper.BoardMapper">
 
     <resultMap id="boardEntityResultMap" type="com.hyrax.microservice.project.data.entity.BoardEntity">
-        <id column="team_id" jdbcType="BIGINT" property="boardId" javaType="java.lang.Long"/>
+        <id column="board_id" jdbcType="BIGINT" property="boardId" javaType="java.lang.Long"/>
         <result column="board_name" jdbcType="VARCHAR" property="boardName" javaType="java.lang.String"/>
         <result column="owner_username" jdbcType="VARCHAR" property="ownerUsername" javaType="java.lang.String" />
     </resultMap>
@@ -16,11 +16,9 @@
 
     <select id="selectAllBoardByUsername" parameterType="java.lang.String" resultType="com.hyrax.microservice.project.data.entity.BoardEntity" resultMap="boardEntityResultMap">
         select distinct b.board_id, b.board_name, b.owner_username
-        from board b inner join board_member bm
-        on b.board_name = bm.board_name
-        where owner_username = #{username} or username = #{username}
+        from board b left join board_member bm
+        on b.board_name = bm.board_name and (owner_username = #{username} or username = #{username})
     </select>
-
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="boardId">
         insert into board (board_name, owner_username)

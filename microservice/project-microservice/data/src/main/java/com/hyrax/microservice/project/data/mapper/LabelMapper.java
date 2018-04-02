@@ -25,4 +25,6 @@ public interface LabelMapper {
     void deleteAllLabelFromTasksByColumn(@Param("boardName") String boardName, @Param("columnName") String columnName);
 
     void deleteAllLabelFromTasksByBoard(@Param("boardName") String boardName);
+
+    void deleteAllLabelFromBoard(@Param("boardName") String boardName);
 }
