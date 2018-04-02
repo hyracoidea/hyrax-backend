@@ -6,6 +6,8 @@ DROP TABLE IF EXISTS board_member;
 
 DROP TABLE IF EXISTS task_assigned_user;
 
+DROP TABLE IF EXISTS task_watched_user;
+
 DROP TABLE IF EXISTS task_label;
 
 DROP TABLE IF EXISTS task;
@@ -108,4 +110,14 @@ CREATE TABLE IF NOT EXISTS task_assigned_user (
   FOREIGN KEY (board_id) REFERENCES board(board_id),
   FOREIGN KEY (task_id) REFERENCES task(task_id),
   UNIQUE KEY (board_id, task_id)
+);
+
+CREATE TABLE IF NOT EXISTS task_watched_user (
+  board_id BIGINT NOT NULL,
+  task_id BIGINT NOT NULL,
+  username VARCHAR(255) NOT NULL,
+
+  FOREIGN KEY (board_id) REFERENCES board(board_id),
+  FOREIGN KEY (task_id) REFERENCES task(task_id),
+  UNIQUE KEY (board_id, task_id, username)
 );

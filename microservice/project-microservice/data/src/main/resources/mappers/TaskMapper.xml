@@ -78,6 +78,16 @@
         set tau.username = #{username}
     </update>
 
+    <insert id="watchTask">
+        insert into task_watched_user (board_id, task_id, username)
+        select (<include refid="getBoardIdByBoardName"/>), #{taskId}, #{username}
+    </insert>
+
+    <insert id="unwatchTask">
+        delete twu from board b inner join task_watched_user twu
+        on b.board_id = twu.board_id and b.board_name = #{boardName} and twu.task_id = #{taskId} and twu.username = #{username}
+    </insert>
+
     <update id="update">
         update board b inner join board_column c
         on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
