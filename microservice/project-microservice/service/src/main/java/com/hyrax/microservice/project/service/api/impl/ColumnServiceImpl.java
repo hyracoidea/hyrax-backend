@@ -101,6 +101,7 @@ public class ColumnServiceImpl implements ColumnService {
 
         if (ownerUsername.isPresent() && ownerUsername.get().equals(requestedBy)) {
             columnDAO.deleteByBoardNameAndColumnName(boardName, columnName);
+            refreshColumnIndexes(boardName);
         } else {
             throw new ColumnRemovalOperationNotAllowedException(requestedBy);
         }
@@ -138,5 +139,12 @@ public class ColumnServiceImpl implements ColumnService {
         final AtomicLong index = new AtomicLong(startIndex);
 
         columns.forEach(column -> columnDAO.updateColumnPosition(boardName, column.getColumnName(), index.incrementAndGet()));
+    }
+
+    private void refreshColumnIndexes(final String boardName) {
+        final AtomicLong index = new AtomicLong(NumberUtils.LONG_ZERO);
+
+        columnDAO.findAllByBoardName(boardName)
+                .forEach(column -> columnDAO.updateColumnPosition(boardName, column.getColumnName(), index.incrementAndGet()));
     }
 }
