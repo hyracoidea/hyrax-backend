@@ -58,6 +58,7 @@ public class TaskDAOImpl implements TaskDAO {
     @Override
     public void delete(final String boardName, final String columnName, final Long taskId) {
         labelMapper.deleteAllLabelFromTask(boardName, taskId);
+        taskMapper.deleteAssignedUserFromTask(boardName, taskId);
         taskMapper.delete(boardName, columnName, taskId);
     }
 }
