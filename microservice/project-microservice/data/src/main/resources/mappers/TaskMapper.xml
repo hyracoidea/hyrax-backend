@@ -12,13 +12,19 @@
     <sql id="getBoardId">
         select distinct b.board_id
         from board b inner join board_column c
+        on b.board_id = c.board_id and board_name = #{task.boardName}
+    </sql>
+
+    <sql id="getBoardIdByBoardName">
+        select distinct b.board_id
+        from board b inner join board_column c
         on b.board_id = c.board_id and board_name = #{boardName}
     </sql>
 
     <sql id="getColumnIdByColumnName">
         select distinct c.column_id
         from board b inner join board_column c
-        on b.board_id = c.board_id and column_name = #{columnName}
+        on b.board_id = c.board_id and column_name = #{task.columnName}
     </sql>
 
     <sql id="getColumnIdByNewColumnName">
@@ -30,7 +36,7 @@
     <sql id="sumTaskIndexByColumnName">
         select count(t.task_id)
         from board b inner join board_column c
-        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        on b.board_id = c.board_id and b.board_name = #{task.boardName} and c.column_name = #{task.columnName}
         inner join task t
         on b.board_id = t.board_id and c.column_id = t.column_id
     </sql>
@@ -54,10 +60,21 @@
         order by t.task_index
     </select>
 
-    <insert id="insert" useGeneratedKeys="true">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="task.taskId"  keyColumn="task_id">
         insert into task (board_id, column_id, task_name, description, task_index)
-        select (<include refid="getBoardId"/>), (<include refid="getColumnIdByColumnName"/>), #{taskName}, #{description}, (<include refid="sumTaskIndexByColumnName"/>) + 1
+        select (<include refid="getBoardId"/>), (<include refid="getColumnIdByColumnName"/>), #{task.taskName}, #{task.description}, (<include refid="sumTaskIndexByColumnName"/>) + 1
     </insert>
+
+    <insert id="assignDefaultUserToTask">
+        insert into task_assigned_user (board_id, task_id, username)
+        select (<include refid="getBoardIdByBoardName"/>), #{taskId}, 'Not assigned'
+    </insert>
+
+    <update id="assignUserToTask">
+        update board b inner join task_assigned_user tau
+        on b.board_id = tau.board_id and b.board_name = #{boardName} and tau.task_id = #{taskId}
+        set tau.username = #{username}
+    </update>
 
     <update id="update">
         update board b inner join board_column c
@@ -74,7 +91,7 @@
         on b.board_id = t.board_id and c.column_id = t.column_id and t.task_id = #{taskId}
         set t.task_index = #{newTaskIndex}
     </update>
-    
+
     <update id="updatePositionInColumn">
         update board b inner join board_column c
         on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
