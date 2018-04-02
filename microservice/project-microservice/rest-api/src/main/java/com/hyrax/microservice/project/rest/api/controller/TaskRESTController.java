@@ -69,6 +69,20 @@ public class TaskRESTController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping(path = "/board/{boardName}/task/{taskId}/user/{username}")
+    @ApiOperation(httpMethod = "PUT", value = "Resource to assign user to the given task")
+    public ResponseEntity<Void> assignUserToTask(@PathVariable final String boardName, @PathVariable final Long taskId,
+                                                 @PathVariable final String username) {
+
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received assign user to task request [boardName={} taskId={} username={} requestedBy={}]",
+                boardName, taskId, username, requestedBy);
+
+        taskService.assignUserToTask(boardName, taskId, username, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}")
     @ApiOperation(httpMethod = "PUT", value = "Resource to update the name or the description of the existing task")
     public ResponseEntity<Void> update(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,

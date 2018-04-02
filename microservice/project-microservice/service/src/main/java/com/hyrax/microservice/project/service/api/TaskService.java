@@ -10,6 +10,8 @@ public interface TaskService {
 
     void create(String boardName, String columnName, String taskName, String description, String requestedBy);
 
+    void assignUserToTask(String boardName, Long taskId, String username, String requestedBy);
+
     void update(String boardName, String columnName, Long taskId, String taskName, String description, String requestedBy);
 
     void updateIndex(String boardName, String columnName, Long taskId, long from, long to, String requestedBy);

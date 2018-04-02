@@ -1,6 +1,7 @@
 package com.hyrax.microservice.project.data.mapper;
 
 import com.hyrax.microservice.project.data.entity.TaskEntity;
+import com.hyrax.microservice.project.data.entity.saveable.SaveableTaskEntity;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 public interface TaskMapper {
 
     List<TaskEntity> selectAllByBoardNameAndColumnName(@Param("boardName") String boardName, @Param("columnName") String columnName);
+
+    void insert(@Param("task") SaveableTaskEntity saveableTaskEntity);
 
     void insert(@Param("boardName") String boardName, @Param("columnName") String columnName,
                 @Param("taskName") String taskName, @Param("description") String description);
@@ -20,6 +23,10 @@ public interface TaskMapper {
 
     void updatePositionInColumn(@Param("boardName") String boardName, @Param("columnName") String columnName,
                                 @Param("taskId") Long taskId, @Param("newColumnName") String newColumnName);
+
+    void assignDefaultUserToTask(@Param("boardName") String boardName, @Param("taskId") Long taskId);
+
+    void assignUserToTask(@Param("boardName") String boardName, @Param("taskId") Long taskId, @Param("username") String username);
 
     void delete(@Param("boardName") String boardName, @Param("columnName") String columnName, @Param("taskId") Long taskId);
 

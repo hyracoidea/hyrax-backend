@@ -2,12 +2,14 @@ package com.hyrax.microservice.project.service.api.impl;
 
 import com.google.common.collect.Lists;
 import com.hyrax.microservice.project.data.entity.TaskEntity;
+import com.hyrax.microservice.project.data.entity.saveable.SaveableTaskEntity;
 import com.hyrax.microservice.project.data.mapper.LabelMapper;
 import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.api.impl.checker.TaskOperationChecker;
 import com.hyrax.microservice.project.service.domain.Task;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
+import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskRemovalOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskUpdateOperationNotAllowedException;
@@ -55,7 +57,14 @@ public class TaskServiceImpl implements TaskService {
         if (isOperationAllowed) {
             try {
                 LOGGER.info("Trying to save the task = [boardName={} columnName={} taskName={} description={}]", boardName, columnName, taskName, description);
-                taskMapper.insert(boardName, columnName, taskName, description);
+                final SaveableTaskEntity saveableTaskEntity = SaveableTaskEntity.builder()
+                        .boardName(boardName)
+                        .columnName(columnName)
+                        .taskName(taskName)
+                        .description(description)
+                        .build();
+                taskMapper.insert(saveableTaskEntity);
+                taskMapper.assignDefaultUserToTask(boardName, saveableTaskEntity.getTaskId());
                 LOGGER.info("Task saving was successful [boardName={} columnName={} taskName={} description={}]", boardName, columnName, taskName, description);
             } catch (final DataIntegrityViolationException e) {
                 final String errorMessage = String.format("Column does not exist [boardName=%s columnName=%s]", boardName, columnName);
@@ -64,6 +73,20 @@ public class TaskServiceImpl implements TaskService {
             }
         } else {
             throw new TaskAdditionOperationNotAllowedException(requestedBy);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void assignUserToTask(final String boardName, final Long taskId, final String username, final String requestedBy) {
+        final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
+
+        if (isOperationAllowed) {
+            LOGGER.info("Trying to assign user to task [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
+            taskMapper.assignUserToTask(boardName, taskId, username);
+            LOGGER.info("Assigning user to task was successful [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
+        } else {
+            throw new AssignUserToTaskOperationNotAllowedException(requestedBy);
         }
     }
 
