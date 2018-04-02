@@ -37,4 +37,37 @@
         on b.board_id = l.board_id and b.board_name = #{boardName} and l.label_id = #{labelId}
     </delete>
 
+    <delete id="deleteLabelFromTask">
+        delete tl from board b inner join task_label tl
+        on b.board_id = tl.board_id and b.board_name = #{boardName} and tl.task_id = #{taskId} and tl.label_id = #{labelId}
+    </delete>
+
+    <delete id="deleteLabelsFromTasks">
+        delete tl from board b inner join task_label tl
+        on b.board_id = tl.board_id and b.board_name = #{boardName} and tl.label_id = #{labelId}
+    </delete>
+
+    <delete id="deleteAllLabelFromTask">
+        delete tl from board b inner join task_label tl
+        on b.board_id = tl.board_id and b.board_name = #{boardName}
+        inner join task t
+        on tl.task_id = t.task_id and t.task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteAllLabelFromTasksByColumn">
+        delete tl from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on c.column_id = t.column_id
+        inner join task_label tl
+        on b.board_id = tl.board_id and t.task_id = tl.task_id
+    </delete>
+
+    <delete id="deleteAllLabelFromTasksByBoard">
+        delete tl from board b inner join task t
+        on b.board_id = t.board_id and b.board_name = #{boardName}
+        inner join task_label tl
+        on b.board_id = tl.board_id and t.task_id = tl.task_id
+    </delete>
+
 </mapper>

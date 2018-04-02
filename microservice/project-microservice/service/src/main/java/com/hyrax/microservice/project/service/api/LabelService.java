@@ -14,4 +14,6 @@ public interface LabelService {
     void addLabelToTask(String boardName, Long taskId, Long labelId, String requestedBy);
 
     void remove(String boardName, Long labelId, String requestedBy);
+
+    void removeLabelFromTask(String boardName, Long taskId, Long labelId, String requestedBy);
 }

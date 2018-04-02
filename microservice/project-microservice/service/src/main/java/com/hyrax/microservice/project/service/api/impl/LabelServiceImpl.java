@@ -88,7 +88,19 @@ public class LabelServiceImpl implements LabelService {
     public void remove(final String boardName, final Long labelId, final String requestedBy) {
         final boolean isOperationAllowed = labelOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
+            labelMapper.deleteLabelsFromTasks(boardName, labelId);
             labelMapper.delete(boardName, labelId);
+        } else {
+            throw new LabelRemovalOperationNotAllowedException(requestedBy);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void removeLabelFromTask(final String boardName, final Long taskId, final Long labelId, final String requestedBy) {
+        final boolean isOperationAllowed = labelOperationChecker.isOperationAllowed(boardName, requestedBy);
+        if (isOperationAllowed) {
+            labelMapper.deleteLabelFromTask(boardName, taskId, labelId);
         } else {
             throw new LabelRemovalOperationNotAllowedException(requestedBy);
         }

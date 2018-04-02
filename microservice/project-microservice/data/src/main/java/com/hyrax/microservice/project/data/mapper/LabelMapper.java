@@ -15,4 +15,14 @@ public interface LabelMapper {
     void addLabelToTask(@Param("boardName") String boardName, @Param("taskId") Long taskId, @Param("labelId") Long labelId);
 
     void delete(@Param("boardName") String boardName, @Param("labelId") Long labelId);
+
+    void deleteLabelFromTask(@Param("boardName") String boardName, @Param("taskId") Long taskId, @Param("labelId") Long labelId);
+
+    void deleteLabelsFromTasks(@Param("boardName") String boardName, @Param("labelId") Long labelId);
+
+    void deleteAllLabelFromTask(@Param("boardName") String boardName, @Param("taskId") Long taskId);
+
+    void deleteAllLabelFromTasksByColumn(@Param("boardName") String boardName, @Param("columnName") String columnName);
+
+    void deleteAllLabelFromTasksByBoard(@Param("boardName") String boardName);
 }
