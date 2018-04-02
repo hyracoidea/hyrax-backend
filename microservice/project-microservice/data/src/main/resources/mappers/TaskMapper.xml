@@ -51,7 +51,8 @@
         limit 1
     </sql>
 
-    <select id="selectAllByBoardNameAndColumnName" resultType="com.hyrax.microservice.project.data.entity.TaskEntity" resultMap="taskEntityResultMap">
+    <select id="selectAllByBoardNameAndColumnName" resultType="com.hyrax.microservice.project.data.entity.TaskEntity"
+            resultMap="taskEntityResultMap">
         select t.task_id, t.task_name, t.description, t.task_index
         from board b inner join board_column c
         on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
@@ -60,9 +61,10 @@
         order by t.task_index
     </select>
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="task.taskId"  keyColumn="task_id">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="task.taskId" keyColumn="task_id">
         insert into task (board_id, column_id, task_name, description, task_index)
-        select (<include refid="getBoardId"/>), (<include refid="getColumnIdByColumnName"/>), #{task.taskName}, #{task.description}, (<include refid="sumTaskIndexByColumnName"/>) + 1
+        select (<include refid="getBoardId"/>), (<include refid="getColumnIdByColumnName"/>), #{task.taskName},
+        #{task.description}, (<include refid="sumTaskIndexByColumnName"/>) + 1
     </insert>
 
     <insert id="assignDefaultUserToTask">
@@ -97,7 +99,8 @@
         on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
         inner join task t
         on b.board_id = t.board_id and c.column_id = t.column_id and t.task_id = #{taskId}
-        set t.task_index = IFNULL((<include refid="getLastTaskIndexByNewColumnName"/>) + 1, 1), t.column_id = (<include refid="getColumnIdByNewColumnName"/>)
+        set t.task_index = IFNULL((<include refid="getLastTaskIndexByNewColumnName"/>) + 1, 1), t.column_id = (<include
+            refid="getColumnIdByNewColumnName"/>)
     </update>
 
     <delete id="delete">
@@ -119,6 +122,25 @@
         on b.board_id = c.board_id and b.board_name = #{boardName}
         inner join task t
         on b.board_id = t.board_id and c.column_id = t.column_id
+    </delete>
+
+    <delete id="deleteAssignedUserFromTask">
+        delete tau from board b inner join task_assigned_user tau
+        on b.board_id = tau.board_id and b.board_name = #{boardName} and tau.task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteAssignedUsersFromTasksByColumnName">
+        delete tau from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id
+        inner join task_assigned_user tau
+        on b.board_id = tau.board_id and t.task_id = tau.task_id
+    </delete>
+
+    <delete id="deleteAssignedUsersFromTasksByBoardName">
+        delete tau from board b inner join task_assigned_user tau
+        on b.board_id = tau.board_id and b.board_name = #{boardName}
     </delete>
 
 </mapper>

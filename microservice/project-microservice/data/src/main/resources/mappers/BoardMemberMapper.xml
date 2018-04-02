@@ -12,4 +12,9 @@
         insert into board_member (board_name, username)
         values (#{boardName}, #{username})
     </insert>
+
+    <delete id="deleteMembersFromBoard">
+        delete bm from board b inner join board_member bm
+        on b.board_name = bm.board_name and b.board_name = #{boardName}
+    </delete>
 </mapper>

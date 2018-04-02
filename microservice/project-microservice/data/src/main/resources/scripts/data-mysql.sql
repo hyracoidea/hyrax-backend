@@ -4,6 +4,9 @@ VALUES (1, 'SampleTeam', 'Sample team', 'hyrax_username');
 INSERT INTO board(board_id, board_name, owner_username)
 VALUES (1, 'board1', 'admin');
 
+INSERT INTO board_member(board_name, username)
+VALUES ('board1', 'ultimateUser');
+
 INSERT INTO board_column(column_id, board_id, column_name, column_index)
 VALUES (1, 1, 'column1', 1);
 
@@ -39,3 +42,12 @@ VALUES (1, 1, 2);
 
 INSERT INTO task_label(board_id, task_id, label_id)
 VALUES (1, 1, 3);
+
+INSERT INTO task_assigned_user(board_id, task_id, username)
+VALUES (1, 1, 'admin');
+
+INSERT INTO task_assigned_user(board_id, task_id, username)
+VALUES (1, 2, 'admin');
+
+INSERT INTO task_assigned_user(board_id, task_id, username)
+VALUES (1, 3, 'admin');
