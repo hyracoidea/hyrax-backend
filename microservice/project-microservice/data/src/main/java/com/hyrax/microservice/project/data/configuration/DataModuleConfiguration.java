@@ -10,6 +10,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 @EnableTransactionManagement
 @MapperScan(basePackages = "com.hyrax.microservice.project.data.mapper")
-@ComponentScan(basePackages = "com.hyrax.microservice.project.data.mapper")
+@ComponentScan(basePackages = "com.hyrax.microservice.project.data")
 public class DataModuleConfiguration {
 }

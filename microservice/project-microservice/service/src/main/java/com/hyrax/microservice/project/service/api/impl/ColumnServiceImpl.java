@@ -1,10 +1,8 @@
 package com.hyrax.microservice.project.service.api.impl;
 
 import com.google.common.collect.Lists;
+import com.hyrax.microservice.project.data.dao.ColumnDAO;
 import com.hyrax.microservice.project.data.entity.ColumnEntity;
-import com.hyrax.microservice.project.data.mapper.ColumnMapper;
-import com.hyrax.microservice.project.data.mapper.LabelMapper;
-import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.api.ColumnService;
 import com.hyrax.microservice.project.service.domain.Board;
@@ -36,18 +34,14 @@ public class ColumnServiceImpl implements ColumnService {
 
     private final BoardService boardService;
 
-    private final ColumnMapper columnMapper;
-
-    private final TaskMapper taskMapper;
-
-    private final LabelMapper labelMapper;
+    private final ColumnDAO columnDAO;
 
     private final ModelMapper modelMapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<Column> findAllByBoardName(final String boardName) {
-        return columnMapper.selectAllByBoardName(boardName)
+        return columnDAO.findAllByBoardName(boardName)
                 .stream()
                 .map(columnEntity -> modelMapper.map(columnEntity, Column.class))
                 .collect(Collectors.toList());
@@ -61,7 +55,7 @@ public class ColumnServiceImpl implements ColumnService {
         if (board.getOwnerUsername().equals(requestedBy)) {
             try {
                 LOGGER.info("Trying to save the column = [boardName={} columnName={}]", boardName, columnName);
-                columnMapper.insert(boardName, columnName);
+                columnDAO.save(boardName, columnName);
                 LOGGER.info("Column saving was successful [boardName={} columnName={}]", boardName, columnName);
             } catch (final DuplicateKeyException e) {
                 final String errorMessage = String.format("Column already exists with this name=%s on this board=%s", columnName, boardName);
@@ -92,7 +86,7 @@ public class ColumnServiceImpl implements ColumnService {
             if (from != to) {
                 updateColumnsByIndex(boardName, before, NumberUtils.LONG_ZERO);
                 updateColumnsByIndex(boardName, after, to);
-                columnMapper.updateIndex(boardName, columnName, to);
+                columnDAO.updateColumnPosition(boardName, columnName, to);
             }
         } else {
             throw new ColumnUpdateOperationNotAllowedException(requestedBy);
@@ -106,9 +100,7 @@ public class ColumnServiceImpl implements ColumnService {
         final Optional<String> ownerUsername = boardService.findByBoardName(boardName).map(Board::getOwnerUsername);
 
         if (ownerUsername.isPresent() && ownerUsername.get().equals(requestedBy)) {
-            labelMapper.deleteAllLabelFromTasksByColumn(boardName, columnName);
-            taskMapper.deleteAllByBoardNameAndColumnName(boardName, columnName);
-            columnMapper.delete(boardName, columnName);
+            columnDAO.deleteByBoardNameAndColumnName(boardName, columnName);
         } else {
             throw new ColumnRemovalOperationNotAllowedException(requestedBy);
         }
@@ -116,7 +108,7 @@ public class ColumnServiceImpl implements ColumnService {
 
     private void populateByFromLeftToRight(final String boardName, final String columnName, final Long newColumnIndex,
                                            final List<ColumnEntity> before, final List<ColumnEntity> after) {
-        columnMapper.selectAllByBoardName(boardName)
+        columnDAO.findAllByBoardName(boardName)
                 .stream()
                 .filter(column -> !columnName.equals(column.getColumnName()))
                 .forEach(column -> {
@@ -130,7 +122,7 @@ public class ColumnServiceImpl implements ColumnService {
 
     private void populateByFromRightToLeft(final String boardName, final String columnName, final Long newColumnIndex,
                                            final List<ColumnEntity> before, final List<ColumnEntity> after) {
-        columnMapper.selectAllByBoardName(boardName)
+        columnDAO.findAllByBoardName(boardName)
                 .stream()
                 .filter(column -> !columnName.equals(column.getColumnName()))
                 .forEach(column -> {
@@ -145,6 +137,6 @@ public class ColumnServiceImpl implements ColumnService {
     private void updateColumnsByIndex(final String boardName, final List<ColumnEntity> columns, final Long startIndex) {
         final AtomicLong index = new AtomicLong(startIndex);
 
-        columns.forEach(column -> columnMapper.updateIndex(boardName, column.getColumnName(), index.incrementAndGet()));
+        columns.forEach(column -> columnDAO.updateColumnPosition(boardName, column.getColumnName(), index.incrementAndGet()));
     }
 }

@@ -1,10 +1,8 @@
 package com.hyrax.microservice.project.service.api.impl;
 
 import com.google.common.collect.Lists;
+import com.hyrax.microservice.project.data.dao.TaskDAO;
 import com.hyrax.microservice.project.data.entity.TaskEntity;
-import com.hyrax.microservice.project.data.entity.saveable.SaveableTaskEntity;
-import com.hyrax.microservice.project.data.mapper.LabelMapper;
-import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.api.impl.checker.TaskOperationChecker;
 import com.hyrax.microservice.project.service.domain.Task;
@@ -32,18 +30,16 @@ public class TaskServiceImpl implements TaskService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    private final TaskMapper taskMapper;
-
     private final TaskOperationChecker taskOperationChecker;
 
-    private final LabelMapper labelMapper;
+    private final TaskDAO taskDAO;
 
     private final ModelMapper modelMapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<Task> findAllByBoardNameAndColumnName(final String boardName, final String columnName) {
-        return taskMapper.selectAllByBoardNameAndColumnName(boardName, columnName)
+        return taskDAO.findAllByBoardNameAndColumnName(boardName, columnName)
                 .stream()
                 .map(taskEntity -> modelMapper.map(taskEntity, Task.class))
                 .collect(Collectors.toList());
@@ -57,14 +53,7 @@ public class TaskServiceImpl implements TaskService {
         if (isOperationAllowed) {
             try {
                 LOGGER.info("Trying to save the task = [boardName={} columnName={} taskName={} description={}]", boardName, columnName, taskName, description);
-                final SaveableTaskEntity saveableTaskEntity = SaveableTaskEntity.builder()
-                        .boardName(boardName)
-                        .columnName(columnName)
-                        .taskName(taskName)
-                        .description(description)
-                        .build();
-                taskMapper.insert(saveableTaskEntity);
-                taskMapper.assignDefaultUserToTask(boardName, saveableTaskEntity.getTaskId());
+                taskDAO.save(boardName, columnName, taskName, description);
                 LOGGER.info("Task saving was successful [boardName={} columnName={} taskName={} description={}]", boardName, columnName, taskName, description);
             } catch (final DataIntegrityViolationException e) {
                 final String errorMessage = String.format("Column does not exist [boardName=%s columnName=%s]", boardName, columnName);
@@ -83,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
 
         if (isOperationAllowed) {
             LOGGER.info("Trying to assign user to task [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
-            taskMapper.assignUserToTask(boardName, taskId, username);
+            taskDAO.assignUserToTask(boardName, taskId, username);
             LOGGER.info("Assigning user to task was successful [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
         } else {
             throw new AssignUserToTaskOperationNotAllowedException(requestedBy);
@@ -96,7 +85,7 @@ public class TaskServiceImpl implements TaskService {
         final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
 
         if (isOperationAllowed) {
-            taskMapper.update(boardName, columnName, taskId, taskName, description);
+            taskDAO.update(boardName, columnName, taskId, taskName, description);
         } else {
             throw new TaskUpdateOperationNotAllowedException(requestedBy);
         }
@@ -120,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
             if (from != to) {
                 updateTasksByIndex(boardName, columnName, up, NumberUtils.LONG_ZERO);
                 updateTasksByIndex(boardName, columnName, down, to);
-                taskMapper.updateIndex(boardName, columnName, taskId, to);
+                taskDAO.updatePosition(boardName, columnName, taskId, to);
             }
         } else {
             throw new TaskUpdateOperationNotAllowedException(requestedBy);
@@ -134,7 +123,7 @@ public class TaskServiceImpl implements TaskService {
 
         if (isOperationAllowed) {
             if (!columnName.equals(newColumnName)) {
-                taskMapper.updatePositionInColumn(boardName, columnName, taskId, newColumnName);
+                taskDAO.updatePositionInColumn(boardName, columnName, taskId, newColumnName);
             }
         } else {
             throw new TaskUpdateOperationNotAllowedException(requestedBy);
@@ -146,8 +135,7 @@ public class TaskServiceImpl implements TaskService {
     public void remove(final String boardName, final String columnName, final Long taskId, final String requestedBy) {
         final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
-            labelMapper.deleteAllLabelFromTask(boardName, taskId);
-            taskMapper.delete(boardName, columnName, taskId);
+            taskDAO.delete(boardName, columnName, taskId);
         } else {
             throw new TaskRemovalOperationNotAllowedException(requestedBy);
         }
@@ -155,7 +143,7 @@ public class TaskServiceImpl implements TaskService {
 
     private void populateByFromUpToDown(final String boardName, final String columnName, final Long taskId, final Long newColumnIndex,
                                         final List<TaskEntity> up, final List<TaskEntity> down) {
-        taskMapper.selectAllByBoardNameAndColumnName(boardName, columnName)
+        taskDAO.findAllByBoardNameAndColumnName(boardName, columnName)
                 .stream()
                 .filter(task -> task.getTaskId().longValue() != taskId.longValue())
                 .forEach(task -> {
@@ -169,7 +157,7 @@ public class TaskServiceImpl implements TaskService {
 
     private void populateByFromDownToUp(final String boardName, final String columnName, final Long taskId, final Long newColumnIndex,
                                         final List<TaskEntity> up, final List<TaskEntity> down) {
-        taskMapper.selectAllByBoardNameAndColumnName(boardName, columnName)
+        taskDAO.findAllByBoardNameAndColumnName(boardName, columnName)
                 .stream()
                 .filter(task -> task.getTaskId().longValue() != taskId.longValue())
                 .forEach(task -> {
@@ -184,6 +172,6 @@ public class TaskServiceImpl implements TaskService {
     private void updateTasksByIndex(final String boardName, final String columnName, final List<TaskEntity> tasks, final Long startIndex) {
         final AtomicLong index = new AtomicLong(startIndex);
 
-        tasks.forEach(task -> taskMapper.updateIndex(boardName, columnName, task.getTaskId(), index.incrementAndGet()));
+        tasks.forEach(task -> taskDAO.updatePosition(boardName, columnName, task.getTaskId(), index.incrementAndGet()));
     }
 }

@@ -1,6 +1,6 @@
 package com.hyrax.microservice.project.service.api.impl;
 
-import com.hyrax.microservice.project.data.mapper.LabelMapper;
+import com.hyrax.microservice.project.data.dao.LabelDAO;
 import com.hyrax.microservice.project.service.api.LabelService;
 import com.hyrax.microservice.project.service.api.impl.checker.LabelOperationChecker;
 import com.hyrax.microservice.project.service.domain.Label;
@@ -27,16 +27,16 @@ public class LabelServiceImpl implements LabelService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LabelServiceImpl.class);
 
-    private final ModelMapper modelMapper;
-
-    private final LabelMapper labelMapper;
-
     private final LabelOperationChecker labelOperationChecker;
+
+    private final LabelDAO labelDAO;
+
+    private final ModelMapper modelMapper;
 
     @Override
     @Transactional(readOnly = true)
     public List<Label> findAllByBoardName(final String boardName) {
-        return labelMapper.selectAllByBoardName(boardName)
+        return labelDAO.findAllByBoardName(boardName)
                 .stream()
                 .map(labelEntity -> modelMapper.map(labelEntity, Label.class))
                 .collect(Collectors.toList());
@@ -50,7 +50,7 @@ public class LabelServiceImpl implements LabelService {
         if (isOperationAllowed) {
             try {
                 LOGGER.info("Trying to save the label = [boardName={} labelName={} labelColor={} requestedBy={}]", boardName, labelName, labelColor, requestedBy);
-                labelMapper.insert(boardName, labelName, labelColor.getRed(), labelColor.getGreen(), labelColor.getBlue());
+                labelDAO.save(boardName, labelName, labelColor.getRed(), labelColor.getGreen(), labelColor.getBlue());
                 LOGGER.info("Label saving was successful [boardName={} labelName={} labelColor={} requestedBy={}]", boardName, labelName, labelColor, requestedBy);
             } catch (final DuplicateKeyException e) {
                 final String errorMessage = String.format("Label already exists with this name=%s on this board=%s", labelName, boardName);
@@ -70,7 +70,7 @@ public class LabelServiceImpl implements LabelService {
         if (isOperationAllowed) {
             try {
                 LOGGER.info("Trying to add label to task [boardName={} labelId={} taskId={} requestedBy={}]", boardName, labelId, taskId, requestedBy);
-                labelMapper.addLabelToTask(boardName, taskId, labelId);
+                labelDAO.addToTask(boardName, taskId, labelId);
                 LOGGER.info("Adding label to task was successful [boardName={} labelId={} taskId={} requestedBy={}]",
                         boardName, labelId, taskId, requestedBy);
             } catch (final DataIntegrityViolationException e) {
@@ -88,8 +88,7 @@ public class LabelServiceImpl implements LabelService {
     public void remove(final String boardName, final Long labelId, final String requestedBy) {
         final boolean isOperationAllowed = labelOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
-            labelMapper.deleteLabelsFromTasks(boardName, labelId);
-            labelMapper.delete(boardName, labelId);
+            labelDAO.delete(boardName, labelId);
         } else {
             throw new LabelRemovalOperationNotAllowedException(requestedBy);
         }
@@ -100,7 +99,7 @@ public class LabelServiceImpl implements LabelService {
     public void removeLabelFromTask(final String boardName, final Long taskId, final Long labelId, final String requestedBy) {
         final boolean isOperationAllowed = labelOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
-            labelMapper.deleteLabelFromTask(boardName, taskId, labelId);
+            labelDAO.deleteFromTask(boardName, taskId, labelId);
         } else {
             throw new LabelRemovalOperationNotAllowedException(requestedBy);
         }

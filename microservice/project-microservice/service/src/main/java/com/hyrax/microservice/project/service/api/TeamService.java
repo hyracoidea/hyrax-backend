@@ -7,9 +7,7 @@ import java.util.Optional;
 
 public interface TeamService {
 
-    boolean existByName(String name);
-
-    Optional<Team> findByName(String name);
+    Optional<Team> findByTeamName(String teamName);
 
     void save(Team team) throws TeamAlreadyExistsException;
 

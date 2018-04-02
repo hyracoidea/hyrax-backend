@@ -1,17 +1,16 @@
 package com.hyrax.microservice.project.service.api.impl;
 
 import com.google.common.base.Preconditions;
+import com.hyrax.microservice.project.data.dao.TeamDAO;
 import com.hyrax.microservice.project.data.entity.TeamEntity;
-import com.hyrax.microservice.project.data.mapper.TeamMapper;
-import com.hyrax.microservice.project.data.mapper.TeamMemberMapper;
 import com.hyrax.microservice.project.service.api.TeamService;
 import com.hyrax.microservice.project.service.domain.Team;
 import com.hyrax.microservice.project.service.exception.team.TeamAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.team.TeamRemovalOperationNotAllowedException;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,38 +19,24 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class TeamServiceImpl implements TeamService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamServiceImpl.class);
 
     private static final String ERROR_MESSAGE_TEMPLATE = "Team already exists with this name=%s";
 
-    private final TeamMapper teamMapper;
-
-    private final TeamMemberMapper teamMemberMapper;
+    private final TeamDAO teamDAO;
 
     private final ModelMapper modelMapper;
 
-    @Autowired
-    public TeamServiceImpl(final TeamMapper teamMapper, final TeamMemberMapper teamMemberMapper, final ModelMapper modelMapper) {
-        this.teamMapper = teamMapper;
-        this.teamMemberMapper = teamMemberMapper;
-        this.modelMapper = modelMapper;
-    }
-
     @Override
     @Transactional(readOnly = true)
-    public boolean existByName(final String name) {
-        return findByName(name).isPresent();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<Team> findByName(final String name) {
+    public Optional<Team> findByTeamName(final String teamName) {
         Team team = null;
-        final TeamEntity teamEntity = teamMapper.selectByName(name);
-        if (Objects.nonNull(teamEntity)) {
-            team = modelMapper.map(teamEntity, Team.class);
+        final Optional<TeamEntity> teamEntity = teamDAO.findByTeamName(teamName);
+        if (teamEntity.isPresent()) {
+            team = modelMapper.map(teamEntity.get(), Team.class);
         }
         return Optional.ofNullable(team);
     }
@@ -59,16 +44,10 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public void save(final Team team) throws TeamAlreadyExistsException {
         Preconditions.checkArgument(Objects.nonNull(team));
-
         try {
-            if (!existByName(team.getName())) {
-                LOGGER.info("Team={} seems to be valid, trying to save...", team);
-                final TeamEntity teamEntity = modelMapper.map(team, TeamEntity.class);
-                teamMapper.insert(teamEntity);
-                LOGGER.info("Team={} saving was successful", team);
-            } else {
-                throwTeamAlreadyExistsException(team.getName());
-            }
+            LOGGER.info("Trying to save the team [team={}]", team);
+            teamDAO.save(modelMapper.map(team, TeamEntity.class));
+            LOGGER.info("Team={} saving was successful", team);
         } catch (final DuplicateKeyException e) {
             throwTeamAlreadyExistsException(team.getName(), e);
         }
@@ -77,19 +56,18 @@ public class TeamServiceImpl implements TeamService {
     @Override
     @Transactional
     public void remove(final String teamName, final String requestedBy) {
-        final Optional<Team> result = findByName(teamName);
+        final Optional<Team> result = findByTeamName(teamName);
 
         if (result.isPresent()) {
             if (result.get().getOwnerUsername().equals(requestedBy)) {
-                teamMemberMapper.deleteAllByTeamName(teamName);
-                teamMapper.delete(teamName);
+                teamDAO.delete(teamName);
             } else {
                 throw new TeamRemovalOperationNotAllowedException(requestedBy);
             }
         }
     }
 
-    private TeamAlreadyExistsException throwTeamAlreadyExistsException(final String teamName, final Exception... e) {
+    private TeamAlreadyExistsException throwTeamAlreadyExistsException(final String teamName, final Exception e) {
         final String errorMessage = String.format(ERROR_MESSAGE_TEMPLATE, teamName);
         LOGGER.error(errorMessage, e);
         throw new TeamAlreadyExistsException(errorMessage);
