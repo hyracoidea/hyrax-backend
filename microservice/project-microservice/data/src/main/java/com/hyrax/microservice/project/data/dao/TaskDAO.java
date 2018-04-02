@@ -14,7 +14,7 @@ public interface TaskDAO {
 
     void updatePosition(String boardName, String columnName, Long taskId, Long newTaskIndex);
 
-    void updatePositionInColumn(String boardName, String columnName, Long taskId, String newColumnName);
+    void updatePositionBetweenColumns(String boardName, String columnName, Long taskId, String newColumnName);
 
     void assignUserToTask(String boardName, Long taskId, String username);
 

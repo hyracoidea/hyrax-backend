@@ -93,7 +93,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void updateIndex(final String boardName, final String columnName, final Long taskId, final long from, final long to, final String requestedBy) {
+    public void updatePosition(final String boardName, final String columnName, final Long taskId, final long from, final long to, final String requestedBy) {
         final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
 
         if (isOperationAllowed) {
@@ -118,12 +118,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void updatePositionInColumn(final String boardName, final String columnName, final Long taskId, final String newColumnName, final String requestedBy) {
+    public void updatePositionBetweenColumns(final String boardName, final String columnName, final Long taskId, final String newColumnName, final String requestedBy) {
         final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
 
         if (isOperationAllowed) {
             if (!columnName.equals(newColumnName)) {
-                taskDAO.updatePositionInColumn(boardName, columnName, taskId, newColumnName);
+                taskDAO.updatePositionBetweenColumns(boardName, columnName, taskId, newColumnName);
+                refreshTaskIndexes(boardName, columnName);
+                refreshTaskIndexes(boardName, newColumnName);
             }
         } else {
             throw new TaskUpdateOperationNotAllowedException(requestedBy);
@@ -136,6 +138,7 @@ public class TaskServiceImpl implements TaskService {
         final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
             taskDAO.delete(boardName, columnName, taskId);
+            refreshTaskIndexes(boardName, columnName);
         } else {
             throw new TaskRemovalOperationNotAllowedException(requestedBy);
         }
@@ -173,5 +176,12 @@ public class TaskServiceImpl implements TaskService {
         final AtomicLong index = new AtomicLong(startIndex);
 
         tasks.forEach(task -> taskDAO.updatePosition(boardName, columnName, task.getTaskId(), index.incrementAndGet()));
+    }
+
+    private void refreshTaskIndexes(final String boardName, final String columnName) {
+        final AtomicLong index = new AtomicLong(NumberUtils.LONG_ZERO);
+
+        taskDAO.findAllByBoardNameAndColumnName(boardName, columnName)
+                .forEach(task -> taskDAO.updatePosition(boardName, columnName, task.getTaskId(), index.incrementAndGet()));
     }
 }

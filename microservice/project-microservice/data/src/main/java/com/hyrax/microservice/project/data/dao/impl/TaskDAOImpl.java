@@ -46,7 +46,7 @@ public class TaskDAOImpl implements TaskDAO {
     }
 
     @Override
-    public void updatePositionInColumn(final String boardName, final String columnName, final Long taskId, final String newColumnName) {
+    public void updatePositionBetweenColumns(final String boardName, final String columnName, final Long taskId, final String newColumnName) {
         taskMapper.updatePositionInColumn(boardName, columnName, taskId, newColumnName);
     }
 
