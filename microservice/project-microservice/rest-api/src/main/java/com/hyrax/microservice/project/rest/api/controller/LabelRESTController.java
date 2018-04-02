@@ -99,6 +99,17 @@ public class LabelRESTController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping(path = "/board/{boardName}/label/{labelId}/task/{taskId}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to remove the given label from the task")
+    public ResponseEntity<Void> deleteLabelFromTask(@PathVariable final String boardName, @PathVariable final Long taskId, @PathVariable final Long labelId) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received label removal from task request [boardName={} taskId={} labelId={} requestedBy={}]", boardName, taskId, labelId, requestedBy);
+
+        labelService.removeLabelFromTask(boardName, taskId, labelId, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @ExceptionHandler(RequestValidationException.class)
     protected ResponseEntity<RequestValidationResponse> handleRequestValidationException(final RequestValidationException e) {
         logException(e);

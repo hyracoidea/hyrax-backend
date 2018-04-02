@@ -2,6 +2,7 @@ package com.hyrax.microservice.project.service.api.impl;
 
 import com.google.common.collect.Lists;
 import com.hyrax.microservice.project.data.entity.TaskEntity;
+import com.hyrax.microservice.project.data.mapper.LabelMapper;
 import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.api.impl.checker.TaskOperationChecker;
@@ -32,6 +33,8 @@ public class TaskServiceImpl implements TaskService {
     private final TaskMapper taskMapper;
 
     private final TaskOperationChecker taskOperationChecker;
+
+    private final LabelMapper labelMapper;
 
     private final ModelMapper modelMapper;
 
@@ -120,6 +123,7 @@ public class TaskServiceImpl implements TaskService {
     public void remove(final String boardName, final String columnName, final Long taskId, final String requestedBy) {
         final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
+            labelMapper.deleteAllLabelFromTask(boardName, taskId);
             taskMapper.delete(boardName, columnName, taskId);
         } else {
             throw new TaskRemovalOperationNotAllowedException(requestedBy);
