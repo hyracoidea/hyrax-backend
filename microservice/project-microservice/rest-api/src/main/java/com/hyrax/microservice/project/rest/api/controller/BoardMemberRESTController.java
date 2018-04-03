@@ -51,11 +51,22 @@ public class BoardMemberRESTController {
 
     @PostMapping(path = "/board/{boardName}/member/{username}")
     @ApiOperation(httpMethod = "POST", value = "Resource to add a member to the given board")
-    public ResponseEntity<Void> addBoardMemberToTeam(@PathVariable final String boardName, @PathVariable final String username) {
+    public ResponseEntity<Void> addMemberToBoard(@PathVariable final String boardName, @PathVariable final String username) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received board member addition request [boardName={} username={} requestedBy={}]", boardName, username, requestedBy);
 
         boardMemberService.add(username, boardName, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping(path = "/board/{boardName}/member/team/{teamName}")
+    @ApiOperation(httpMethod = "POST", value = "Resource to add the members of the given team to the given board")
+    public ResponseEntity<Void> addTeamMembersToBoard(@PathVariable final String boardName, @PathVariable final String teamName) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received team members addition request [boardName={} teamName={} requestedBy={}]", boardName, teamName, requestedBy);
+
+        boardMemberService.addTeamMembersToBoard(boardName, teamName, requestedBy);
 
         return ResponseEntity.noContent().build();
     }
@@ -69,16 +80,6 @@ public class BoardMemberRESTController {
         boardMemberService.removeMemberFromBoard(boardName, username, requestedBy);
 
         return ResponseEntity.noContent().build();
-    }
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    protected ResponseEntity<ErrorResponse> handleResourceNotFoundException(final ResourceNotFoundException e) {
-        logException(e);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ErrorResponse.builder()
-                        .message(e.getMessage())
-                        .build()
-                );
     }
 
     @ExceptionHandler(BoardMemberIsAlreadyAddedException.class)

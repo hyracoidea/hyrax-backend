@@ -1,6 +1,5 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
-import com.hyrax.microservice.project.rest.api.domain.request.TeamMemberAdditionRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.wrapper.TeamMemberUsernameWrapperResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api(description = "Operations about team members")
@@ -43,13 +41,13 @@ public class TeamMemberRESTController {
         );
     }
 
-    @PostMapping(path = "/team/member")
+    @PostMapping(path = "/team/{teamName}/member/{username}")
     @ApiOperation(httpMethod = "POST", value = "Resource to add a new member to the given team")
-    public ResponseEntity<Void> addTeamMemberToTeam(@RequestBody final TeamMemberAdditionRequest request) {
+    public ResponseEntity<Void> addTeamMemberToTeam(@PathVariable final String teamName, @PathVariable final String username) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
-        LOGGER.info("Received team member addition request: {} from {}", request, requestedBy);
+        LOGGER.info("Received team member addition request=[username={} teamName={} requestedBy={}]", username, teamName, requestedBy);
 
-        teamMemberService.add(request.getUsername(), request.getTeamName(), requestedBy);
+        teamMemberService.add(username, teamName, requestedBy);
 
         return ResponseEntity.noContent().build();
     }

@@ -8,5 +8,7 @@ public interface BoardMemberService {
 
     void add(String username, String boardName, String requestedBy);
 
+    void addTeamMembersToBoard(String boardName, String teamName, String requestedBy);
+
     void removeMemberFromBoard(String boardName, String username, String requestedBy);
 }
