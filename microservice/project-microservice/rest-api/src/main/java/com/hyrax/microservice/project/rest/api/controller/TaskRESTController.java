@@ -8,7 +8,10 @@ import com.hyrax.microservice.project.rest.api.domain.response.wrapper.TaskRespo
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
+import com.hyrax.microservice.project.service.exception.column.ColumnDoesNotExistException;
+import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskException;
 import com.hyrax.microservice.project.service.exception.task.TaskOperationNotAllowedException;
+import com.hyrax.microservice.project.service.exception.task.WatchTaskException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -164,6 +167,36 @@ public class TaskRESTController {
     protected ResponseEntity<ErrorResponse> handleResourceNotFoundException(final ResourceNotFoundException e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(AssignUserToTaskException.class)
+    protected ResponseEntity<ErrorResponse> handleAssignUserToTaskException(final AssignUserToTaskException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(WatchTaskException.class)
+    protected ResponseEntity<ErrorResponse> handleWatchTaskException(final WatchTaskException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(ColumnDoesNotExistException.class)
+    protected ResponseEntity<ErrorResponse> handleColumnDoesNotExistException(final ColumnDoesNotExistException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(ErrorResponse.builder()
                         .message(e.getMessage())
                         .build()

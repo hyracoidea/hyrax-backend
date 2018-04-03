@@ -7,6 +7,7 @@ import com.hyrax.microservice.project.service.domain.Label;
 import com.hyrax.microservice.project.service.domain.LabelColor;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionToTaskException;
+import com.hyrax.microservice.project.service.exception.label.LabelAlreadyAddedToTaskException;
 import com.hyrax.microservice.project.service.exception.label.LabelAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.label.LabelRemovalOperationNotAllowedException;
 import lombok.AllArgsConstructor;
@@ -73,8 +74,12 @@ public class LabelServiceImpl implements LabelService {
                 labelDAO.addToTask(boardName, taskId, labelId);
                 LOGGER.info("Adding label to task was successful [boardName={} labelId={} taskId={} requestedBy={}]",
                         boardName, labelId, taskId, requestedBy);
+            } catch (final DuplicateKeyException e) {
+                final String errorMessage = String.format("Label with id=%s already added to task with id=%s", labelId, taskId);
+                LOGGER.error(errorMessage, e);
+                throw new LabelAlreadyAddedToTaskException(errorMessage);
             } catch (final DataIntegrityViolationException e) {
-                final String errorMessage = String.format("Label addition to task was not successful [ labelId=%s taskId=%s]", labelId, taskId);
+                final String errorMessage = String.format("Label with id=%s or task with id=%s does not exist", labelId, taskId);
                 LOGGER.error(errorMessage, e);
                 throw new LabelAdditionToTaskException(errorMessage);
             }

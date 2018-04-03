@@ -11,6 +11,7 @@ import com.hyrax.microservice.project.rest.api.validation.bindingresult.BindingR
 import com.hyrax.microservice.project.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.project.service.api.LabelService;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionToTaskException;
+import com.hyrax.microservice.project.service.exception.label.LabelAlreadyAddedToTaskException;
 import com.hyrax.microservice.project.service.exception.label.LabelAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.label.LabelOperationNotAllowedException;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -77,8 +79,8 @@ public class LabelRESTController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping(path = "/board/{boardName}/label/{labelId}/task/{taskId}")
-    @ApiOperation(httpMethod = "POST", value = "Resource to add the given label for the given task")
+    @PutMapping(path = "/board/{boardName}/label/{labelId}/task/{taskId}")
+    @ApiOperation(httpMethod = "PUT", value = "Resource to add the given label for the given task")
     public ResponseEntity<Void> addLabelToTask(@PathVariable final String boardName, @PathVariable final Long taskId, @PathVariable final Long labelId) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received label addition to task request [boardName={} taskId={} labelId={} requestedBy={}]", boardName, taskId, labelId, requestedBy);
@@ -132,6 +134,16 @@ public class LabelRESTController {
 
     @ExceptionHandler(LabelAlreadyExistsException.class)
     protected ResponseEntity<ErrorResponse> handleLabelAlreadyExistsException(final LabelAlreadyExistsException e) {
+        logException(e);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.builder()
+                        .message(e.getMessage())
+                        .build()
+                );
+    }
+
+    @ExceptionHandler(LabelAlreadyAddedToTaskException.class)
+    protected ResponseEntity<ErrorResponse> handleLabelAlreadyAddedToTaskException(final LabelAlreadyAddedToTaskException e) {
         logException(e);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(ErrorResponse.builder()

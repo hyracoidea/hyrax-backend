@@ -7,16 +7,20 @@ import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.api.impl.checker.TaskOperationChecker;
 import com.hyrax.microservice.project.service.domain.Task;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
+import com.hyrax.microservice.project.service.exception.column.ColumnDoesNotExistException;
+import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskException;
 import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskRemovalOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskUpdateOperationNotAllowedException;
+import com.hyrax.microservice.project.service.exception.task.WatchTaskException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,9 +75,15 @@ public class TaskServiceImpl implements TaskService {
         final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
 
         if (isOperationAllowed) {
-            LOGGER.info("Trying to assign user to task [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
-            taskDAO.assignUserToTask(boardName, taskId, username);
-            LOGGER.info("Assigning user to task was successful [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
+            try {
+                LOGGER.info("Trying to assign user to task [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
+                taskDAO.assignUserToTask(boardName, taskId, username);
+                LOGGER.info("Assigning user to task was successful [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
+            } catch (final DataIntegrityViolationException e) {
+                final String errorMessage = String.format("Task does not exist with id=%s", taskId);
+                LOGGER.error(errorMessage, e);
+                throw new AssignUserToTaskException(errorMessage);
+            }
         } else {
             throw new AssignUserToTaskOperationNotAllowedException(requestedBy);
         }
@@ -82,9 +92,17 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public void watchTask(final String boardName, final Long taskId, final String requestedBy) {
-        LOGGER.info("Trying to watch the task [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
-        taskDAO.watchTask(boardName, taskId, requestedBy);
-        LOGGER.info("Watch the task was successful [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+        try {
+            LOGGER.info("Trying to watch the task [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+            taskDAO.watchTask(boardName, taskId, requestedBy);
+            LOGGER.info("Watch the task was successful [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+        } catch (final DuplicateKeyException e) {
+            LOGGER.error("User={} already watched the task with id={} on board={}", requestedBy, taskId, boardName);
+        } catch (final DataIntegrityViolationException e) {
+            final String errorMessage = String.format("Task does not exist with id=%s", taskId);
+            LOGGER.error(errorMessage, e);
+            throw new WatchTaskException(errorMessage);
+        }
     }
 
     @Override
@@ -139,9 +157,15 @@ public class TaskServiceImpl implements TaskService {
 
         if (isOperationAllowed) {
             if (!columnName.equals(newColumnName)) {
-                taskDAO.updatePositionBetweenColumns(boardName, columnName, taskId, newColumnName);
-                refreshTaskIndexes(boardName, columnName);
-                refreshTaskIndexes(boardName, newColumnName);
+                try {
+                    taskDAO.updatePositionBetweenColumns(boardName, columnName, taskId, newColumnName);
+                    refreshTaskIndexes(boardName, columnName);
+                    refreshTaskIndexes(boardName, newColumnName);
+                } catch (final DataIntegrityViolationException e) {
+                    final String errorMessage = String.format("Column does not exist with name=%s on board=%s", newColumnName, boardName);
+                    LOGGER.error(errorMessage, e);
+                    throw new ColumnDoesNotExistException(errorMessage);
+                }
             }
         } else {
             throw new TaskUpdateOperationNotAllowedException(requestedBy);
