@@ -17,4 +17,9 @@
         delete bm from board b inner join board_member bm
         on b.board_name = bm.board_name and b.board_name = #{boardName}
     </delete>
+    
+    <delete id="deleteMemberFromBoard">
+        delete bm from board b inner join board_member bm
+        on b.board_name = bm.board_name and b.board_name = #{boardName} and bm.username = #{username}
+    </delete>
 </mapper>

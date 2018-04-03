@@ -53,6 +53,11 @@ public class BoardDAOImpl implements BoardDAO {
     }
 
     @Override
+    public void deleteMemberFromBoard(final String boardName, final String username) {
+        boardMemberMapper.deleteMemberFromBoard(boardName, username);
+    }
+
+    @Override
     public void deleteByBoardName(final String boardName) {
         labelMapper.deleteAllLabelFromTasksByBoard(boardName);
         labelMapper.deleteAllLabelFromBoard(boardName);
