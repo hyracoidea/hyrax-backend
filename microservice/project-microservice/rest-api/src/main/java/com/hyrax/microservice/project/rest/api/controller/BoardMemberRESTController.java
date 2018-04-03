@@ -1,8 +1,10 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.wrapper.BoardMemberResponseWrapper;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.BoardMemberService;
+import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.board.member.BoardMemberIsAlreadyAddedException;
 import com.hyrax.microservice.project.service.exception.board.member.BoardMemberOperationNotAllowedException;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +31,23 @@ public class BoardMemberRESTController {
 
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
+    private final BoardService boardService;
+
     private final BoardMemberService boardMemberService;
+
+    @GetMapping(path = "/board/{boardName}/member/details")
+    @ApiOperation(httpMethod = "GET", value = "Resource to list all members by the given board name")
+    public ResponseEntity<BoardMemberResponseWrapper> retrieveAll(@PathVariable final String boardName) {
+        final String ownerUsername = boardService.findByBoardName(boardName)
+                .map(board -> board.getOwnerUsername())
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Board does not exist with name=%s", boardName)));
+
+        return ResponseEntity.ok()
+                .body(BoardMemberResponseWrapper.builder()
+                        .ownerUsername(ownerUsername)
+                        .boardMemberUsernames(boardMemberService.findAllUsernameByBoardName(boardName))
+                        .build());
+    }
 
     @PostMapping(path = "/board/{boardName}/member/{username}")
     @ApiOperation(httpMethod = "POST", value = "Resource to add a member to the given board")
