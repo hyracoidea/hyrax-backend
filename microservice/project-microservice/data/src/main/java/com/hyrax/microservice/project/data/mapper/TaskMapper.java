@@ -43,4 +43,10 @@ public interface TaskMapper {
     void deleteAssignedUsersFromTasksByColumnName(@Param("boardName") String boardName, @Param("columnName") String columnName);
 
     void deleteAssignedUsersFromTasksByBoardName(@Param("boardName") String boardName);
+
+    void deleteWatchedUsersFromTask(@Param("boardName") String boardName, @Param("taskId") Long taskId);
+
+    void deleteWatchedUsersFromTasksByColumnName(@Param("boardName") String boardName, @Param("columnName") String columnName);
+
+    void deleteWatchedUsersFromTasksByBoardName(@Param("boardName") String boardName);
 }

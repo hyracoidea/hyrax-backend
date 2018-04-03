@@ -71,6 +71,7 @@ public class TaskDAOImpl implements TaskDAO {
     public void delete(final String boardName, final String columnName, final Long taskId) {
         labelMapper.deleteAllLabelFromTask(boardName, taskId);
         taskMapper.deleteAssignedUserFromTask(boardName, taskId);
+        taskMapper.deleteWatchedUsersFromTask(boardName, taskId);
         taskMapper.delete(boardName, columnName, taskId);
     }
 }

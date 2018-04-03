@@ -57,6 +57,7 @@ public class BoardDAOImpl implements BoardDAO {
         labelMapper.deleteAllLabelFromTasksByBoard(boardName);
         labelMapper.deleteAllLabelFromBoard(boardName);
         taskMapper.deleteAssignedUsersFromTasksByBoardName(boardName);
+        taskMapper.deleteWatchedUsersFromTasksByBoardName(boardName);
         taskMapper.deleteAllByBoardName(boardName);
         columnMapper.deleteAllByBoardName(boardName);
         boardMemberMapper.deleteMembersFromBoard(boardName);
