@@ -1,6 +1,7 @@
 package com.hyrax.microservice.project.data.dao.impl;
 
 import com.hyrax.microservice.project.data.dao.TaskDAO;
+import com.hyrax.microservice.project.data.entity.SingleTaskEntity;
 import com.hyrax.microservice.project.data.entity.TaskEntity;
 import com.hyrax.microservice.project.data.entity.saveable.SaveableTaskEntity;
 import com.hyrax.microservice.project.data.mapper.LabelMapper;
@@ -12,6 +13,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -32,6 +34,11 @@ public class TaskDAOImpl implements TaskDAO {
     @Override
     public List<TaskEntity> findAllByBoardNameAndColumnName(final String boardName, final String columnName) {
         return findAllByBoardNameAndColumnName(boardName, columnName, null, null);
+    }
+
+    @Override
+    public Optional<SingleTaskEntity> findSingleTask(final String boardName, final String columnName, final Long taskId) {
+        return Optional.ofNullable(taskMapper.selectSingleTask(boardName, columnName, taskId));
     }
 
     @Override

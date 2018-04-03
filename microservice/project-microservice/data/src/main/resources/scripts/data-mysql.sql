@@ -66,3 +66,6 @@ VALUES (1, 2, 'admin');
 
 INSERT INTO task_watched_user(board_id, task_id, username)
 VALUES (1, 3, 'admin');
+
+INSERT INTO task_watched_user(board_id, task_id, username)
+VALUES (1, 1, 'ultimateUser');

@@ -4,6 +4,7 @@ import com.hyrax.microservice.project.rest.api.domain.request.FilterTaskRequest;
 import com.hyrax.microservice.project.rest.api.domain.request.TaskCreationRequest;
 import com.hyrax.microservice.project.rest.api.domain.request.TaskUpdateRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.SingleTaskResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.TaskResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.wrapper.TaskResponseWrapper;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
@@ -41,6 +42,8 @@ public class TaskRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskRESTController.class);
 
+    private static final String TASK_NOT_FOUND_ERROR_MESSAGE = "Task does not exist with id=%s in column=%s on board=%s";
+
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
     private final TaskService taskService;
@@ -59,6 +62,16 @@ public class TaskRESTController {
                                 .collect(Collectors.toList())
                         )
                         .build());
+    }
+
+    @GetMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}")
+    @ApiOperation(httpMethod = "GET", value = "Resource to get the given task")
+    public ResponseEntity<SingleTaskResponse> retrieveSingleTask(@PathVariable final String boardName,
+                                                                 @PathVariable final String columnName,
+                                                                 @PathVariable final Long taskId) {
+        return ResponseEntity.ok(taskService.findSingleTask(boardName, columnName, taskId)
+                .map(task -> conversionService.convert(task, SingleTaskResponse.class))
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(TASK_NOT_FOUND_ERROR_MESSAGE, taskId, columnName, boardName))));
     }
 
     @PostMapping(path = "/board/{boardName}/column/{columnName}/task")
