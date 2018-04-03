@@ -28,6 +28,10 @@ public interface TaskMapper {
 
     void assignUserToTask(@Param("boardName") String boardName, @Param("taskId") Long taskId, @Param("username") String username);
 
+    void watchTask(@Param("boardName") String boardName, @Param("taskId") Long taskId, @Param("username") String username);
+
+    void unwatchTask(@Param("boardName") String boardName, @Param("taskId") Long taskId, @Param("username") String username);
+
     void delete(@Param("boardName") String boardName, @Param("columnName") String columnName, @Param("taskId") Long taskId);
 
     void deleteAllByBoardName(@Param("boardName") String boardName);

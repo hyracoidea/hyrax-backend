@@ -24,7 +24,7 @@ public class TaskDAOImpl implements TaskDAO {
     }
 
     @Override
-    public void save(final String boardName, final String columnName, final String taskName, final String description) {
+    public void save(final String boardName, final String columnName, final String taskName, final String description, final String requestedBy) {
         final SaveableTaskEntity saveableTaskEntity = SaveableTaskEntity.builder()
                 .boardName(boardName)
                 .columnName(columnName)
@@ -33,6 +33,7 @@ public class TaskDAOImpl implements TaskDAO {
                 .build();
         taskMapper.insert(saveableTaskEntity);
         taskMapper.assignDefaultUserToTask(boardName, saveableTaskEntity.getTaskId());
+        taskMapper.watchTask(boardName, saveableTaskEntity.getTaskId(), requestedBy);
     }
 
     @Override
@@ -53,6 +54,17 @@ public class TaskDAOImpl implements TaskDAO {
     @Override
     public void assignUserToTask(final String boardName, final Long taskId, final String username) {
         taskMapper.assignUserToTask(boardName, taskId, username);
+        taskMapper.watchTask(boardName, taskId, username);
+    }
+
+    @Override
+    public void watchTask(final String boardName, final Long taskId, final String username) {
+        taskMapper.watchTask(boardName, taskId, username);
+    }
+
+    @Override
+    public void unwatchTask(final String boardName, final Long taskId, final String username) {
+        taskMapper.unwatchTask(boardName, taskId, username);
     }
 
     @Override

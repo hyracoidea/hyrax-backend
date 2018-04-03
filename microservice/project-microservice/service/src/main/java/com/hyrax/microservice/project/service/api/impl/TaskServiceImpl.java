@@ -53,7 +53,7 @@ public class TaskServiceImpl implements TaskService {
         if (isOperationAllowed) {
             try {
                 LOGGER.info("Trying to save the task = [boardName={} columnName={} taskName={} description={}]", boardName, columnName, taskName, description);
-                taskDAO.save(boardName, columnName, taskName, description);
+                taskDAO.save(boardName, columnName, taskName, description, requestedBy);
                 LOGGER.info("Task saving was successful [boardName={} columnName={} taskName={} description={}]", boardName, columnName, taskName, description);
             } catch (final DataIntegrityViolationException e) {
                 final String errorMessage = String.format("Column does not exist [boardName=%s columnName=%s]", boardName, columnName);
@@ -77,6 +77,22 @@ public class TaskServiceImpl implements TaskService {
         } else {
             throw new AssignUserToTaskOperationNotAllowedException(requestedBy);
         }
+    }
+
+    @Override
+    @Transactional
+    public void watchTask(final String boardName, final Long taskId, final String requestedBy) {
+        LOGGER.info("Trying to watch the task [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+        taskDAO.watchTask(boardName, taskId, requestedBy);
+        LOGGER.info("Watch the task was successful [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+    }
+
+    @Override
+    @Transactional
+    public void unwatch(final String boardName, final Long taskId, final String requestedBy) {
+        LOGGER.info("Trying to unwatch the task [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+        taskDAO.unwatchTask(boardName, taskId, requestedBy);
+        LOGGER.info("Unwatch the task was successful [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
     }
 
     @Override

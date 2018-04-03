@@ -8,7 +8,7 @@ public interface TaskDAO {
 
     List<TaskEntity> findAllByBoardNameAndColumnName(String boardName, String columnName);
 
-    void save(String boardName, String columnName, String taskName, String description);
+    void save(String boardName, String columnName, String taskName, String description, String requestedBy);
 
     void update(String boardName, String columnName, Long taskId, String taskName, String description);
 
@@ -17,6 +17,10 @@ public interface TaskDAO {
     void updatePositionBetweenColumns(String boardName, String columnName, Long taskId, String newColumnName);
 
     void assignUserToTask(String boardName, Long taskId, String username);
+
+    void watchTask(String boardName, Long taskId, String username);
+
+    void unwatchTask(String boardName, Long taskId, String username);
 
     void delete(String boardName, String columnName, Long taskId);
 }

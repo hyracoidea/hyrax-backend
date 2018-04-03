@@ -83,6 +83,30 @@ public class TaskRESTController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping(path = "/board/{boardName}/task/{taskId}/watch")
+    @ApiOperation(httpMethod = "PUT", value = "Resource to watch the given task")
+    public ResponseEntity<Void> watchTask(@PathVariable final String boardName, @PathVariable final Long taskId) {
+
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received watch task request [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+
+        taskService.watchTask(boardName, taskId, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/board/{boardName}/task/{taskId}/unwatch")
+    @ApiOperation(httpMethod = "PUT", value = "Resource to unwatch the given task")
+    public ResponseEntity<Void> unwatchTask(@PathVariable final String boardName, @PathVariable final Long taskId) {
+
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received unwatch task request [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
+
+        taskService.unwatch(boardName, taskId, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping(path = "/board/{boardName}/column/{columnName}/task/{taskId}")
     @ApiOperation(httpMethod = "PUT", value = "Resource to update the name or the description of the existing task")
     public ResponseEntity<Void> update(@PathVariable final String boardName, @PathVariable final String columnName, @PathVariable final Long taskId,
