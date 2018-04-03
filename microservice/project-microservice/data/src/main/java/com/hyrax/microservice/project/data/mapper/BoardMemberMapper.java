@@ -10,5 +10,7 @@ public interface BoardMemberMapper {
 
     void insert(@Param("username") String username, @Param("boardName") String boardName);
 
+    void deleteMemberFromBoard(@Param("boardName") String boardName, @Param("username") String username);
+
     void deleteMembersFromBoard(@Param("boardName") String boardName);
 }

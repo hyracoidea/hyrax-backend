@@ -17,5 +17,7 @@ public interface BoardDAO {
 
     void addMemberToBoard(String boardName, String username);
 
+    void deleteMemberFromBoard(String boardName, String username);
+
     void deleteByBoardName(String boardName);
 }

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,11 +32,22 @@ public class BoardMemberRESTController {
 
     @PostMapping(path = "/board/{boardName}/member/{username}")
     @ApiOperation(httpMethod = "POST", value = "Resource to add a member to the given board")
-    public ResponseEntity<Void> addTeamMemberToTeam(@PathVariable final String boardName, @PathVariable final String username) {
+    public ResponseEntity<Void> addBoardMemberToTeam(@PathVariable final String boardName, @PathVariable final String username) {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received board member addition request [boardName={} username={} requestedBy={}]", boardName, username, requestedBy);
 
         boardMemberService.add(username, boardName, requestedBy);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(path = "/board/{boardName}/member/{username}")
+    @ApiOperation(httpMethod = "DELETE", value = "Resource to remove a board member from the board team")
+    public ResponseEntity<Void> removeBoardMember(@PathVariable final String boardName, @PathVariable final String username) {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        LOGGER.info("Received board member deletion request=[username={} boardName={} requestedBy={}]", username, boardName, requestedBy);
+
+        boardMemberService.removeMemberFromBoard(boardName, username, requestedBy);
 
         return ResponseEntity.noContent().build();
     }
