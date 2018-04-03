@@ -6,6 +6,9 @@ import com.hyrax.microservice.project.data.entity.saveable.SaveableTaskEntity;
 import com.hyrax.microservice.project.data.mapper.LabelMapper;
 import com.hyrax.microservice.project.data.mapper.TaskMapper;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.List;
 @Repository
 @AllArgsConstructor
 public class TaskDAOImpl implements TaskDAO {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskDAOImpl.class);
 
     private final TaskMapper taskMapper;
 
@@ -54,7 +59,11 @@ public class TaskDAOImpl implements TaskDAO {
     @Override
     public void assignUserToTask(final String boardName, final Long taskId, final String username) {
         taskMapper.assignUserToTask(boardName, taskId, username);
-        taskMapper.watchTask(boardName, taskId, username);
+        try {
+            taskMapper.watchTask(boardName, taskId, username);
+        } catch (final DuplicateKeyException e) {
+            LOGGER.error("User={} already watched the task with id={} on board={}", username, taskId, boardName);
+        }
     }
 
     @Override
