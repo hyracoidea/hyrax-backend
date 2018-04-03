@@ -10,9 +10,9 @@ import com.hyrax.microservice.project.service.exception.team.member.TeamMemberIs
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberOperationNotAllowedException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,8 +23,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Api(description = "Operations about team members")
 @RestController
-@Api(description = "Operations about tasks")
+@AllArgsConstructor
 public class TeamMemberRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TeamMemberRESTController.class);
@@ -32,12 +33,6 @@ public class TeamMemberRESTController {
     private final TeamMemberService teamMemberService;
 
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
-
-    @Autowired
-    public TeamMemberRESTController(final TeamMemberService teamMemberService, final AuthenticationUserDetailsHelper authenticationUserDetailsHelper) {
-        this.teamMemberService = teamMemberService;
-        this.authenticationUserDetailsHelper = authenticationUserDetailsHelper;
-    }
 
     @GetMapping(path = "/team/{teamName}/members")
     @ApiOperation(httpMethod = "GET", value = "Resource to list all team members for the given team")
