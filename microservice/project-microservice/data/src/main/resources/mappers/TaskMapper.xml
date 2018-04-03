@@ -83,10 +83,10 @@
         select (<include refid="getBoardIdByBoardName"/>), #{taskId}, #{username}
     </insert>
 
-    <insert id="unwatchTask">
+    <delete id="unwatchTask">
         delete twu from board b inner join task_watched_user twu
         on b.board_id = twu.board_id and b.board_name = #{boardName} and twu.task_id = #{taskId} and twu.username = #{username}
-    </insert>
+    </delete>
 
     <update id="update">
         update board b inner join board_column c
@@ -151,6 +151,25 @@
     <delete id="deleteAssignedUsersFromTasksByBoardName">
         delete tau from board b inner join task_assigned_user tau
         on b.board_id = tau.board_id and b.board_name = #{boardName}
+    </delete>
+
+    <delete id="deleteWatchedUsersFromTask">
+        delete twu from board b inner join task_watched_user twu
+        on b.board_id = twu.board_id and b.board_name = #{boardName} and twu.task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteWatchedUsersFromTasksByColumnName">
+        delete twu from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id
+        inner join task_watched_user twu
+        on b.board_id = twu.board_id and t.task_id = twu.task_id
+    </delete>
+
+    <delete id="deleteWatchedUsersFromTasksByBoardName">
+        delete twu from board b inner join task_watched_user twu
+        on b.board_id = twu.board_id and b.board_name = #{boardName}
     </delete>
 
 </mapper>

@@ -39,6 +39,7 @@ public class ColumnDAOImpl implements ColumnDAO {
     public void deleteByBoardNameAndColumnName(final String boardName, final String columnName) {
         labelMapper.deleteAllLabelFromTasksByColumn(boardName, columnName);
         taskMapper.deleteAssignedUsersFromTasksByColumnName(boardName, columnName);
+        taskMapper.deleteWatchedUsersFromTasksByColumnName(boardName, columnName);
         taskMapper.deleteAllByBoardNameAndColumnName(boardName, columnName);
         columnMapper.delete(boardName, columnName);
     }
