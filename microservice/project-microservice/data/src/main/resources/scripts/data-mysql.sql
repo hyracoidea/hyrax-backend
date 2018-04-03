@@ -25,6 +25,9 @@ VALUES (2, 1, 1, 'task2', 'task2 desc', 2);
 INSERT INTO task(task_id, board_id, column_id, task_name, description, task_index)
 VALUES (3, 1, 1, 'task3', 'task3 desc', 3);
 
+INSERT INTO task(task_id, board_id, column_id, task_name, description, task_index)
+VALUES (4, 1, 1, 'task4', 'task4 desc', 4);
+
 INSERT INTO label(label_id, board_id, label_name, red, green, blue)
 VALUES (1, 1, 'label1', 0, 0, 0);
 
@@ -51,6 +54,9 @@ VALUES (1, 2, 'admin');
 
 INSERT INTO task_assigned_user(board_id, task_id, username)
 VALUES (1, 3, 'admin');
+
+INSERT INTO task_assigned_user(board_id, task_id, username)
+VALUES (1, 4, 'ultimateUser');
 
 INSERT INTO task_watched_user(board_id, task_id, username)
 VALUES (1, 1, 'admin');

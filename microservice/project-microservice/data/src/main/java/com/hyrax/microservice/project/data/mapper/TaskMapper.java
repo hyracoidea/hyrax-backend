@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface TaskMapper {
 
-    List<TaskEntity> selectAllByBoardNameAndColumnName(@Param("boardName") String boardName, @Param("columnName") String columnName);
+    List<TaskEntity> selectAllByBoardNameAndColumnName(@Param("boardName") String boardName, @Param("columnName") String columnName,
+                                                       @Param("assignedUsername") String assignedUsername,
+                                                       @Param("labelNames") List<String> labelNames);
 
     void insert(@Param("task") SaveableTaskEntity saveableTaskEntity);
 

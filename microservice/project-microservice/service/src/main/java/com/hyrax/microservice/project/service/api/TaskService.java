@@ -1,12 +1,13 @@
 package com.hyrax.microservice.project.service.api;
 
 import com.hyrax.microservice.project.service.domain.Task;
+import com.hyrax.microservice.project.service.domain.TaskFilterDetails;
 
 import java.util.List;
 
 public interface TaskService {
 
-    List<Task> findAllByBoardNameAndColumnName(String boardName, String columnName);
+    List<Task> findAllByBoardNameAndColumnName(String boardName, String columnName, TaskFilterDetails taskFilterDetails);
 
     void create(String boardName, String columnName, String taskName, String description, String requestedBy);
 
