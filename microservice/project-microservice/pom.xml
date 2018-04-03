@@ -42,12 +42,6 @@
                 <artifactId>swagger-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>com.hyrax.client.account</groupId>
-                <artifactId>account-client-spring-boot-starter</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

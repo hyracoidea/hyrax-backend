@@ -42,6 +42,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    @Transactional
     public void save(final Team team) throws TeamAlreadyExistsException {
         Preconditions.checkArgument(Objects.nonNull(team));
         try {
