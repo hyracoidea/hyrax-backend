@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface TaskDAO {
 
+    List<TaskEntity> findAllByBoardNameAndColumnName(String boardName, String columnName, String assignedUsername, List<String> labelNames);
+
     List<TaskEntity> findAllByBoardNameAndColumnName(String boardName, String columnName);
 
     void save(String boardName, String columnName, String taskName, String description, String requestedBy);

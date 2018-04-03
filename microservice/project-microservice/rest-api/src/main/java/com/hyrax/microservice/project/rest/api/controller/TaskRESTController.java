@@ -1,5 +1,6 @@
 package com.hyrax.microservice.project.rest.api.controller;
 
+import com.hyrax.microservice.project.rest.api.domain.request.FilterTaskRequest;
 import com.hyrax.microservice.project.rest.api.domain.request.TaskCreationRequest;
 import com.hyrax.microservice.project.rest.api.domain.request.TaskUpdateRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
@@ -7,6 +8,7 @@ import com.hyrax.microservice.project.rest.api.domain.response.TaskResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.wrapper.TaskResponseWrapper;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.service.api.TaskService;
+import com.hyrax.microservice.project.service.domain.TaskFilterDetails;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnDoesNotExistException;
 import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskException;
@@ -47,10 +49,11 @@ public class TaskRESTController {
 
     @GetMapping(path = "/board/{boardName}/column/{columnName}/task")
     @ApiOperation(httpMethod = "GET", value = "Resource to list all the tasks on the given board and the given column")
-    public ResponseEntity<TaskResponseWrapper> retrieveAll(@PathVariable final String boardName, @PathVariable final String columnName) {
+    public ResponseEntity<TaskResponseWrapper> retrieveAll(@PathVariable final String boardName, @PathVariable final String columnName,
+                                                           final FilterTaskRequest filterTaskRequest) {
         return ResponseEntity.ok()
                 .body(TaskResponseWrapper.builder()
-                        .taskResponses(taskService.findAllByBoardNameAndColumnName(boardName, columnName)
+                        .taskResponses(taskService.findAllByBoardNameAndColumnName(boardName, columnName, conversionService.convert(filterTaskRequest, TaskFilterDetails.class))
                                 .stream()
                                 .map(column -> conversionService.convert(column, TaskResponse.class))
                                 .collect(Collectors.toList())

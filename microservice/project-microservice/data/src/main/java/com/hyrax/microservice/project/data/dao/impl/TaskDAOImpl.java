@@ -24,8 +24,14 @@ public class TaskDAOImpl implements TaskDAO {
     private final LabelMapper labelMapper;
 
     @Override
-    public List<TaskEntity> findAllByBoardNameAndColumnName(String boardName, String columnName) {
-        return taskMapper.selectAllByBoardNameAndColumnName(boardName, columnName);
+    public List<TaskEntity> findAllByBoardNameAndColumnName(final String boardName, final String columnName,
+                                                            final String assignedUsername, final List<String> labelNames) {
+        return taskMapper.selectAllByBoardNameAndColumnName(boardName, columnName, assignedUsername, labelNames);
+    }
+
+    @Override
+    public List<TaskEntity> findAllByBoardNameAndColumnName(final String boardName, final String columnName) {
+        return findAllByBoardNameAndColumnName(boardName, columnName, null, null);
     }
 
     @Override

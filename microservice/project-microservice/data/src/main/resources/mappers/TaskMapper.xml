@@ -53,11 +53,27 @@
 
     <select id="selectAllByBoardNameAndColumnName" resultType="com.hyrax.microservice.project.data.entity.TaskEntity"
             resultMap="taskEntityResultMap">
-        select t.task_id, t.task_name, t.description, t.task_index
+        select distinct t.task_id, t.task_name, t.description, t.task_index
         from board b inner join board_column c
         on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
         inner join task t
         on b.board_id = t.board_id and c.column_id = t.column_id
+
+        <if test="assignedUsername != null">
+            inner join task_assigned_user tau
+            on b.board_id = tau.board_id and t.task_id = tau.task_id
+            and tau.username = #{assignedUsername}
+        </if>
+        <if test="labelNames != null">
+            inner join task_label tl
+            on b.board_id = tl.board_id and t.task_id = tl.task_id
+            and tl.label_id in (select label_id from label where label_name in
+            <foreach item="item" index="index" collection="labelNames" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+
         order by t.task_index
     </select>
 
@@ -85,7 +101,8 @@
 
     <delete id="unwatchTask">
         delete twu from board b inner join task_watched_user twu
-        on b.board_id = twu.board_id and b.board_name = #{boardName} and twu.task_id = #{taskId} and twu.username = #{username}
+        on b.board_id = twu.board_id and b.board_name = #{boardName} and twu.task_id = #{taskId} and twu.username =
+        #{username}
     </delete>
 
     <update id="update">

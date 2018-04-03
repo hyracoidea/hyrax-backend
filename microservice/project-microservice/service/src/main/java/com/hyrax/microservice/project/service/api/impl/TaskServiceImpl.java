@@ -6,6 +6,7 @@ import com.hyrax.microservice.project.data.entity.TaskEntity;
 import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.api.impl.checker.TaskOperationChecker;
 import com.hyrax.microservice.project.service.domain.Task;
+import com.hyrax.microservice.project.service.domain.TaskFilterDetails;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnDoesNotExistException;
 import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskException;
@@ -42,8 +43,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findAllByBoardNameAndColumnName(final String boardName, final String columnName) {
-        return taskDAO.findAllByBoardNameAndColumnName(boardName, columnName)
+    public List<Task> findAllByBoardNameAndColumnName(final String boardName, final String columnName, final TaskFilterDetails taskFilterDetails) {
+        LOGGER.info("ASd: {}", taskFilterDetails);
+        return taskDAO.findAllByBoardNameAndColumnName(boardName, columnName, taskFilterDetails.getAssignedUsername(), taskFilterDetails.getLabelNames())
                 .stream()
                 .map(taskEntity -> modelMapper.map(taskEntity, Task.class))
                 .collect(Collectors.toList());
