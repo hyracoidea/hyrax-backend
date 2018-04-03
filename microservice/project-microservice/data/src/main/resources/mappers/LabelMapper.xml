@@ -5,9 +5,9 @@
     <resultMap id="labelEntityResultMap" type="com.hyrax.microservice.project.data.entity.LabelEntity">
         <id column="label_id" jdbcType="BIGINT" property="labelId" javaType="java.lang.Long"/>
         <result column="label_name" jdbcType="VARCHAR" property="labelName" javaType="java.lang.String"/>
-        <result column="red" jdbcType="VARCHAR" property="red" javaType="java.lang.Integer"/>
-        <result column="green" jdbcType="BIGINT" property="green" javaType="java.lang.Integer"/>
-        <result column="blue" jdbcType="BIGINT" property="blue" javaType="java.lang.Integer"/>
+        <result column="red" jdbcType="TINYINT" property="red" javaType="java.lang.Integer"/>
+        <result column="green" jdbcType="TINYINT" property="green" javaType="java.lang.Integer"/>
+        <result column="blue" jdbcType="TINYINT" property="blue" javaType="java.lang.Integer"/>
     </resultMap>
 
     <sql id="getBoardId">

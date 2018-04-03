@@ -5,6 +5,7 @@ import com.hyrax.microservice.project.data.dao.TaskDAO;
 import com.hyrax.microservice.project.data.entity.TaskEntity;
 import com.hyrax.microservice.project.service.api.TaskService;
 import com.hyrax.microservice.project.service.api.impl.checker.TaskOperationChecker;
+import com.hyrax.microservice.project.service.domain.SingleTask;
 import com.hyrax.microservice.project.service.domain.Task;
 import com.hyrax.microservice.project.service.domain.TaskFilterDetails;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -48,6 +50,13 @@ public class TaskServiceImpl implements TaskService {
                 .stream()
                 .map(taskEntity -> modelMapper.map(taskEntity, Task.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<SingleTask> findSingleTask(final String boardName, final String columnName, final Long taskId) {
+        return taskDAO.findSingleTask(boardName, columnName, taskId)
+                .map(singleTaskEntity -> modelMapper.map(singleTaskEntity, SingleTask.class));
     }
 
     @Override

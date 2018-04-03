@@ -9,6 +9,24 @@
         <result column="username" jdbcType="VARCHAR" property="assignedUsername" javaType="java.lang.String"/>
     </resultMap>
 
+    <resultMap id="singleTaskEntityResultMap" type="com.hyrax.microservice.project.data.entity.SingleTaskEntity">
+        <id column="task_id" jdbcType="BIGINT" property="taskId" javaType="java.lang.Long"/>
+        <result column="task_name" jdbcType="VARCHAR" property="taskName" javaType="java.lang.String"/>
+        <result column="description" jdbcType="VARCHAR" property="description" javaType="java.lang.String"/>
+        <result column="username" jdbcType="VARCHAR" property="assignedUsername" javaType="java.lang.String"/>
+        <collection property="labels" ofType="com.hyrax.microservice.project.data.entity.LabelEntity"
+                    autoMapping="true">
+            <id column="label_id" jdbcType="BIGINT" property="labelId" javaType="java.lang.Long"/>
+            <result column="label_name" jdbcType="VARCHAR" property="labelName" javaType="java.lang.String"/>
+            <result column="red" jdbcType="TINYINT" property="red" javaType="java.lang.Integer"/>
+            <result column="green" jdbcType="TINYINT" property="green" javaType="java.lang.Integer"/>
+            <result column="blue" jdbcType="TINYINT" property="blue" javaType="java.lang.Integer"/>
+        </collection>
+        <collection property="watchedUsers" ofType="java.lang.String" autoMapping="true">
+            <result column="watchedUser" jdbcType="VARCHAR" javaType="java.lang.String"/>
+        </collection>
+    </resultMap>
+
     <sql id="getBoardId">
         select distinct b.board_id
         from board b inner join board_column c
@@ -76,6 +94,24 @@
         </if>
 
         order by t.task_index
+    </select>
+
+    <select id="selectSingleTask" resultType="com.hyrax.microservice.project.data.entity.SingleTaskEntity"
+            resultMap="singleTaskEntityResultMap">
+        select distinct t.task_id, t.task_name, t.description, tau.username, twu.username as watchedUser,
+        tl.label_id, l.label_name, l.red, l.green, l.blue
+        from board b inner join board_column c
+        on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
+        inner join task t
+        on b.board_id = t.board_id and c.column_id = t.column_id and t.task_id = #{taskId}
+        left join task_assigned_user tau
+        on b.board_id = tau.board_id and t.task_id = tau.task_id
+        left join task_watched_user twu
+        on b.board_id = twu.board_id and t.task_id = twu.task_id
+        left join task_label tl
+        on b.board_id = tl.board_id and t.task_id = tl.task_id
+        left join label l
+        on b.board_id = l.board_id and tl.label_id = l.label_id
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="task.taskId" keyColumn="task_id">

@@ -1,5 +1,6 @@
 package com.hyrax.microservice.project.data.mapper;
 
+import com.hyrax.microservice.project.data.entity.SingleTaskEntity;
 import com.hyrax.microservice.project.data.entity.TaskEntity;
 import com.hyrax.microservice.project.data.entity.saveable.SaveableTaskEntity;
 import org.apache.ibatis.annotations.Param;
@@ -11,6 +12,9 @@ public interface TaskMapper {
     List<TaskEntity> selectAllByBoardNameAndColumnName(@Param("boardName") String boardName, @Param("columnName") String columnName,
                                                        @Param("assignedUsername") String assignedUsername,
                                                        @Param("labelNames") List<String> labelNames);
+
+    SingleTaskEntity selectSingleTask(@Param("boardName") String boardName, @Param("columnName") String columnName,
+                                      @Param("taskId") Long taskId);
 
     void insert(@Param("task") SaveableTaskEntity saveableTaskEntity);
 
