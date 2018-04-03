@@ -44,7 +44,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional(readOnly = true)
     public List<Task> findAllByBoardNameAndColumnName(final String boardName, final String columnName, final TaskFilterDetails taskFilterDetails) {
-        LOGGER.info("ASd: {}", taskFilterDetails);
         return taskDAO.findAllByBoardNameAndColumnName(boardName, columnName, taskFilterDetails.getAssignedUsername(), taskFilterDetails.getLabelNames())
                 .stream()
                 .map(taskEntity -> modelMapper.map(taskEntity, Task.class))
