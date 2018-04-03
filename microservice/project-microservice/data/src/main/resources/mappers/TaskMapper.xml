@@ -5,8 +5,8 @@
     <resultMap id="taskEntityResultMap" type="com.hyrax.microservice.project.data.entity.TaskEntity">
         <id column="task_id" jdbcType="BIGINT" property="taskId" javaType="java.lang.Long"/>
         <result column="task_name" jdbcType="VARCHAR" property="taskName" javaType="java.lang.String"/>
-        <result column="description" jdbcType="VARCHAR" property="description" javaType="java.lang.String"/>
         <result column="task_index" jdbcType="BIGINT" property="taskIndex" javaType="java.lang.Long"/>
+        <result column="username" jdbcType="VARCHAR" property="assignedUsername" javaType="java.lang.String"/>
     </resultMap>
 
     <sql id="getBoardId">
@@ -53,17 +53,18 @@
 
     <select id="selectAllByBoardNameAndColumnName" resultType="com.hyrax.microservice.project.data.entity.TaskEntity"
             resultMap="taskEntityResultMap">
-        select distinct t.task_id, t.task_name, t.description, t.task_index
+        select distinct t.task_id, t.task_name, t.task_index, tau.username
         from board b inner join board_column c
         on b.board_id = c.board_id and b.board_name = #{boardName} and c.column_name = #{columnName}
         inner join task t
         on b.board_id = t.board_id and c.column_id = t.column_id
+        inner join task_assigned_user tau
+        on b.board_id = tau.board_id and t.task_id = tau.task_id
 
         <if test="assignedUsername != null">
-            inner join task_assigned_user tau
-            on b.board_id = tau.board_id and t.task_id = tau.task_id
             and tau.username = #{assignedUsername}
         </if>
+
         <if test="labelNames != null">
             inner join task_label tl
             on b.board_id = tl.board_id and t.task_id = tl.task_id

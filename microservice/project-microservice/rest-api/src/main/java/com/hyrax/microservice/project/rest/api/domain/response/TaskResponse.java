@@ -11,8 +11,8 @@ public class TaskResponse {
 
     private final String taskName;
 
-    private final String description;
-
     private final Long taskIndex;
+
+    private final String assignedUsername;
 
 }
