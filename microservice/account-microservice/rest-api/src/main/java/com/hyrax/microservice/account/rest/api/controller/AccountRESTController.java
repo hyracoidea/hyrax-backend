@@ -1,12 +1,16 @@
 package com.hyrax.microservice.account.rest.api.controller;
 
+import com.hyrax.microservice.account.rest.api.domain.request.AccountDetailsRequest;
 import com.hyrax.microservice.account.rest.api.domain.request.AccountRequest;
+import com.hyrax.microservice.account.rest.api.domain.response.AccountDetailsResponse;
+import com.hyrax.microservice.account.rest.api.domain.response.AccountDetailsResponseWrapper;
 import com.hyrax.microservice.account.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.SecuredAccountResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.UsernameWrapperResponse;
 import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
 import com.hyrax.microservice.account.rest.api.exception.ResourceNotFoundException;
+import com.hyrax.microservice.account.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingResultProcessor;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.account.service.api.AccountService;
@@ -14,9 +18,9 @@ import com.hyrax.microservice.account.service.domain.Account;
 import com.hyrax.microservice.account.service.exception.AccountAlreadyExistsException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,25 +36,22 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Api(description = "Operations about accounts")
 @RestController
+@AllArgsConstructor
 public class AccountRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountRESTController.class);
 
     private final AccountService accountService;
 
+    private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
+
     private final ConversionService conversionService;
 
     private final BindingResultProcessor bindingResultProcessor;
-
-    @Autowired
-    public AccountRESTController(final AccountService accountService, final ConversionService conversionService, final BindingResultProcessor bindingResultProcessor) {
-        this.accountService = accountService;
-        this.conversionService = conversionService;
-        this.bindingResultProcessor = bindingResultProcessor;
-    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping(path = "/admin/account/{username}")
@@ -66,6 +67,39 @@ public class AccountRESTController {
             LOGGER.error(message);
             throw new ResourceNotFoundException(message);
         }
+    }
+
+    @GetMapping(path = "/account/details/me")
+    @ApiOperation(httpMethod = "GET", value = "Resource to get details about me")
+    public ResponseEntity<AccountDetailsResponse> retrieveDetailsAboutMe() {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+        final AccountDetailsResponse response = accountService.findAccountByUsername(requestedBy)
+                .map(account -> conversionService.convert(account, AccountDetailsResponse.class))
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Account not found with this username=%s", requestedBy)));
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping(path = "/account/details/{username}")
+    @ApiOperation(httpMethod = "GET", value = "Resource to get details about the given user")
+    public ResponseEntity<AccountDetailsResponse> retrieveDetails(@PathVariable final String username) {
+        final AccountDetailsResponse response = accountService.findAccountByUsername(username)
+                .map(account -> conversionService.convert(account, AccountDetailsResponse.class))
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Account not found with this username=%s", username)));
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(path = "/account/details")
+    @ApiOperation(httpMethod = "POST", value = "Resource to get details about the given user")
+    public ResponseEntity<AccountDetailsResponseWrapper> retrieveDetails(@RequestBody final AccountDetailsRequest accountDetailsRequest) {
+        final AccountDetailsResponseWrapper responseWrapper = AccountDetailsResponseWrapper.builder()
+                .accountDetailsResponses(accountService.findAllByUsernames(accountDetailsRequest.getUsernames())
+                .parallelStream()
+                .map(account -> conversionService.convert(account, AccountDetailsResponse.class))
+                .collect(Collectors.toList()))
+                .build();
+        return ResponseEntity.ok(responseWrapper);
     }
 
     @GetMapping(path = "/account/usernames")

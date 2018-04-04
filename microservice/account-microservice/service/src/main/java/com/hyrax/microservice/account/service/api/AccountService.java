@@ -18,5 +18,7 @@ public interface AccountService {
 
     Optional<Account> findAccountByUsername(String username);
 
+    List<Account> findAllByUsernames(List<String> usernames);
+
     void saveAccount(Account account) throws AccountAlreadyExistsException;
 }

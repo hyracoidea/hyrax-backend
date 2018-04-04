@@ -80,6 +80,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Account> findAllByUsernames(final List<String> usernames) {
+        return accountMapper.selectAllByUsernames(usernames)
+                .parallelStream()
+                .map(accountEntity -> modelMapper.map(accountEntity, Account.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public void saveAccount(final Account account) throws AccountAlreadyExistsException {
         Preconditions.checkArgument(Objects.nonNull(account));
