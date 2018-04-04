@@ -11,6 +11,6 @@ public class AccountRESTClientProperties {
     private String token;
 
     private String serviceUrl;
-    private String path;
-    private String usernamesEndpoint;
+    private String singleAccountDetailsEndpoint;
+    private String bulkAccountDetailsEndpoint;
 }

@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface AccountMapper {
 
-    Collection<AccountEntity> selectAll();
-
     Collection<AccountEntity> selectAllByUsernames(@Param("usernames") List<String> usernames);
 
     AccountEntity selectByEmail(String email);

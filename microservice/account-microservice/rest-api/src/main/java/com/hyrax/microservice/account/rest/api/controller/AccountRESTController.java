@@ -102,20 +102,6 @@ public class AccountRESTController {
         return ResponseEntity.ok(responseWrapper);
     }
 
-    @GetMapping(path = "/account/usernames")
-    public ResponseEntity<UsernameWrapperResponse> retrieveAllUsernames() {
-        ResponseEntity<UsernameWrapperResponse> response = ResponseEntity.noContent().build();
-
-        final List<String> usernames = accountService.findAllUsernames();
-        if (!usernames.isEmpty()) {
-            response = ResponseEntity.ok(UsernameWrapperResponse.builder()
-                    .usernames(usernames)
-                    .build()
-            );
-        }
-        return response;
-    }
-
     @PostMapping(path = "/account")
     @ApiOperation(httpMethod = "POST", value = "Resource to create a new account")
     public ResponseEntity<Void> createAccount(@Valid @RequestBody final AccountRequest accountRequest, final BindingResult bindingResult) {

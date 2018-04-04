@@ -12,8 +12,6 @@ public interface AccountService {
 
     boolean existAccountByUsername(String username);
 
-    List<String> findAllUsernames();
-
     Optional<Account> findAccountByEmail(String email);
 
     Optional<Account> findAccountByUsername(String username);
