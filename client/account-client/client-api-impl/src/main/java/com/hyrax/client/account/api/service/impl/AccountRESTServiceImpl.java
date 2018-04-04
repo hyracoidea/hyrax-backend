@@ -1,15 +1,18 @@
 package com.hyrax.client.account.api.service.impl;
 
-import com.hyrax.client.account.api.response.HyraxResponse;
-import com.hyrax.client.account.api.response.ResponseStatus;
-import com.hyrax.client.account.api.response.UsernameWrapperResponse;
+import com.hyrax.client.account.api.response.AccountDetailsResponse;
+import com.hyrax.client.account.api.response.AccountDetailsResponseWrapper;
 import com.hyrax.client.account.api.service.AccountRESTService;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+@AllArgsConstructor
 public class AccountRESTServiceImpl implements AccountRESTService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountRESTServiceImpl.class);
@@ -18,58 +21,61 @@ public class AccountRESTServiceImpl implements AccountRESTService {
 
     private final AccountRESTClient accountRESTClient;
 
-    public AccountRESTServiceImpl(final AccountRESTClient accountRESTClient) {
-        this.accountRESTClient = accountRESTClient;
-    }
-
     @Override
-    public HyraxResponse<UsernameWrapperResponse> retrieveAllUsernames() {
-        HyraxResponse<UsernameWrapperResponse> result;
+    public Optional<AccountDetailsResponse> getAccountDetailsResponse(final String username) {
         Response response = null;
+        AccountDetailsResponse result = null;
 
         try {
-            response = accountRESTClient.callRetrieveAllUsernamesEndpoint();
-            result = processResponse(response);
+            response = accountRESTClient.callSingleAccountDetailsRESTEndpoint(username);
+            result = processSingleAccountDetailsResponse(response);
         } catch (final Exception e) {
             LOGGER.error(ERROR_MESSAGE_REST_CALL, e);
-            result = HyraxResponse.<UsernameWrapperResponse>builder()
-                    .responseStatus(ResponseStatus.SERVER_ERROR)
-                    .reason(ERROR_MESSAGE_REST_CALL)
-                    .build();
         } finally {
             if (Objects.nonNull(response)) {
                 response.close();
             }
         }
+        return Optional.ofNullable(result);
+    }
+
+    @Override
+    public Optional<AccountDetailsResponseWrapper> getAccountDetailsResponses(final List<String> usernames) {
+        Response response = null;
+        AccountDetailsResponseWrapper result = null;
+
+        try {
+            response = accountRESTClient.callBulkAccountDetailsRESTEndpoint(usernames);
+            result = processBulkAccountDetailsResponse(response);
+        } catch (final Exception e) {
+            LOGGER.error(ERROR_MESSAGE_REST_CALL, e);
+        } finally {
+            if (Objects.nonNull(response)) {
+                response.close();
+            }
+        }
+        return Optional.ofNullable(result);
+    }
+
+    private AccountDetailsResponse processSingleAccountDetailsResponse(final Response response) {
+        AccountDetailsResponse result = null;
+
+        if (Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily()) {
+            result = response.readEntity(AccountDetailsResponse.class);
+        } else {
+            response.readEntity(String.class);
+        }
         return result;
     }
 
-    private HyraxResponse<UsernameWrapperResponse> processResponse(final Response response) {
-        HyraxResponse<UsernameWrapperResponse> result = null;
+    private AccountDetailsResponseWrapper processBulkAccountDetailsResponse(final Response response) {
+        AccountDetailsResponseWrapper result = null;
 
-        switch (response.getStatusInfo().getFamily()) {
-            case SUCCESSFUL:
-                result = HyraxResponse.<UsernameWrapperResponse>builder()
-                        .responseStatus(ResponseStatus.SUCCESSFUL)
-                        .payload(response.readEntity(UsernameWrapperResponse.class))
-                        .build();
-                break;
-            case CLIENT_ERROR:
-                result = HyraxResponse.<UsernameWrapperResponse>builder()
-                        .responseStatus(ResponseStatus.CLIENT_ERROR)
-                        .reason(response.getStatusInfo().getReasonPhrase())
-                        .build();
-                response.readEntity(String.class);
-                break;
-            case SERVER_ERROR:
-                result = HyraxResponse.<UsernameWrapperResponse>builder()
-                        .responseStatus(ResponseStatus.SERVER_ERROR)
-                        .reason(response.getStatusInfo().getReasonPhrase())
-                        .build();
-                response.readEntity(String.class);
-                break;
+        if (Response.Status.Family.SUCCESSFUL == response.getStatusInfo().getFamily()) {
+            result = response.readEntity(AccountDetailsResponseWrapper.class);
+        } else {
+            response.readEntity(String.class);
         }
-
         return result;
     }
 }

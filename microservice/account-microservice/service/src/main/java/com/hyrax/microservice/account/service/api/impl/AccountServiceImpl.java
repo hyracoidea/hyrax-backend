@@ -50,15 +50,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<String> findAllUsernames() {
-        return accountMapper.selectAll()
-                .parallelStream()
-                .map(AccountEntity::getUsername)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public Optional<Account> findAccountByEmail(final String email) {
         Account account = null;
         final AccountEntity accountEntity = accountMapper.selectByEmail(email);
