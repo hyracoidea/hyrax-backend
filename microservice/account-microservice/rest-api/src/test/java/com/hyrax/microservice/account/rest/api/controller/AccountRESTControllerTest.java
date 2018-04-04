@@ -8,6 +8,7 @@ import com.hyrax.microservice.account.rest.api.domain.response.RequestValidation
 import com.hyrax.microservice.account.rest.api.domain.response.SecuredAccountResponse;
 import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
 import com.hyrax.microservice.account.rest.api.exception.ResourceNotFoundException;
+import com.hyrax.microservice.account.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.BindingResultProcessor;
 import com.hyrax.microservice.account.rest.api.validation.bindingresult.ProcessedBindingResult;
 import com.hyrax.microservice.account.service.api.AccountService;
@@ -78,6 +79,9 @@ public class AccountRESTControllerTest {
     private AccountService accountService;
 
     @Mock
+    private AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
+
+    @Mock
     private ConversionService conversionService;
 
     @Mock
@@ -93,7 +97,7 @@ public class AccountRESTControllerTest {
 
     @Before
     public void init() {
-        accountRESTController = new AccountRESTController(accountService, conversionService, bindingResultProcessor);
+        accountRESTController = new AccountRESTController(accountService, authenticationUserDetailsHelper, conversionService, bindingResultProcessor);
     }
 
     @Test(expected = ResourceNotFoundException.class)

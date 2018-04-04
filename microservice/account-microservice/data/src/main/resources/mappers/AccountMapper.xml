@@ -24,6 +24,15 @@
         where username=#{username}
     </select>
 
+    <select id="selectAllByUsernames" parameterType="java.lang.String" resultType="com.hyrax.microservice.account.data.entity.AccountEntity" resultMap="accountEntityResultMap">
+        select account_id, first_name, last_name, username, email, password_hash, authority
+        from account
+        where username in
+            <foreach item="item" index="index" collection="usernames" open="(" separator="," close=")">
+            #{item}
+            </foreach>
+    </select>
+
     <select id="selectByEmail" parameterType="java.lang.String" resultType="com.hyrax.microservice.account.data.entity.AccountEntity" resultMap="accountEntityResultMap">
         select account_id, first_name, last_name, username, email, password_hash, authority
         from account
