@@ -19,6 +19,7 @@
         <module>sample-microservice</module>
         <module>account-microservice</module>
         <module>project-microservice</module>
+        <module>email-microservice</module>
     </modules>
 
     <properties>
