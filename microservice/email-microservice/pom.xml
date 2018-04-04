@@ -30,6 +30,17 @@
                 <artifactId>email-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.hyrax.client.account</groupId>
+                <artifactId>account-client-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hyrax.spring.boot.starter.swagger</groupId>
+                <artifactId>swagger-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

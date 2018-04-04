@@ -1,0 +1,27 @@
+server:
+  port: 8081
+  context-path: /hyrax/api
+
+swagger:
+  api:
+    basePackage: com.hyrax.microservice.email.rest.api.controller
+    authRequired: false
+
+spring:
+  freemarker:
+    template-loader-path: classpath:/templates
+    suffix: .ftl
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: donotreplyhyrax@gmail.com
+    password: Password2018
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+    test-connection: false

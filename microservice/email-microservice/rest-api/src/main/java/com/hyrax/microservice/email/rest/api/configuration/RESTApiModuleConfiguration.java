@@ -5,6 +5,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 @Import(ServiceModuleConfiguration.class)
-@ComponentScan(basePackages = "com.hyrax.microservice.email.rest.api.controller")
+@ComponentScan(basePackages = "com.hyrax.microservice.email.rest.api")
 public class RESTApiModuleConfiguration {
 }

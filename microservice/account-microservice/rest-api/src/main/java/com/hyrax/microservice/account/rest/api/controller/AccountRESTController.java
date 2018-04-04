@@ -7,7 +7,6 @@ import com.hyrax.microservice.account.rest.api.domain.response.AccountDetailsRes
 import com.hyrax.microservice.account.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.RequestValidationResponse;
 import com.hyrax.microservice.account.rest.api.domain.response.SecuredAccountResponse;
-import com.hyrax.microservice.account.rest.api.domain.response.UsernameWrapperResponse;
 import com.hyrax.microservice.account.rest.api.exception.RequestValidationException;
 import com.hyrax.microservice.account.rest.api.exception.ResourceNotFoundException;
 import com.hyrax.microservice.account.rest.api.security.AuthenticationUserDetailsHelper;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,6 +42,8 @@ import java.util.stream.Collectors;
 public class AccountRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountRESTController.class);
+
+    private static final String ACCOUNT_NOT_FOUND_TEMPLATE_MESSAGE = "Account not found with this username=%s";
 
     private final AccountService accountService;
 
@@ -63,7 +63,7 @@ public class AccountRESTController {
         if (account.isPresent()) {
             return ResponseEntity.ok(conversionService.convert(account.get(), SecuredAccountResponse.class));
         } else {
-            final String message = String.format("Account not found with this username=%s", username);
+            final String message = String.format(ACCOUNT_NOT_FOUND_TEMPLATE_MESSAGE, username);
             LOGGER.error(message);
             throw new ResourceNotFoundException(message);
         }
@@ -75,7 +75,7 @@ public class AccountRESTController {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         final AccountDetailsResponse response = accountService.findAccountByUsername(requestedBy)
                 .map(account -> conversionService.convert(account, AccountDetailsResponse.class))
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Account not found with this username=%s", requestedBy)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ACCOUNT_NOT_FOUND_TEMPLATE_MESSAGE, requestedBy)));
 
         return ResponseEntity.ok(response);
     }
@@ -85,7 +85,7 @@ public class AccountRESTController {
     public ResponseEntity<AccountDetailsResponse> retrieveDetails(@PathVariable final String username) {
         final AccountDetailsResponse response = accountService.findAccountByUsername(username)
                 .map(account -> conversionService.convert(account, AccountDetailsResponse.class))
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Account not found with this username=%s", username)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ACCOUNT_NOT_FOUND_TEMPLATE_MESSAGE, username)));
 
         return ResponseEntity.ok(response);
     }
