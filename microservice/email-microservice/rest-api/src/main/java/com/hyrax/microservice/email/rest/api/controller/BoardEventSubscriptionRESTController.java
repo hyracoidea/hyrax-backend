@@ -9,8 +9,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,8 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "Operations about board event subscriptions")
 @AllArgsConstructor
 public class BoardEventSubscriptionRESTController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BoardEventSubscriptionRESTController.class);
 
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
@@ -44,8 +40,8 @@ public class BoardEventSubscriptionRESTController {
 
     @PutMapping
     @ApiOperation(httpMethod = "PUT", value = "Resource to modify the board event subscription settings for the given user")
-    public ResponseEntity<Void> modifyBoardEventSubscriptionSettings(@RequestBody final BoardEventSubscriptionRequest boardEventSubscriptionRequest) {
-        boardEventSubscriptionService.create(modelMapper.map(boardEventSubscriptionRequest, BoardEventSubscription.class));
+    public ResponseEntity<Void> saveOrUpdateBoardEventSubscriptionSettings(@RequestBody final BoardEventSubscriptionRequest boardEventSubscriptionRequest) {
+        boardEventSubscriptionService.saveOrUpdate(modelMapper.map(boardEventSubscriptionRequest, BoardEventSubscription.class));
         return ResponseEntity.noContent().build();
     }
 

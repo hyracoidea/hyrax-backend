@@ -22,7 +22,7 @@ public class BoardEventSubscriptionServiceImpl implements BoardEventSubscription
     }
 
     @Override
-    public void create(final BoardEventSubscription boardEventSubscription) {
+    public void saveOrUpdate(final BoardEventSubscription boardEventSubscription) {
         boardEventSubscriptionRepository.save(modelMapper.map(boardEventSubscription, BoardEventSubscriptionEntity.class));
     }
 }

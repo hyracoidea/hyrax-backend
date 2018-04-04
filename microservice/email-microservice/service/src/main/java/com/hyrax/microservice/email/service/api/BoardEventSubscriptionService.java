@@ -6,5 +6,5 @@ public interface BoardEventSubscriptionService {
 
     BoardEventSubscription findByUsername(String username);
 
-    void create(BoardEventSubscription boardEventSubscription);
+    void saveOrUpdate(BoardEventSubscription boardEventSubscription);
 }
