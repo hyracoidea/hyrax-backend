@@ -16,6 +16,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+cd ../project-microservice/scripts
+sh build_project_microservice.sh
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 cd ../../scripts
 
 exit 0

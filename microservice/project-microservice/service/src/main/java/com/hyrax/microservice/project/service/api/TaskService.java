@@ -15,12 +15,6 @@ public interface TaskService {
 
     void create(String boardName, String columnName, String taskName, String description, String requestedBy);
 
-    void assignUserToTask(String boardName, Long taskId, String username, String requestedBy);
-
-    void watchTask(String boardName, Long taskId, String requestedBy);
-
-    void unwatch(String boardName, Long taskId, String requestedBy);
-
     void update(String boardName, String columnName, Long taskId, String taskName, String description, String requestedBy);
 
     void updatePosition(String boardName, String columnName, Long taskId, long from, long to, String requestedBy);

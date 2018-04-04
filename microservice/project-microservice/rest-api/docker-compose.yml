@@ -1,0 +1,28 @@
+version: "2.0"
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    container_name: hyrax_mysql
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  project_microservice:
+    image: hyracoidea/project_microservice
+    container_name: project_microservice
+    depends_on:
+      - mysql
+    ports:
+      - 8081:8080
+    environment:
+      - DATABASE_HOST=${MYSQL_HOST}
+      - DATABASE_USER=${MYSQL_USER}
+      - DATABASE_PASSWORD=${MYSQL_PASSWORD}
+      - DATABASE_NAME=${MYSQL_DATABASE}
+      - DATABASE_PORT=${MYSQL_PORT}

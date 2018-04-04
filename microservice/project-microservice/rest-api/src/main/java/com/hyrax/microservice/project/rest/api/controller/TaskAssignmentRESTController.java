@@ -2,7 +2,7 @@ package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
-import com.hyrax.microservice.project.service.api.TaskService;
+import com.hyrax.microservice.project.service.api.TaskAssignmentService;
 import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskException;
 import com.hyrax.microservice.project.service.exception.task.TaskOperationNotAllowedException;
 import io.swagger.annotations.Api;
@@ -26,7 +26,7 @@ public class TaskAssignmentRESTController {
 
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
-    private final TaskService taskService;
+    private final TaskAssignmentService taskAssignmentService;
 
     @PutMapping(path = "/board/{boardName}/task/{taskId}/user/{username}")
     @ApiOperation(httpMethod = "PUT", value = "Resource to assign user to the given task")
@@ -37,7 +37,7 @@ public class TaskAssignmentRESTController {
         LOGGER.info("Received assign user to task request [boardName={} taskId={} username={} requestedBy={}]",
                 boardName, taskId, username, requestedBy);
 
-        taskService.assignUserToTask(boardName, taskId, username, requestedBy);
+        taskAssignmentService.assignUserToTask(boardName, taskId, username, requestedBy);
 
         return ResponseEntity.noContent().build();
     }

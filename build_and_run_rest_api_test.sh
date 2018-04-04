@@ -32,7 +32,13 @@ fi
 sh build_microservices_and_run_rest_api_test.sh
 
 if [ $? -ne 0 ]; then
+    docker stop hyrax_mysql&
+    sleep 15
     exit 1
-else
-    exit 0
 fi
+
+docker stop hyrax_mysql&
+
+sleep 15
+
+exit 0

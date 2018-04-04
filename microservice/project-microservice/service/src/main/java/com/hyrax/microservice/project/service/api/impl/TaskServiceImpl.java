@@ -10,19 +10,15 @@ import com.hyrax.microservice.project.service.domain.Task;
 import com.hyrax.microservice.project.service.domain.TaskFilterDetails;
 import com.hyrax.microservice.project.service.exception.ResourceNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnDoesNotExistException;
-import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskException;
-import com.hyrax.microservice.project.service.exception.task.AssignUserToTaskOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskRemovalOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.task.TaskUpdateOperationNotAllowedException;
-import com.hyrax.microservice.project.service.exception.task.WatchTaskException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,50 +73,6 @@ public class TaskServiceImpl implements TaskService {
         } else {
             throw new TaskAdditionOperationNotAllowedException(requestedBy);
         }
-    }
-
-    @Override
-    @Transactional
-    public void assignUserToTask(final String boardName, final Long taskId, final String username, final String requestedBy) {
-        final boolean isOperationAllowed = taskOperationChecker.isOperationAllowed(boardName, requestedBy);
-
-        if (isOperationAllowed) {
-            try {
-                LOGGER.info("Trying to assign user to task [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
-                taskDAO.assignUserToTask(boardName, taskId, username);
-                LOGGER.info("Assigning user to task was successful [boardName={} taskId={} assignUsername={}]", boardName, taskId, username);
-            } catch (final DataIntegrityViolationException e) {
-                final String errorMessage = String.format("Task does not exist with id=%s", taskId);
-                LOGGER.error(errorMessage, e);
-                throw new AssignUserToTaskException(errorMessage);
-            }
-        } else {
-            throw new AssignUserToTaskOperationNotAllowedException(requestedBy);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void watchTask(final String boardName, final Long taskId, final String requestedBy) {
-        try {
-            LOGGER.info("Trying to watch the task [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
-            taskDAO.watchTask(boardName, taskId, requestedBy);
-            LOGGER.info("Watch the task was successful [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
-        } catch (final DuplicateKeyException e) {
-            LOGGER.error("User={} already watched the task with id={} on board={}", requestedBy, taskId, boardName);
-        } catch (final DataIntegrityViolationException e) {
-            final String errorMessage = String.format("Task does not exist with id=%s", taskId);
-            LOGGER.error(errorMessage, e);
-            throw new WatchTaskException(errorMessage);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void unwatch(final String boardName, final Long taskId, final String requestedBy) {
-        LOGGER.info("Trying to unwatch the task [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
-        taskDAO.unwatchTask(boardName, taskId, requestedBy);
-        LOGGER.info("Unwatch the task was successful [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
     }
 
     @Override
