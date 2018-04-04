@@ -11,5 +11,11 @@
 
     <artifactId>email-service</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.hyrax.microservice.email</groupId>
+            <artifactId>email-data</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

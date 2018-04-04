@@ -18,5 +18,19 @@
         <module>rest-api</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.hyrax.microservice.email</groupId>
+                <artifactId>email-data</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hyrax.microservice.email</groupId>
+                <artifactId>email-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
