@@ -17,3 +17,12 @@ if [ $? -ne 0 ]; then
 fi
 
 cd ../../scripts
+
+cd ../project-microservice/scripts
+sh build_project_microservice_and_run_rest_api_test.sh
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+cd ../../scripts

@@ -23,8 +23,7 @@ public class TeamOperationChecker {
     public boolean isTeamMemberRemovalOperationAllowed(final String teamName, final String username, final String requestedBy) {
         final Optional<String> ownerUsername = teamDAO.findByTeamName(teamName).map(team -> team.getOwnerUsername());
 
-        return ownerUsername.isPresent() &&
-                (canRemoveYourself(username, requestedBy, ownerUsername.get()) || canRemoveOtherMembers(username, requestedBy, ownerUsername.get()));
+        return ownerUsername.isPresent() && (canRemoveYourself(username, requestedBy, ownerUsername.get()) || canRemoveOtherMembers(username, requestedBy, ownerUsername.get()));
     }
 
     private boolean canRemoveYourself(final String username, final String requestedBy, final String teamOwnerUsername) {

@@ -2,7 +2,7 @@ package com.hyrax.microservice.project.rest.api.controller;
 
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
-import com.hyrax.microservice.project.service.api.TaskService;
+import com.hyrax.microservice.project.service.api.WatchTaskService;
 import com.hyrax.microservice.project.service.exception.task.WatchTaskException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +25,7 @@ public class WatchTaskRESTController {
 
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
-    private final TaskService taskService;
+    private final WatchTaskService watchTaskService;
 
     @PutMapping(path = "/board/{boardName}/task/{taskId}/watch")
     @ApiOperation(httpMethod = "PUT", value = "Resource to watch the given task")
@@ -34,7 +34,7 @@ public class WatchTaskRESTController {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received watch task request [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
 
-        taskService.watchTask(boardName, taskId, requestedBy);
+        watchTaskService.watchTask(boardName, taskId, requestedBy);
 
         return ResponseEntity.noContent().build();
     }
@@ -46,7 +46,7 @@ public class WatchTaskRESTController {
         final String requestedBy = authenticationUserDetailsHelper.getUsername();
         LOGGER.info("Received unwatch task request [boardName={} taskId={} requestedBy={}]", boardName, taskId, requestedBy);
 
-        taskService.unwatch(boardName, taskId, requestedBy);
+        watchTaskService.unwatch(boardName, taskId, requestedBy);
 
         return ResponseEntity.noContent().build();
     }
