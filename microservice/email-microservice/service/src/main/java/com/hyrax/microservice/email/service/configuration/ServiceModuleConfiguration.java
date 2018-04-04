@@ -1,6 +1,8 @@
 package com.hyrax.microservice.email.service.configuration;
 
 import com.hyrax.microservice.email.data.configuration.DataModuleConfiguration;
+import org.modelmapper.ModelMapper;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -9,4 +11,9 @@ import org.springframework.context.annotation.Import;
 @ComponentScan(basePackages = "com.hyrax.microservice.email.service")
 @Import(DataModuleConfiguration.class)
 public class ServiceModuleConfiguration {
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 }

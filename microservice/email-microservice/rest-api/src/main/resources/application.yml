@@ -5,7 +5,7 @@ server:
 swagger:
   api:
     basePackage: com.hyrax.microservice.email.rest.api.controller
-    authRequired: false
+    authRequired: true
 
 spring:
   freemarker:
