@@ -1,7 +1,7 @@
 package com.hyrax.microservice.email.rest.api.controller;
 
-import com.hyrax.microservice.email.rest.api.domain.request.TeamEventSubscriptionRequest;
-import com.hyrax.microservice.email.rest.api.domain.response.TeamEventSubscriptionResponse;
+import com.hyrax.client.email.api.request.TeamEventSubscriptionRequest;
+import com.hyrax.client.email.api.response.TeamEventSubscriptionResponse;
 import com.hyrax.microservice.email.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.email.service.api.TeamEventSubscriptionService;
 import com.hyrax.microservice.email.service.api.model.TeamEventSubscription;
@@ -9,6 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "Operations about team event subscriptions")
 @AllArgsConstructor
 public class TeamEventSubscriptionRESTController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeamEventSubscriptionRESTController.class);
 
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
@@ -41,6 +45,7 @@ public class TeamEventSubscriptionRESTController {
     @PutMapping
     @ApiOperation(httpMethod = "PUT", value = "Resource to modify the team event subscription settings for the given user")
     public ResponseEntity<Void> saveOrUpdateTeamEventSubscriptionSettings(@RequestBody final TeamEventSubscriptionRequest teamEventSubscriptionRequest) {
+        LOGGER.info("Received team event subscription settings to update : {}", teamEventSubscriptionRequest);
         teamEventSubscriptionService.saveOrUpdate(modelMapper.map(teamEventSubscriptionRequest, TeamEventSubscription.class));
         return ResponseEntity.noContent().build();
     }

@@ -1,6 +1,6 @@
 package com.hyrax.microservice.email.rest.api.converter;
 
-import com.hyrax.microservice.email.rest.api.domain.response.TeamEventSubscriptionResponse;
+import com.hyrax.client.email.api.response.TeamEventSubscriptionResponse;
 import com.hyrax.microservice.email.service.api.model.TeamEventSubscription;
 import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;

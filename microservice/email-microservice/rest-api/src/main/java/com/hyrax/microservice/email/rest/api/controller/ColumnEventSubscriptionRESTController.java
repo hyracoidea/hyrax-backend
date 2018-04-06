@@ -1,7 +1,7 @@
 package com.hyrax.microservice.email.rest.api.controller;
 
-import com.hyrax.microservice.email.rest.api.domain.request.ColumnEventSubscriptionRequest;
-import com.hyrax.microservice.email.rest.api.domain.response.ColumnEventSubscriptionResponse;
+import com.hyrax.client.email.api.request.ColumnEventSubscriptionRequest;
+import com.hyrax.client.email.api.response.ColumnEventSubscriptionResponse;
 import com.hyrax.microservice.email.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.email.service.api.ColumnEventSubscriptionService;
 import com.hyrax.microservice.email.service.api.model.ColumnEventSubscription;
@@ -9,6 +9,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(description = "Operations about column event subscriptions")
 @AllArgsConstructor
 public class ColumnEventSubscriptionRESTController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ColumnEventSubscriptionRESTController.class);
 
     private final AuthenticationUserDetailsHelper authenticationUserDetailsHelper;
 
@@ -41,6 +45,7 @@ public class ColumnEventSubscriptionRESTController {
     @PutMapping
     @ApiOperation(httpMethod = "PUT", value = "Resource to modify the column event subscription settings for the given user")
     public ResponseEntity<Void> saveOrUpdateColumnEventSubscriptionSettings(@RequestBody final ColumnEventSubscriptionRequest columnEventSubscriptionRequest) {
+        LOGGER.info("Received column event subscription settings to update : {}", columnEventSubscriptionRequest);
         columnEventSubscriptionService.saveOrUpdate(modelMapper.map(columnEventSubscriptionRequest, ColumnEventSubscription.class));
         return ResponseEntity.noContent().build();
     }

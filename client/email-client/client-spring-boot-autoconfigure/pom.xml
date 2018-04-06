@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>email-client</artifactId>
+        <groupId>com.hyrax.client.email</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>email-client-spring-boot-autoconfigure</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.hyrax.client.email</groupId>
+            <artifactId>email-client-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hyrax.client.email</groupId>
+            <artifactId>email-client-api-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -12,6 +12,7 @@
         <module>sample-client</module>
         <module>common-client</module>
         <module>account-client</module>
+        <module>email-client</module>
     </modules>
 
     <properties>
@@ -67,6 +68,11 @@
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${com.fasterxml.jackson.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.glassfish.jersey.core</groupId>
@@ -81,6 +87,10 @@
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
                         <artifactId>jackson-annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-databind</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

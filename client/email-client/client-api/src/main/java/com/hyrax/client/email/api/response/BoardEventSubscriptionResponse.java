@@ -1,11 +1,11 @@
-package com.hyrax.microservice.email.rest.api.domain.request;
+package com.hyrax.client.email.api.response;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class BoardEventSubscriptionRequest {
+public class BoardEventSubscriptionResponse {
 
     private final String username;
 

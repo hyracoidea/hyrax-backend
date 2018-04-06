@@ -10,9 +10,13 @@ import java.util.Map;
 public class EmailRequest {
 
     private final String from;
+
     private final String to;
+
     private final String subject;
+
     private final String templateName;
+    
     private final Map<String, String> model;
 
 }
