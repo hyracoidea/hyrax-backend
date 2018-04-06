@@ -48,6 +48,11 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.hyrax.client.email</groupId>
+            <artifactId>email-client-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

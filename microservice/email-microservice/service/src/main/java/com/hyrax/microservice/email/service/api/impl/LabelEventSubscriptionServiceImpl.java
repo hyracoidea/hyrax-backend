@@ -22,7 +22,7 @@ public class LabelEventSubscriptionServiceImpl implements LabelEventSubscription
     }
 
     @Override
-    public void saveOrUpdate(LabelEventSubscription labelEventSubscription) {
+    public void saveOrUpdate(final LabelEventSubscription labelEventSubscription) {
         labelEventSubscriptionRepository.save(modelMapper.map(labelEventSubscription, LabelEventSubscriptionEntity.class));
     }
 }

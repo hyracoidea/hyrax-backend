@@ -8,7 +8,10 @@ import lombok.Data;
 public class EmailDetails {
 
     private final String from;
+
     private final String to;
+
     private final String subject;
+
     private final String contentAsHtml;
 }
