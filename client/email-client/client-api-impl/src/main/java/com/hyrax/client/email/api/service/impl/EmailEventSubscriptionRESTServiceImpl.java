@@ -12,7 +12,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public abstract class EmailEventSubscriptionRESTServiceImpl<T extends BaseEventSubscriptionRequest> implements EmailEventSubscriptionRESTService<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TeamEmailEventSubscriptionRESTServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailEventSubscriptionRESTServiceImpl.class);
 
     private static final String ERROR_MESSAGE_REST_CALL = "Unexpected exception happened under the REST call";
 

@@ -48,13 +48,16 @@ public class AccountServiceImplTest {
     private AccountMapper accountMapper;
 
     @Mock
+    private EmailEventSubscriptionHelper emailEventSubscriptionHelper;
+
+    @Mock
     private ModelMapper modelMapper;
 
     private AccountService accountService;
 
     @Before
     public void init() {
-        accountService = new AccountServiceImpl(accountMapper, modelMapper);
+        accountService = new AccountServiceImpl(accountMapper, emailEventSubscriptionHelper, modelMapper);
     }
 
     @Test
