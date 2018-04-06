@@ -6,10 +6,10 @@ import com.hyrax.microservice.account.data.mapper.AccountMapper;
 import com.hyrax.microservice.account.service.api.AccountService;
 import com.hyrax.microservice.account.service.domain.Account;
 import com.hyrax.microservice.account.service.exception.AccountAlreadyExistsException;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountServiceImpl.class);
@@ -28,13 +29,9 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountMapper accountMapper;
 
-    private final ModelMapper modelMapper;
+    private final EmailEventSubscriptionHelper emailEventSubscriptionHelper;
 
-    @Autowired
-    public AccountServiceImpl(final AccountMapper accountMapper, final ModelMapper modelMapper) {
-        this.accountMapper = accountMapper;
-        this.modelMapper = modelMapper;
-    }
+    private final ModelMapper modelMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -89,6 +86,7 @@ public class AccountServiceImpl implements AccountService {
                 LOGGER.info("Account={} seems to be valid, trying to save...", account);
                 final AccountEntity accountEntity = modelMapper.map(account, AccountEntity.class);
                 accountMapper.insert(accountEntity);
+                emailEventSubscriptionHelper.createDefaultEmailEventSubscriptionsBy(account.getUsername());
                 LOGGER.info("Account={} saving was successful", account);
             } else {
                 throwAccountAlreadyExistsException(account.getUsername(), account.getEmail());

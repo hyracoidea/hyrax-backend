@@ -33,15 +33,15 @@ public class AuthenticationModuleConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public Client client() {
+    @ConditionalOnMissingBean(name = "securedAccountJerseyClient")
+    public Client securedAccountJerseyClient() {
         return ClientBuilder.newClient();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public SecuredAccountRESTClient securedAccountRESTClient(final Client client, final AuthenticationProperties authenticationProperties, final AuthenticationAdminProperties authenticationAdminProperties) {
-        return new SecuredAccountRESTClientImpl(client, authenticationProperties, authenticationAdminProperties);
+    public SecuredAccountRESTClient securedAccountRESTClient(final Client securedAccountJerseyClient, final AuthenticationProperties authenticationProperties, final AuthenticationAdminProperties authenticationAdminProperties) {
+        return new SecuredAccountRESTClientImpl(securedAccountJerseyClient, authenticationProperties, authenticationAdminProperties);
     }
 
     @Bean

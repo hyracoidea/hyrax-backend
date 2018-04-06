@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import(DataModuleConfiguration.class)
+@Import({DataModuleConfiguration.class, SpringAsyncConfig.class})
 @ComponentScan(basePackages = "com.hyrax.microservice.account.service.api.impl")
 public class ServiceModuleConfiguration {
 
