@@ -15,6 +15,12 @@
         where name=#{name}
     </select>
 
+    <select id="selectAllTeamByUsername" parameterType="java.lang.String" resultType="com.hyrax.microservice.project.data.entity.TeamEntity" resultMap="teamEntityResultMap">
+        select distinct t.team_id, t.name, t.description, t.owner_username
+        from team t left join team_member tm
+        on t.name = tm.team_name and (owner_username = #{username} or username = #{username})
+    </select>
+
     <insert id="insert" useGeneratedKeys="true" keyProperty="teamId">
         insert into team (name, description, owner_username)
         values (#{name}, #{description}, #{ownerUsername})

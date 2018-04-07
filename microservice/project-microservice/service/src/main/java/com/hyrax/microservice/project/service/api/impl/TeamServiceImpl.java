@@ -15,8 +15,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -39,6 +41,15 @@ public class TeamServiceImpl implements TeamService {
             team = modelMapper.map(teamEntity.get(), Team.class);
         }
         return Optional.ofNullable(team);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Team> findAllByUsername(final String username) {
+        return teamDAO.findAllByUsername(username)
+                .stream()
+                .map(teamEntity -> modelMapper.map(teamEntity, Team.class))
+                .collect(Collectors.toList());
     }
 
     @Override

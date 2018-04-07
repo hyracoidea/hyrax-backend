@@ -24,6 +24,11 @@ public class TeamDAOImpl implements TeamDAO {
     }
 
     @Override
+    public List<TeamEntity> findAllByUsername(final String username) {
+        return teamMapper.selectAllTeamByUsername(username);
+    }
+
+    @Override
     public List<String> findAllTeamMemberNameByTeamName(final String teamName) {
         return teamMemberMapper.selectAllUsernameByTeamName(teamName);
     }
