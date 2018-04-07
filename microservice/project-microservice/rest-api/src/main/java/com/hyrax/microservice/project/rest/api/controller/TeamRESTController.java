@@ -3,6 +3,8 @@ package com.hyrax.microservice.project.rest.api.controller;
 import com.hyrax.microservice.project.rest.api.domain.request.TeamCreationRequest;
 import com.hyrax.microservice.project.rest.api.domain.response.ErrorResponse;
 import com.hyrax.microservice.project.rest.api.domain.response.RequestValidationResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.TeamResponse;
+import com.hyrax.microservice.project.rest.api.domain.response.wrapper.TeamResponseWrapper;
 import com.hyrax.microservice.project.rest.api.exception.RequestValidationException;
 import com.hyrax.microservice.project.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.project.rest.api.validation.bindingresult.BindingResultProcessor;
@@ -22,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @Api(description = "Operations about teams")
 @RestController
@@ -52,6 +56,21 @@ public class TeamRESTController {
         this.conversionService = conversionService;
         this.bindingResultProcessor = bindingResultProcessor;
         this.authenticationUserDetailsHelper = authenticationUserDetailsHelper;
+    }
+
+    @GetMapping
+    @ApiOperation(httpMethod = "GET", value = "Resource to list all the teams by the user")
+    public ResponseEntity<TeamResponseWrapper> retrieveAll() {
+        final String requestedBy = authenticationUserDetailsHelper.getUsername();
+
+        return ResponseEntity.ok()
+                .body(TeamResponseWrapper.builder()
+                        .teamResponses(teamService.findAllByUsername(requestedBy)
+                                .stream()
+                                .map(team -> conversionService.convert(team, TeamResponse.class))
+                                .collect(Collectors.toList())
+                        )
+                        .build());
     }
 
     @PostMapping

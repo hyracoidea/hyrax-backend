@@ -9,6 +9,8 @@ public interface TeamDAO {
 
     Optional<TeamEntity> findByTeamName(String teamName);
 
+    List<TeamEntity> findAllByUsername(String username);
+
     List<String> findAllTeamMemberNameByTeamName(String teamName);
 
     void save(TeamEntity teamEntity);
