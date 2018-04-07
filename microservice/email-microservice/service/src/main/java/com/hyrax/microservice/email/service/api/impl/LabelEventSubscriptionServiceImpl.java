@@ -1,28 +1,15 @@
 package com.hyrax.microservice.email.service.api.impl;
 
 import com.hyrax.microservice.email.data.entity.LabelEventSubscriptionEntity;
-import com.hyrax.microservice.email.data.repository.LabelEventSubscriptionRepository;
+import com.hyrax.microservice.email.data.repository.EventSubscriptionRepository;
 import com.hyrax.microservice.email.service.api.LabelEventSubscriptionService;
 import com.hyrax.microservice.email.service.api.model.LabelEventSubscription;
-import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
 
-@Service
-@AllArgsConstructor
-public class LabelEventSubscriptionServiceImpl implements LabelEventSubscriptionService {
+public class LabelEventSubscriptionServiceImpl extends EventSubscriptionServiceImpl<LabelEventSubscription, LabelEventSubscriptionEntity> implements LabelEventSubscriptionService {
 
-    private final LabelEventSubscriptionRepository labelEventSubscriptionRepository;
-
-    private final ModelMapper modelMapper;
-
-    @Override
-    public LabelEventSubscription findByUsername(final String username) {
-        return modelMapper.map(labelEventSubscriptionRepository.findByUsername(username), LabelEventSubscription.class);
-    }
-
-    @Override
-    public void saveOrUpdate(final LabelEventSubscription labelEventSubscription) {
-        labelEventSubscriptionRepository.save(modelMapper.map(labelEventSubscription, LabelEventSubscriptionEntity.class));
+    public LabelEventSubscriptionServiceImpl(final EventSubscriptionRepository<LabelEventSubscriptionEntity> eventSubscriptionRepository, final ModelMapper modelMapper,
+                                             final Class<LabelEventSubscription> eventSubscriptionType, final Class<LabelEventSubscriptionEntity> eventSubscriptionEntityType) {
+        super(eventSubscriptionRepository, modelMapper, eventSubscriptionType, eventSubscriptionEntityType);
     }
 }
