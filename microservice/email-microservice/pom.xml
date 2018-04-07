@@ -16,6 +16,7 @@
         <module>data</module>
         <module>service</module>
         <module>rest-api</module>
+        <module>rest-api-test</module>
     </modules>
 
     <dependencyManagement>

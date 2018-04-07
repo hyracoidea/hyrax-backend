@@ -16,8 +16,10 @@ sh run_rest_api_test.sh
 
 if [ $? -ne 0 ]; then
     sh shutdown_account_microservice.sh
+    sh shutdown_hyrax_mysql.sh
     exit 1
 else
     sh shutdown_account_microservice.sh
+    sh shutdown_hyrax_mysql.sh
     exit 0
 fi

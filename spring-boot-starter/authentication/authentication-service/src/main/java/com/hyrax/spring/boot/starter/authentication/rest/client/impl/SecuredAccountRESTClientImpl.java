@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 public class SecuredAccountRESTClientImpl implements SecuredAccountRESTClient {
 
     private static final String PATH_VARIABLE_USERNAME = "username";
-    private static final String ACCOUNT_SERVICE_URL = "http://localhost:8080/hyrax/api";
+    private static final String ACCOUNT_SERVICE_URL = "http://account_microservice:8081/hyrax/api";
     private static final String SECURED_ACCOUNT_ENDPOINT_PATH = "/admin/account/{username}";
 
     private final Client client;

@@ -25,4 +25,13 @@ fi
 
 cd ../../scripts
 
+cd ../email-microservice/scripts
+sh build_email_microservice.sh
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+cd ../../scripts
+
 exit 0

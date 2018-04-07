@@ -19,7 +19,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - 8081:8080
+      - 8082:8082
     environment:
       - DATABASE_HOST=${MYSQL_HOST}
       - DATABASE_USER=${MYSQL_USER}

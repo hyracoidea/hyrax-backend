@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8083
   context-path: /hyrax/api
 
 swagger:
@@ -8,6 +8,12 @@ swagger:
     authRequired: true
 
 spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
+  output:
+    ansi:
+      enabled: DETECT
   freemarker:
     template-loader-path: classpath:/templates
     suffix: .ftl
@@ -25,3 +31,11 @@ spring:
             enable: true
     protocol: smtp
     test-connection: false
+
+logging:
+  file: logs/email-microservice.log
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    org.springframework.web: ERROR

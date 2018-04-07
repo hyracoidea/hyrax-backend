@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 callTheHealthCheckEndpoint() {
-    actualHealthCheckEndpointResponse=$(curl http://localhost:8080/hyrax/api/health -s)
+    actualHealthCheckEndpointResponse=$(curl http://localhost:8081/hyrax/api/health -s)
 }
 
 expectedHealthCheckEndpointResponse="{\"status\":\"UP\"}"
