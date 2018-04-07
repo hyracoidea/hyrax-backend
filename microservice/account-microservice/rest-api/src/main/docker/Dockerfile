@@ -8,7 +8,7 @@ ADD start.sh start.sh
 RUN chmod +x wait-for-it.sh
 RUN chmod +x start.sh
 
-EXPOSE 8080
+EXPOSE 8081
 
 RUN sh -c 'touch /app.jar'
 CMD ["sh", "start.sh"]

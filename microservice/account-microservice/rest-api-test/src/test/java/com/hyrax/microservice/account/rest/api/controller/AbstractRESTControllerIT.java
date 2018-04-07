@@ -18,7 +18,7 @@ public abstract class AbstractRESTControllerIT {
     private static final String DB_CONNECTION_PWD = "hyrax_password";
 
     private static final String REST_ASSURED_BASE_URI = "http://localhost";
-    private static final int REST_ASSURED_PORT = 8080;
+    private static final int REST_ASSURED_PORT = 8081;
     private static final String REST_ASSURED_BASE_PATH = "/hyrax/api";
 
     protected static Connection connection;

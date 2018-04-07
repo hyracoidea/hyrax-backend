@@ -1,0 +1,9 @@
+version: "2.0"
+
+services:
+
+  email_microservice:
+    image: hyracoidea/email_microservice
+    container_name: email_microservice
+    ports:
+      - 8083:8083
