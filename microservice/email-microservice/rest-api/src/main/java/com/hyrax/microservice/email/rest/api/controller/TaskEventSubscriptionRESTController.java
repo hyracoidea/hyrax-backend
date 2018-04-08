@@ -6,6 +6,7 @@ import com.hyrax.microservice.email.rest.api.exception.ResourceNotFoundException
 import com.hyrax.microservice.email.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.email.service.api.TaskEventSubscriptionService;
 import com.hyrax.microservice.email.service.api.model.TaskEventSubscription;
+import com.hyrax.microservice.email.service.exception.UpdateOperationNotAllowedException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,11 @@ public class TaskEventSubscriptionRESTController extends AbstractRESTController 
     @ApiOperation(httpMethod = "PUT", value = "Resource to modify the task event subscription settings for the given user")
     public ResponseEntity<Void> saveOrUpdateTaskEventSubscriptionSettings(@RequestBody final TaskEventSubscriptionRequest taskEventSubscriptionRequest) {
         logger.info("Received task event subscription settings to update : {}", taskEventSubscriptionRequest);
-        taskEventSubscriptionService.saveOrUpdate(modelMapper.map(taskEventSubscriptionRequest, TaskEventSubscription.class));
+        if (authenticationUserDetailsHelper.getUsername().equals(taskEventSubscriptionRequest.getUsername())) {
+            taskEventSubscriptionService.saveOrUpdate(modelMapper.map(taskEventSubscriptionRequest, TaskEventSubscription.class));
+        } else {
+            throw new UpdateOperationNotAllowedException(authenticationUserDetailsHelper.getUsername());
+        }
         return ResponseEntity.noContent().build();
     }
 

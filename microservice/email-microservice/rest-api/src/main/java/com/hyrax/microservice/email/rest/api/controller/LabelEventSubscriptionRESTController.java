@@ -6,6 +6,7 @@ import com.hyrax.microservice.email.rest.api.exception.ResourceNotFoundException
 import com.hyrax.microservice.email.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.email.service.api.LabelEventSubscriptionService;
 import com.hyrax.microservice.email.service.api.model.LabelEventSubscription;
+import com.hyrax.microservice.email.service.exception.UpdateOperationNotAllowedException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -47,7 +48,11 @@ public class LabelEventSubscriptionRESTController extends AbstractRESTController
     @ApiOperation(httpMethod = "PUT", value = "Resource to modify the label event subscription settings for the given user")
     public ResponseEntity<Void> saveOrUpdateLabelEventSubscriptionSettings(@RequestBody final LabelEventSubscriptionRequest labelEventSubscriptionRequest) {
         logger.info("Received label event subscription settings to update : {}", labelEventSubscriptionRequest);
-        labelEventSubscriptionService.saveOrUpdate(modelMapper.map(labelEventSubscriptionRequest, LabelEventSubscription.class));
+        if (authenticationUserDetailsHelper.getUsername().equals(labelEventSubscriptionRequest.getUsername())) {
+            labelEventSubscriptionService.saveOrUpdate(modelMapper.map(labelEventSubscriptionRequest, LabelEventSubscription.class));
+        } else {
+            throw new UpdateOperationNotAllowedException(authenticationUserDetailsHelper.getUsername());
+        }
         return ResponseEntity.noContent().build();
     }
 
