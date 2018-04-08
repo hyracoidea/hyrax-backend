@@ -1,11 +1,9 @@
 package com.hyrax.microservice.email.service.api;
 
-import com.hyrax.microservice.email.service.api.model.EmailDetails;
-
-import javax.mail.MessagingException;
+import com.hyrax.microservice.email.service.api.model.EmailDetail;
 
 public interface EmailService {
 
-    void sendEmail(EmailDetails emailDetails) throws MessagingException;
+    void sendEmail(EmailDetail emailDetail);
 
 }
