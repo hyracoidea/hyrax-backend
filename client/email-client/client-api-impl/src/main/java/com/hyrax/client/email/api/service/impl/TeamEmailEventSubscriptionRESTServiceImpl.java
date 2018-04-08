@@ -1,21 +1,21 @@
 package com.hyrax.client.email.api.service.impl;
 
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTEndpointProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTEndpointProperties;
 import com.hyrax.client.email.api.request.TeamEventSubscriptionRequest;
 import com.hyrax.client.email.api.service.TeamEmailEventSubscriptionRESTService;
 
 public class TeamEmailEventSubscriptionRESTServiceImpl extends EmailEventSubscriptionRESTServiceImpl<TeamEventSubscriptionRequest> implements TeamEmailEventSubscriptionRESTService {
 
-    private final EmailEventSubscriptionRESTEndpointProperties emailEventSubscriptionRESTEndpointProperties;
+    private final EmailEventRESTEndpointProperties emailEventRESTEndpointProperties;
 
     public TeamEmailEventSubscriptionRESTServiceImpl(final EmailEventSubscriptionRESTClient<TeamEventSubscriptionRequest> emailEventSubscriptionRESTClient,
-                                                     final EmailEventSubscriptionRESTEndpointProperties emailEventSubscriptionRESTEndpointProperties) {
+                                                     final EmailEventRESTEndpointProperties emailEventRESTEndpointProperties) {
         super(emailEventSubscriptionRESTClient);
-        this.emailEventSubscriptionRESTEndpointProperties = emailEventSubscriptionRESTEndpointProperties;
+        this.emailEventRESTEndpointProperties = emailEventRESTEndpointProperties;
     }
 
     @Override
     protected String getPath() {
-        return emailEventSubscriptionRESTEndpointProperties.getPathToTeam();
+        return emailEventRESTEndpointProperties.getPathToTeam();
     }
 }

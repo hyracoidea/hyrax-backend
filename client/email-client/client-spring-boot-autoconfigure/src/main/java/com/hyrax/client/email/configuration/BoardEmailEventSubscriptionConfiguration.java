@@ -1,7 +1,7 @@
 package com.hyrax.client.email.configuration;
 
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTClientProperties;
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTEndpointProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTClientProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTEndpointProperties;
 import com.hyrax.client.email.api.request.BoardEventSubscriptionRequest;
 import com.hyrax.client.email.api.service.BoardEmailEventSubscriptionRESTService;
 import com.hyrax.client.email.api.service.impl.BoardEmailEventSubscriptionRESTServiceImpl;
@@ -18,10 +18,10 @@ import javax.ws.rs.client.ClientBuilder;
 public class BoardEmailEventSubscriptionConfiguration {
 
     @Autowired
-    private EmailEventSubscriptionRESTClientProperties emailEventSubscriptionRESTClientProperties;
+    private EmailEventRESTClientProperties emailEventRESTClientProperties;
 
     @Autowired
-    private EmailEventSubscriptionRESTEndpointProperties emailEventSubscriptionRESTEndpointProperties;
+    private EmailEventRESTEndpointProperties emailEventRESTEndpointProperties;
 
     @Bean
     @ConditionalOnMissingBean(name = "boardEmailEventSubscriptionJerseyClient")
@@ -32,12 +32,12 @@ public class BoardEmailEventSubscriptionConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "boardEmailEventSubscriptionRESTClient")
     public EmailEventSubscriptionRESTClient<BoardEventSubscriptionRequest> boardEmailEventSubscriptionRESTClient(final Client boardEmailEventSubscriptionJerseyClient) {
-        return new EmailEventSubscriptionRESTClient<>(boardEmailEventSubscriptionJerseyClient, emailEventSubscriptionRESTClientProperties);
+        return new EmailEventSubscriptionRESTClient<>(boardEmailEventSubscriptionJerseyClient, emailEventRESTClientProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public BoardEmailEventSubscriptionRESTService boardEmailEventSubscriptionRESTService(final EmailEventSubscriptionRESTClient<BoardEventSubscriptionRequest> boardEmailEventSubscriptionRESTClient) {
-        return new BoardEmailEventSubscriptionRESTServiceImpl(boardEmailEventSubscriptionRESTClient, emailEventSubscriptionRESTEndpointProperties);
+        return new BoardEmailEventSubscriptionRESTServiceImpl(boardEmailEventSubscriptionRESTClient, emailEventRESTEndpointProperties);
     }
 }

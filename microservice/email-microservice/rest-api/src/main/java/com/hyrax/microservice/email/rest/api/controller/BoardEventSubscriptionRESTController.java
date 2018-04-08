@@ -6,7 +6,6 @@ import com.hyrax.microservice.email.rest.api.exception.ResourceNotFoundException
 import com.hyrax.microservice.email.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.email.service.api.BoardEventSubscriptionService;
 import com.hyrax.microservice.email.service.api.model.BoardEventSubscription;
-import com.hyrax.microservice.email.service.exception.UpdateOperationNotAllowedException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -48,11 +47,7 @@ public class BoardEventSubscriptionRESTController extends AbstractRESTController
     @ApiOperation(httpMethod = "PUT", value = "Resource to modify the board event subscription settings for the given user")
     public ResponseEntity<Void> saveOrUpdateBoardEventSubscriptionSettings(@RequestBody final BoardEventSubscriptionRequest boardEventSubscriptionRequest) {
         logger.info("Received board event subscription settings to update : {}", boardEventSubscriptionRequest);
-        if (authenticationUserDetailsHelper.getUsername().equals(boardEventSubscriptionRequest.getUsername())) {
-            boardEventSubscriptionService.saveOrUpdate(modelMapper.map(boardEventSubscriptionRequest, BoardEventSubscription.class));
-        } else {
-            throw new UpdateOperationNotAllowedException(authenticationUserDetailsHelper.getUsername());
-        }
+        boardEventSubscriptionService.saveOrUpdate(modelMapper.map(boardEventSubscriptionRequest, BoardEventSubscription.class));
         return ResponseEntity.noContent().build();
     }
 

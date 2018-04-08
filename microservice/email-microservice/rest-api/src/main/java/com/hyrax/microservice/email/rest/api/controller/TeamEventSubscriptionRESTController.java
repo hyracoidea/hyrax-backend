@@ -6,7 +6,6 @@ import com.hyrax.microservice.email.rest.api.exception.ResourceNotFoundException
 import com.hyrax.microservice.email.rest.api.security.AuthenticationUserDetailsHelper;
 import com.hyrax.microservice.email.service.api.TeamEventSubscriptionService;
 import com.hyrax.microservice.email.service.api.model.TeamEventSubscription;
-import com.hyrax.microservice.email.service.exception.UpdateOperationNotAllowedException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -48,11 +47,7 @@ public class TeamEventSubscriptionRESTController extends AbstractRESTController 
     @ApiOperation(httpMethod = "PUT", value = "Resource to modify the team event subscription settings for the given user")
     public ResponseEntity<Void> saveOrUpdateTeamEventSubscriptionSettings(@RequestBody final TeamEventSubscriptionRequest teamEventSubscriptionRequest) {
         logger.info("Received team event subscription settings to update : {}", teamEventSubscriptionRequest);
-        if (authenticationUserDetailsHelper.getUsername().equals(teamEventSubscriptionRequest.getUsername())) {
-            teamEventSubscriptionService.saveOrUpdate(modelMapper.map(teamEventSubscriptionRequest, TeamEventSubscription.class));
-        } else {
-            throw new UpdateOperationNotAllowedException(authenticationUserDetailsHelper.getUsername());
-        }
+        teamEventSubscriptionService.saveOrUpdate(modelMapper.map(teamEventSubscriptionRequest, TeamEventSubscription.class));
         return ResponseEntity.noContent().build();
     }
 

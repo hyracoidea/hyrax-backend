@@ -1,7 +1,7 @@
 package com.hyrax.client.email.configuration;
 
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTClientProperties;
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTEndpointProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTClientProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTEndpointProperties;
 import com.hyrax.client.email.api.request.LabelEventSubscriptionRequest;
 import com.hyrax.client.email.api.service.LabelEmailEventSubscriptionRESTService;
 import com.hyrax.client.email.api.service.impl.EmailEventSubscriptionRESTClient;
@@ -18,10 +18,10 @@ import javax.ws.rs.client.ClientBuilder;
 public class LabelEmailEventSubscriptionConfiguration {
 
     @Autowired
-    private EmailEventSubscriptionRESTClientProperties emailEventSubscriptionRESTClientProperties;
+    private EmailEventRESTClientProperties emailEventRESTClientProperties;
 
     @Autowired
-    private EmailEventSubscriptionRESTEndpointProperties emailEventSubscriptionRESTEndpointProperties;
+    private EmailEventRESTEndpointProperties emailEventRESTEndpointProperties;
 
     @Bean
     @ConditionalOnMissingBean(name = "labelEmailEventSubscriptionJerseyClient")
@@ -32,12 +32,12 @@ public class LabelEmailEventSubscriptionConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "labelEmailEventSubscriptionRESTClient")
     public EmailEventSubscriptionRESTClient<LabelEventSubscriptionRequest> labelEmailEventSubscriptionRESTClient(final Client labelEmailEventSubscriptionJerseyClient) {
-        return new EmailEventSubscriptionRESTClient<>(labelEmailEventSubscriptionJerseyClient, emailEventSubscriptionRESTClientProperties);
+        return new EmailEventSubscriptionRESTClient<>(labelEmailEventSubscriptionJerseyClient, emailEventRESTClientProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public LabelEmailEventSubscriptionRESTService labelEmailEventSubscriptionRESTService(final EmailEventSubscriptionRESTClient<LabelEventSubscriptionRequest> labelEmailEventSubscriptionRESTClient) {
-        return new LabelEmailEventSubscriptionRESTServiceImpl(labelEmailEventSubscriptionRESTClient, emailEventSubscriptionRESTEndpointProperties);
+        return new LabelEmailEventSubscriptionRESTServiceImpl(labelEmailEventSubscriptionRESTClient, emailEventRESTEndpointProperties);
     }
 }
