@@ -1,7 +1,7 @@
 package com.hyrax.client.email.configuration;
 
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTClientProperties;
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTEndpointProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTClientProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTEndpointProperties;
 import com.hyrax.client.email.api.request.ColumnEventSubscriptionRequest;
 import com.hyrax.client.email.api.service.ColumnEmailEventSubscriptionRESTService;
 import com.hyrax.client.email.api.service.impl.ColumnEmailEventSubscriptionRESTServiceImpl;
@@ -18,10 +18,10 @@ import javax.ws.rs.client.ClientBuilder;
 public class ColumnEmailEventSubscriptionConfiguration {
 
     @Autowired
-    private EmailEventSubscriptionRESTClientProperties emailEventSubscriptionRESTClientProperties;
+    private EmailEventRESTClientProperties emailEventRESTClientProperties;
 
     @Autowired
-    private EmailEventSubscriptionRESTEndpointProperties emailEventSubscriptionRESTEndpointProperties;
+    private EmailEventRESTEndpointProperties emailEventRESTEndpointProperties;
 
     @Bean
     @ConditionalOnMissingBean(name = "columnEmailEventSubscriptionJerseyClient")
@@ -32,12 +32,12 @@ public class ColumnEmailEventSubscriptionConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "columnEmailEventSubscriptionRESTClient")
     public EmailEventSubscriptionRESTClient<ColumnEventSubscriptionRequest> columnEmailEventSubscriptionRESTClient(final Client columnEmailEventSubscriptionJerseyClient) {
-        return new EmailEventSubscriptionRESTClient<>(columnEmailEventSubscriptionJerseyClient, emailEventSubscriptionRESTClientProperties);
+        return new EmailEventSubscriptionRESTClient<>(columnEmailEventSubscriptionJerseyClient, emailEventRESTClientProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public ColumnEmailEventSubscriptionRESTService columnEmailEventSubscriptionRESTService(final EmailEventSubscriptionRESTClient<ColumnEventSubscriptionRequest> columnEmailEventSubscriptionRESTClient) {
-        return new ColumnEmailEventSubscriptionRESTServiceImpl(columnEmailEventSubscriptionRESTClient, emailEventSubscriptionRESTEndpointProperties);
+        return new ColumnEmailEventSubscriptionRESTServiceImpl(columnEmailEventSubscriptionRESTClient, emailEventRESTEndpointProperties);
     }
 }

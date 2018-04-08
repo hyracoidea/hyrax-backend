@@ -87,6 +87,7 @@ public class AccountServiceImpl implements AccountService {
                 final AccountEntity accountEntity = modelMapper.map(account, AccountEntity.class);
                 accountMapper.insert(accountEntity);
                 emailEventSubscriptionHelper.createDefaultEmailEventSubscriptionsBy(account.getUsername());
+                emailEventSubscriptionHelper.sendRegistrationSuccessfulEmail(account.getUsername());
                 LOGGER.info("Account={} saving was successful", account);
             } else {
                 throwAccountAlreadyExistsException(account.getUsername(), account.getEmail());

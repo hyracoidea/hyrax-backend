@@ -1,7 +1,7 @@
 package com.hyrax.client.email.configuration;
 
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTClientProperties;
-import com.hyrax.client.email.api.properties.EmailEventSubscriptionRESTEndpointProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTClientProperties;
+import com.hyrax.client.email.api.properties.EmailEventRESTEndpointProperties;
 import com.hyrax.client.email.api.request.TeamEventSubscriptionRequest;
 import com.hyrax.client.email.api.service.TeamEmailEventSubscriptionRESTService;
 import com.hyrax.client.email.api.service.impl.EmailEventSubscriptionRESTClient;
@@ -18,10 +18,10 @@ import javax.ws.rs.client.ClientBuilder;
 public class TeamEmailEventSubscriptionConfiguration {
 
     @Autowired
-    private EmailEventSubscriptionRESTClientProperties emailEventSubscriptionRESTClientProperties;
+    private EmailEventRESTClientProperties emailEventRESTClientProperties;
 
     @Autowired
-    private EmailEventSubscriptionRESTEndpointProperties emailEventSubscriptionRESTEndpointProperties;
+    private EmailEventRESTEndpointProperties emailEventRESTEndpointProperties;
 
     @Bean
     @ConditionalOnMissingBean(name = "teamEmailEventSubscriptionJerseyClient")
@@ -32,12 +32,12 @@ public class TeamEmailEventSubscriptionConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "teamEmailEventSubscriptionRESTClient")
     public EmailEventSubscriptionRESTClient<TeamEventSubscriptionRequest> teamEmailEventSubscriptionRESTClient(final Client teamEmailEventSubscriptionJerseyClient) {
-        return new EmailEventSubscriptionRESTClient<>(teamEmailEventSubscriptionJerseyClient, emailEventSubscriptionRESTClientProperties);
+        return new EmailEventSubscriptionRESTClient<>(teamEmailEventSubscriptionJerseyClient, emailEventRESTClientProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public TeamEmailEventSubscriptionRESTService teamEmailEventSubscriptionRESTService(final EmailEventSubscriptionRESTClient<TeamEventSubscriptionRequest> teamEmailEventSubscriptionRESTClient) {
-        return new TeamEmailEventSubscriptionRESTServiceImpl(teamEmailEventSubscriptionRESTClient, emailEventSubscriptionRESTEndpointProperties);
+        return new TeamEmailEventSubscriptionRESTServiceImpl(teamEmailEventSubscriptionRESTClient, emailEventRESTEndpointProperties);
     }
 }
