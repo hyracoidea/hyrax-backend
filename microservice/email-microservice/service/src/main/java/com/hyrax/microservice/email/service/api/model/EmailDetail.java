@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class EmailDetails {
+public class EmailDetail {
 
-    private final String from;
+    private final String senderEmailAddress;
 
-    private final String to;
+    private final String recipientEmailAddress;
 
     private final String subject;
 

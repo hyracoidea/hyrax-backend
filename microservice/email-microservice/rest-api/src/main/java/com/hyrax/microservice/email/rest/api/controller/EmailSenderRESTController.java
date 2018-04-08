@@ -1,8 +1,7 @@
 package com.hyrax.microservice.email.rest.api.controller;
 
-import com.hyrax.microservice.email.rest.api.converter.EmailRequestToEmailDetailsConverter;
-import com.hyrax.microservice.email.rest.api.domain.request.EmailRequest;
-import com.hyrax.microservice.email.service.api.EmailService;
+import com.hyrax.microservice.email.rest.api.domain.request.EmailNotificationRequest;
+import com.hyrax.microservice.email.rest.api.processor.EmailNotificationRequestProcessor;
 import freemarker.template.TemplateException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,21 +26,21 @@ public class EmailSenderRESTController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailSenderRESTController.class);
 
-    private final EmailService emailService;
-
-    private final EmailRequestToEmailDetailsConverter converter;
+    private final EmailNotificationRequestProcessor emailNotificationRequestProcessor;
 
     @PostMapping
     @ApiOperation(httpMethod = "POST", value = "Resource to send email")
-    public ResponseEntity<Void> sendEmail(@RequestBody final EmailRequest emailRequest) throws IOException, TemplateException, MessagingException {
-        LOGGER.info("Received emailRequest={}", emailRequest);
+    public ResponseEntity<Void> sendEmail(@RequestBody final EmailNotificationRequest emailNotificationRequest) {
+        LOGGER.info("Received emailNotificationRequest={}", emailNotificationRequest);
 
-        emailService.sendEmail(converter.convert(emailRequest));
-        LOGGER.info("Processing of emailRequest={} was successful", emailRequest);
+        emailNotificationRequestProcessor.process(emailNotificationRequest);
+
+        LOGGER.info("Sending emails were successful");
+
         return ResponseEntity.noContent().build();
     }
 
-    @ExceptionHandler({IOException.class, TemplateException.class, MessagingException.class})
+    @ExceptionHandler({IOException.class, TemplateException.class, MessagingException.class, RuntimeException.class})
     protected ResponseEntity<Void> handleBadRequest(final Exception e) {
         logException(e);
         return ResponseEntity.badRequest().build();

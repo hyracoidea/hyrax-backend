@@ -1,8 +1,10 @@
 package com.hyrax.microservice.email.service.api.impl;
 
 import com.hyrax.microservice.email.service.api.EmailService;
-import com.hyrax.microservice.email.service.api.model.EmailDetails;
+import com.hyrax.microservice.email.service.api.model.EmailDetail;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -14,18 +16,24 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceImpl.class);
+
     private final JavaMailSender mailSender;
 
     @Override
-    public void sendEmail(final EmailDetails emailDetails) throws MessagingException {
-        final MimeMessageHelper helper = createMimeMessageHelper();
+    public void sendEmail(final EmailDetail emailDetail) {
+        try {
+            final MimeMessageHelper helper = createMimeMessageHelper();
 
-        helper.setTo(emailDetails.getTo());
-        helper.setText(emailDetails.getContentAsHtml(), true);
-        helper.setSubject(emailDetails.getSubject());
-        helper.setFrom(emailDetails.getFrom());
+            helper.setTo(emailDetail.getRecipientEmailAddress());
+            helper.setText(emailDetail.getContentAsHtml(), true);
+            helper.setSubject(emailDetail.getSubject());
+            helper.setFrom(emailDetail.getSenderEmailAddress());
 
-        mailSender.send(helper.getMimeMessage());
+            mailSender.send(helper.getMimeMessage());
+        } catch (final MessagingException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     private MimeMessageHelper createMimeMessageHelper() throws MessagingException {
