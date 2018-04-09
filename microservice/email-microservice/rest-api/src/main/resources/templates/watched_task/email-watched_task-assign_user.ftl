@@ -19,15 +19,13 @@
         <th>Task title</th>
         <th>Previously assigned username</th>
         <th>New assigned username</th>
-        <th>Column name</th>
         <th>Board name</th>
     </tr>
     <tr>
         <td>${taskId}</td>
         <td>${taskTitle}</td>
-        <td>${prevouslyAssignedUsername}</td>
+        <td>${previouslyAssignedUsername}</td>
         <td>${newAssignedUsername}</td>
-        <td>${columnName}</td>
         <td>${boardName}</td>
     </tr>
 </table>

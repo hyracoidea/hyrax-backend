@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class BoardDAOImpl implements BoardDAO {
     }
 
     @Override
-    public List<String> findAllBoardMemberNameByBoardName(final String boardName) {
+    public Set<String> findAllBoardMemberNameByBoardName(final String boardName) {
         return boardMemberMapper.selectAllUsernameByBoardName(boardName);
     }
 

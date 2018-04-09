@@ -18,14 +18,12 @@
         <th>Task Id</th>
         <th>Task title</th>
         <th>Removed label name</th>
-        <th>Column name</th>
         <th>Board name</th>
     </tr>
     <tr>
         <td>${taskId}</td>
         <td>${taskTitle}</td>
         <td>${removedLabelName}</td>
-        <td>${columnName}</td>
         <td>${boardName}</td>
     </tr>
 </table>

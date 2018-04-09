@@ -1,5 +1,6 @@
 package com.hyrax.microservice.email.rest.api.processor;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.hyrax.client.account.api.response.AccountDetailsResponse;
 import com.hyrax.client.account.api.service.AccountRESTService;
@@ -52,8 +53,9 @@ public class EmailNotificationDetailsConverter {
     }
 
     private Map<String, String> populateAndGetModel(final String username, final Map<String, String> model) {
-        model.put("username", username);
-        return model;
+        final Map<String, String> result = Maps.newHashMap(model);
+        result.put("username", username);
+        return result;
     }
 
 

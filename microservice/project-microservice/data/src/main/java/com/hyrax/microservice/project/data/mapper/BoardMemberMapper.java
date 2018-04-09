@@ -2,11 +2,11 @@ package com.hyrax.microservice.project.data.mapper;
 
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import java.util.Set;
 
 public interface BoardMemberMapper {
 
-    List<String> selectAllUsernameByBoardName(@Param("boardName") String boardName);
+    Set<String> selectAllUsernameByBoardName(@Param("boardName") String boardName);
 
     void insert(@Param("username") String username, @Param("boardName") String boardName);
 

@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -20,7 +20,7 @@ public class LabelOperationChecker {
     @Transactional(readOnly = true)
     public boolean isOperationAllowed(final String boardName, final String username) {
         final Optional<String> ownerUsername = boardService.findByBoardName(boardName).map(board -> board.getOwnerUsername());
-        final List<String> memberUsernames = boardMemberService.findAllUsernameByBoardName(boardName);
+        final Set<String> memberUsernames = boardMemberService.findAllUsernameByBoardName(boardName);
 
         return (ownerUsername.isPresent() && ownerUsername.get().equals(username)) || (memberUsernames.contains(username));
     }

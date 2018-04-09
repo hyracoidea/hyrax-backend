@@ -33,6 +33,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.hyrax.client.email</groupId>
+                <artifactId>email-client-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.hyrax.spring.boot.starter.authentication</groupId>
                 <artifactId>authentication-spring-boot-starter</artifactId>
                 <version>${project.version}</version>

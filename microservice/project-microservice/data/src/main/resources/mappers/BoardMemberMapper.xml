@@ -3,7 +3,11 @@
 <mapper namespace="com.hyrax.microservice.project.data.mapper.BoardMemberMapper">
 
     <select id="selectAllUsernameByBoardName" parameterType="java.lang.String" resultType="java.lang.String">
-        select username
+        select owner_username as username
+        from board
+        where board_name=#{boardName}
+        UNION
+        select username as username
         from board_member
         where board_name=#{boardName}
     </select>

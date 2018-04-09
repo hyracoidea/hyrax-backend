@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.hyrax.microservice.project.data.dao.TeamDAO;
 import com.hyrax.microservice.project.data.entity.TeamEntity;
 import com.hyrax.microservice.project.service.api.TeamService;
+import com.hyrax.microservice.project.service.api.impl.helper.TeamEventEmailSenderHelper;
 import com.hyrax.microservice.project.service.domain.Team;
 import com.hyrax.microservice.project.service.exception.team.TeamAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.team.TeamRemovalOperationNotAllowedException;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +33,8 @@ public class TeamServiceImpl implements TeamService {
     private final TeamDAO teamDAO;
 
     private final ModelMapper modelMapper;
+
+    private final TeamEventEmailSenderHelper teamEventEmailSenderHelper;
 
     @Override
     @Transactional(readOnly = true)
@@ -59,6 +63,7 @@ public class TeamServiceImpl implements TeamService {
         try {
             LOGGER.info("Trying to save the team [team={}]", team);
             teamDAO.save(modelMapper.map(team, TeamEntity.class));
+            teamEventEmailSenderHelper.sendTeamCreationEmail(team.getOwnerUsername(), team.getName());
             LOGGER.info("Team={} saving was successful", team);
         } catch (final DuplicateKeyException e) {
             throwTeamAlreadyExistsException(team.getName(), e);
@@ -72,7 +77,9 @@ public class TeamServiceImpl implements TeamService {
 
         if (result.isPresent()) {
             if (result.get().getOwnerUsername().equals(requestedBy)) {
+                final Set<String> teamMemberUsernames = teamDAO.findAllTeamMemberNameByTeamName(teamName);
                 teamDAO.delete(teamName);
+                teamEventEmailSenderHelper.sendTeamRemovalEmail(teamMemberUsernames, teamName, requestedBy);
             } else {
                 throw new TeamRemovalOperationNotAllowedException(requestedBy);
             }

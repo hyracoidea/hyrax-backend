@@ -3,6 +3,7 @@ package com.hyrax.microservice.project.service.api.impl;
 import com.hyrax.microservice.project.data.dao.TeamDAO;
 import com.hyrax.microservice.project.service.api.TeamMemberService;
 import com.hyrax.microservice.project.service.api.impl.checker.TeamOperationChecker;
+import com.hyrax.microservice.project.service.api.impl.helper.TeamEventEmailSenderHelper;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberAdditionOperationNotAllowedException;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberIsAlreadyAddedException;
 import com.hyrax.microservice.project.service.exception.team.member.TeamMemberRemovalOperationNotAllowedException;
@@ -13,7 +14,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -27,9 +28,11 @@ public class TeamMemberServiceImpl implements TeamMemberService {
 
     private final TeamOperationChecker teamOperationChecker;
 
+    private final TeamEventEmailSenderHelper teamEventEmailSenderHelper;
+
     @Override
     @Transactional(readOnly = true)
-    public List<String> findAllUsernameByTeamName(final String teamName) {
+    public Set<String> findAllUsernameByTeamName(final String teamName) {
         return teamDAO.findAllTeamMemberNameByTeamName(teamName);
     }
 
@@ -40,6 +43,7 @@ public class TeamMemberServiceImpl implements TeamMemberService {
         if (isOperationAllowed) {
             try {
                 teamDAO.addMemberToTeam(teamName, username);
+                teamEventEmailSenderHelper.sendTeamMemberAdditionEmail(teamDAO.findAllTeamMemberNameByTeamName(teamName), teamName, username, requestedBy);
             } catch (final DuplicateKeyException e) {
                 LOGGER.error(String.format(TEAM_MEMBER_ALREADY_ADDED_ERROR_MESSAGE_TEMPLATE, username), e);
                 throw new TeamMemberIsAlreadyAddedException(username);
@@ -54,7 +58,9 @@ public class TeamMemberServiceImpl implements TeamMemberService {
     public void remove(final String username, final String teamName, final String requestedBy) {
         final boolean isOperationAllowed = teamOperationChecker.isTeamMemberRemovalOperationAllowed(teamName, username, requestedBy);
         if (isOperationAllowed) {
+            final Set<String> teamMemberUsernames = teamDAO.findAllTeamMemberNameByTeamName(teamName);
             teamDAO.deleteMemberFromTeam(teamName, username);
+            teamEventEmailSenderHelper.sendTeamMemberRemovalEmail(teamMemberUsernames, teamName, username, requestedBy);
         } else {
             throw new TeamMemberRemovalOperationNotAllowedException(requestedBy);
         }

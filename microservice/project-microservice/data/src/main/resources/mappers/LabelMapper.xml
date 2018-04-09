@@ -22,6 +22,12 @@
         on b.board_id = l.board_id and b.board_name = #{boardName}
     </select>
 
+    <select id="selectByLabelId" resultType="com.hyrax.microservice.project.data.entity.LabelEntity" resultMap="labelEntityResultMap">
+        select l.label_id, l.label_name, l.red, l.green, l.blue
+        from board b inner join label l
+        on b.board_id = l.board_id and b.board_name = #{boardName} and l.label_id = #{labelId}
+    </select>
+
     <insert id="insert" useGeneratedKeys="true">
         insert into label (board_id, label_name, red, green, blue)
         select (<include refid="getBoardId"/>), #{labelName}, #{red}, #{green}, #{blue}

@@ -14,7 +14,9 @@ public interface TaskDAO {
 
     Optional<SingleTaskEntity> findSingleTask(String boardName, String columnName, Long taskId);
 
-    void save(String boardName, String columnName, String taskName, String description, String requestedBy);
+    Optional<SingleTaskEntity> findSingleTask(String boardName, Long taskId);
+
+    Long save(String boardName, String columnName, String taskName, String description, String requestedBy);
 
     void update(String boardName, String columnName, Long taskId, String taskName, String description);
 

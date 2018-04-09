@@ -1,8 +1,14 @@
 package com.hyrax.microservice.project.service.api.impl;
 
+import com.hyrax.microservice.project.data.dao.BoardDAO;
 import com.hyrax.microservice.project.data.dao.LabelDAO;
+import com.hyrax.microservice.project.data.dao.TaskDAO;
+import com.hyrax.microservice.project.data.entity.LabelEntity;
+import com.hyrax.microservice.project.data.entity.SingleTaskEntity;
 import com.hyrax.microservice.project.service.api.LabelService;
 import com.hyrax.microservice.project.service.api.impl.checker.LabelOperationChecker;
+import com.hyrax.microservice.project.service.api.impl.helper.LabelEventEmailSenderHelper;
+import com.hyrax.microservice.project.service.api.impl.helper.WatchedTaskEventEmailSenderHelper;
 import com.hyrax.microservice.project.service.domain.Label;
 import com.hyrax.microservice.project.service.domain.LabelColor;
 import com.hyrax.microservice.project.service.exception.label.LabelAdditionOperationNotAllowedException;
@@ -20,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +39,15 @@ public class LabelServiceImpl implements LabelService {
 
     private final LabelDAO labelDAO;
 
+    private final BoardDAO boardDAO;
+
+    private final TaskDAO taskDAO;
+
     private final ModelMapper modelMapper;
+
+    private final LabelEventEmailSenderHelper labelEventEmailSenderHelper;
+
+    private final WatchedTaskEventEmailSenderHelper watchedTaskEventEmailSenderHelper;
 
     @Override
     @Transactional(readOnly = true)
@@ -52,6 +67,7 @@ public class LabelServiceImpl implements LabelService {
             try {
                 LOGGER.info("Trying to save the label = [boardName={} labelName={} labelColor={} requestedBy={}]", boardName, labelName, labelColor, requestedBy);
                 labelDAO.save(boardName, labelName, labelColor.getRed(), labelColor.getGreen(), labelColor.getBlue());
+                labelEventEmailSenderHelper.sendLabelCreationEmail(boardDAO.findAllBoardMemberNameByBoardName(boardName), boardName, labelName, requestedBy);
                 LOGGER.info("Label saving was successful [boardName={} labelName={} labelColor={} requestedBy={}]", boardName, labelName, labelColor, requestedBy);
             } catch (final DuplicateKeyException e) {
                 final String errorMessage = String.format("Label already exists with this name=%s on this board=%s", labelName, boardName);
@@ -72,6 +88,13 @@ public class LabelServiceImpl implements LabelService {
             try {
                 LOGGER.info("Trying to add label to task [boardName={} labelId={} taskId={} requestedBy={}]", boardName, labelId, taskId, requestedBy);
                 labelDAO.addToTask(boardName, taskId, labelId);
+
+                final Optional<SingleTaskEntity> singleTaskEntity = taskDAO.findSingleTask(boardName, taskId);
+                final Optional<String> assignedLabelName = labelDAO.findByLabelId(boardName, labelId).map(LabelEntity::getLabelName);
+                if (singleTaskEntity.isPresent() && assignedLabelName.isPresent()) {
+                    watchedTaskEventEmailSenderHelper.sendWatchedTaskAssignLabelEmail(singleTaskEntity.get().getWatchedUsers(), boardName, taskId,
+                            singleTaskEntity.get().getTaskName(), assignedLabelName.get(), requestedBy);
+                }
                 LOGGER.info("Adding label to task was successful [boardName={} labelId={} taskId={} requestedBy={}]",
                         boardName, labelId, taskId, requestedBy);
             } catch (final DuplicateKeyException e) {
@@ -93,7 +116,11 @@ public class LabelServiceImpl implements LabelService {
     public void remove(final String boardName, final Long labelId, final String requestedBy) {
         final boolean isOperationAllowed = labelOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
+            final Optional<LabelEntity> labelEntity = labelDAO.findByLabelId(boardName, labelId);
             labelDAO.delete(boardName, labelId);
+            if (labelEntity.isPresent()) {
+                labelEventEmailSenderHelper.sendLabelRemovalEmail(boardDAO.findAllBoardMemberNameByBoardName(boardName), boardName, labelEntity.get().getLabelName(), requestedBy);
+            }
         } else {
             throw new LabelRemovalOperationNotAllowedException(requestedBy);
         }
@@ -104,7 +131,15 @@ public class LabelServiceImpl implements LabelService {
     public void removeLabelFromTask(final String boardName, final Long taskId, final Long labelId, final String requestedBy) {
         final boolean isOperationAllowed = labelOperationChecker.isOperationAllowed(boardName, requestedBy);
         if (isOperationAllowed) {
+            final Optional<String> removedLabelName = labelDAO.findByLabelId(boardName, labelId).map(LabelEntity::getLabelName);
             labelDAO.deleteFromTask(boardName, taskId, labelId);
+
+            final Optional<SingleTaskEntity> singleTaskEntity = taskDAO.findSingleTask(boardName, taskId);
+            if (removedLabelName.isPresent() && singleTaskEntity.isPresent()) {
+                watchedTaskEventEmailSenderHelper.sendWatchedTaskRemoveLabelEmail(singleTaskEntity.get().getWatchedUsers(), boardName, taskId, singleTaskEntity.get().getTaskName(),
+                        removedLabelName.get(), requestedBy);
+            }
+
         } else {
             throw new LabelRemovalOperationNotAllowedException(requestedBy);
         }

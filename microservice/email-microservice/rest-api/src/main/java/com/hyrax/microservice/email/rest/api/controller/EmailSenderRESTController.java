@@ -35,8 +35,6 @@ public class EmailSenderRESTController {
 
         emailNotificationRequestProcessor.process(emailNotificationRequest);
 
-        LOGGER.info("Sending emails were successful");
-
         return ResponseEntity.noContent().build();
     }
 

@@ -20,6 +20,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.hyrax.client.email</groupId>
+            <artifactId>email-client-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
         </dependency>

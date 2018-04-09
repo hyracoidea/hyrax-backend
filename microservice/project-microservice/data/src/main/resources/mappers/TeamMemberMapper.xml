@@ -3,7 +3,11 @@
 <mapper namespace="com.hyrax.microservice.project.data.mapper.TeamMemberMapper">
 
     <select id="selectAllUsernameByTeamName" parameterType="java.lang.String" resultType="java.lang.String">
-        select username
+        select owner_username as username
+        from team
+        where name = #{teamName}
+        UNION
+        select username as username
         from team_member
         where team_name=#{teamName}
     </select>

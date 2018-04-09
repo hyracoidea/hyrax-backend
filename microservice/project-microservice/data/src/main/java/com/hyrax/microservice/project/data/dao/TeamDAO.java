@@ -4,6 +4,7 @@ import com.hyrax.microservice.project.data.entity.TeamEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TeamDAO {
 
@@ -11,7 +12,7 @@ public interface TeamDAO {
 
     List<TeamEntity> findAllByUsername(String username);
 
-    List<String> findAllTeamMemberNameByTeamName(String teamName);
+    Set<String> findAllTeamMemberNameByTeamName(String teamName);
 
     void save(TeamEntity teamEntity);
 

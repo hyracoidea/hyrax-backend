@@ -4,8 +4,8 @@ import com.hyrax.microservice.project.data.dao.TeamDAO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class TeamOperationChecker {
 
     public boolean isTeamMemberAdditionOperationAllowed(final String teamName, final String requestedBy) {
         final Optional<String> ownerUsername = teamDAO.findByTeamName(teamName).map(team -> team.getOwnerUsername());
-        final List<String> memberUsernames = teamDAO.findAllTeamMemberNameByTeamName(teamName);
+        final Set<String> memberUsernames = teamDAO.findAllTeamMemberNameByTeamName(teamName);
 
         return ownerUsername.isPresent() && (ownerUsername.get().equals(requestedBy)) || (memberUsernames.contains(requestedBy));
     }
