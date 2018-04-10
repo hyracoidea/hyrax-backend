@@ -12,8 +12,9 @@ public enum SubEventCategory {
     MEMBER_ADDITION("member_addition"),
     MEMBER_REMOVAL("member_removal"),
 
-    ASSIGN_LABEL("assign_label"),
     ASSIGN_USER("assign_user"),
+    ASSIGN_LABEL("assign_label"),
+    REMOVE_LABEL("remove_label"),
 
     MOVE_BETWEEN_COLUMNS("move_between_columns"),
 

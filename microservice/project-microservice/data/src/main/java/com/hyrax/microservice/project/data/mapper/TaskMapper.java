@@ -16,6 +16,9 @@ public interface TaskMapper {
     SingleTaskEntity selectSingleTask(@Param("boardName") String boardName, @Param("columnName") String columnName,
                                       @Param("taskId") Long taskId);
 
+    SingleTaskEntity selectSingleTaskByTaskId(@Param("boardName") String boardName, @Param("taskId") Long taskId);
+
+
     void insert(@Param("task") SaveableTaskEntity saveableTaskEntity);
 
     void insert(@Param("boardName") String boardName, @Param("columnName") String columnName,

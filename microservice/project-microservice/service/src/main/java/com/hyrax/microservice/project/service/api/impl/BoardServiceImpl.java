@@ -3,6 +3,7 @@ package com.hyrax.microservice.project.service.api.impl;
 import com.hyrax.microservice.project.data.dao.BoardDAO;
 import com.hyrax.microservice.project.data.entity.BoardEntity;
 import com.hyrax.microservice.project.service.api.BoardService;
+import com.hyrax.microservice.project.service.api.impl.helper.BoardEventEmailSenderHelper;
 import com.hyrax.microservice.project.service.domain.Board;
 import com.hyrax.microservice.project.service.exception.board.BoardAlreadyExistsException;
 import com.hyrax.microservice.project.service.exception.board.BoardRemovalOperationNotAllowedException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +29,8 @@ public class BoardServiceImpl implements BoardService {
     private final BoardDAO boardDAO;
 
     private final ModelMapper modelMapper;
+
+    private final BoardEventEmailSenderHelper boardEventEmailSenderHelper;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,6 +59,7 @@ public class BoardServiceImpl implements BoardService {
         try {
             LOGGER.info("Trying to save the board = [boardName={} ownerUsername={}]", boardName, ownerUsername);
             boardDAO.save(boardName, ownerUsername);
+            boardEventEmailSenderHelper.sendBoardCreationEmail(ownerUsername, boardName);
             LOGGER.info("Board saving was successful [boardName={} ownerUsername={}]", boardName, ownerUsername);
         } catch (final DuplicateKeyException e) {
             final String errorMessage = String.format("Board already exists with this name=%s", boardName);
@@ -71,7 +76,9 @@ public class BoardServiceImpl implements BoardService {
 
         if (result.isPresent()) {
             if (result.get().getOwnerUsername().equals(requestedBy)) {
+                final Set<String> boardMemberUsernames = boardDAO.findAllBoardMemberNameByBoardName(boardName);
                 boardDAO.deleteByBoardName(boardName);
+                boardEventEmailSenderHelper.sendBoarddRemovalEmail(boardMemberUsernames, boardName, requestedBy);
             } else {
                 throw new BoardRemovalOperationNotAllowedException(requestedBy);
             }

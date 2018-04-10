@@ -1,11 +1,12 @@
 package com.hyrax.microservice.project.service.api.impl;
 
 import com.google.common.collect.Lists;
+import com.hyrax.microservice.project.data.dao.BoardDAO;
 import com.hyrax.microservice.project.data.dao.ColumnDAO;
+import com.hyrax.microservice.project.data.entity.BoardEntity;
 import com.hyrax.microservice.project.data.entity.ColumnEntity;
-import com.hyrax.microservice.project.service.api.BoardService;
 import com.hyrax.microservice.project.service.api.ColumnService;
-import com.hyrax.microservice.project.service.domain.Board;
+import com.hyrax.microservice.project.service.api.impl.helper.ColumnEventEmailSenderHelper;
 import com.hyrax.microservice.project.service.domain.Column;
 import com.hyrax.microservice.project.service.exception.board.BoardNotFoundException;
 import com.hyrax.microservice.project.service.exception.column.ColumnAdditionOperationNotAllowedException;
@@ -32,11 +33,13 @@ public class ColumnServiceImpl implements ColumnService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ColumnServiceImpl.class);
 
-    private final BoardService boardService;
+    private final BoardDAO boardDao;
 
     private final ColumnDAO columnDAO;
 
     private final ModelMapper modelMapper;
+
+    private final ColumnEventEmailSenderHelper columnEventEmailSenderHelper;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,12 +53,13 @@ public class ColumnServiceImpl implements ColumnService {
     @Override
     @Transactional
     public void create(final String boardName, final String columnName, final String requestedBy) {
-        final Board board = boardService.findByBoardName(boardName).orElseThrow(() -> new BoardNotFoundException(boardName));
+        final BoardEntity board = boardDao.findByBoardName(boardName).orElseThrow(() -> new BoardNotFoundException(boardName));
 
         if (board.getOwnerUsername().equals(requestedBy)) {
             try {
                 LOGGER.info("Trying to save the column = [boardName={} columnName={}]", boardName, columnName);
                 columnDAO.save(boardName, columnName);
+                columnEventEmailSenderHelper.sendColumnCreationEmail(boardDao.findAllBoardMemberNameByBoardName(boardName), boardName, columnName, requestedBy);
                 LOGGER.info("Column saving was successful [boardName={} columnName={}]", boardName, columnName);
             } catch (final DuplicateKeyException e) {
                 final String errorMessage = String.format("Column already exists with this name=%s on this board=%s", columnName, boardName);
@@ -71,7 +75,7 @@ public class ColumnServiceImpl implements ColumnService {
     @Transactional
     public void updateIndex(final String boardName, final String columnName, final String requestedBy, final long from, final long to) {
 
-        final Board board = boardService.findByBoardName(boardName).orElseThrow(() -> new BoardNotFoundException(boardName));
+        final BoardEntity board = boardDao.findByBoardName(boardName).orElseThrow(() -> new BoardNotFoundException(boardName));
 
         if (board.getOwnerUsername().equals(requestedBy)) {
 
@@ -97,11 +101,12 @@ public class ColumnServiceImpl implements ColumnService {
     @Transactional
     public void remove(final String boardName, final String columnName, final String requestedBy) {
 
-        final Optional<String> ownerUsername = boardService.findByBoardName(boardName).map(Board::getOwnerUsername);
+        final Optional<String> ownerUsername = boardDao.findByBoardName(boardName).map(BoardEntity::getOwnerUsername);
 
         if (ownerUsername.isPresent() && ownerUsername.get().equals(requestedBy)) {
             columnDAO.deleteByBoardNameAndColumnName(boardName, columnName);
             refreshColumnIndexes(boardName);
+            columnEventEmailSenderHelper.sendColumnRemovalEmail(boardDao.findAllBoardMemberNameByBoardName(boardName), boardName, columnName, requestedBy);
         } else {
             throw new ColumnRemovalOperationNotAllowedException(requestedBy);
         }

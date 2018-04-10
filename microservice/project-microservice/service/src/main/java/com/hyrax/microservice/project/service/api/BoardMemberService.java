@@ -1,10 +1,10 @@
 package com.hyrax.microservice.project.service.api;
 
-import java.util.List;
+import java.util.Set;
 
 public interface BoardMemberService {
 
-    List<String> findAllUsernameByBoardName(String boardName);
+    Set<String> findAllUsernameByBoardName(String boardName);
 
     void add(String username, String boardName, String requestedBy);
 

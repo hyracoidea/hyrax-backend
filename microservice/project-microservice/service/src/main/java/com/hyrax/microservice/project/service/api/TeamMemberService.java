@@ -1,10 +1,10 @@
 package com.hyrax.microservice.project.service.api;
 
-import java.util.List;
+import java.util.Set;
 
 public interface TeamMemberService {
 
-    List<String> findAllUsernameByTeamName(String teamName);
+    Set<String> findAllUsernameByTeamName(String teamName);
 
     void add(String username, String teamName, String requestedBy);
 

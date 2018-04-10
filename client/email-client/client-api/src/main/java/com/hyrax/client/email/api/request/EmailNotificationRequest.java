@@ -5,7 +5,7 @@ import com.hyrax.client.email.api.domain.SubTemplate;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 @Data
@@ -14,7 +14,7 @@ public class EmailNotificationRequest {
 
     private final String senderEmailAddress;
 
-    private final List<String> recipientUsernames;
+    private final Collection<String> recipientUsernames;
 
     private final String subject;
 

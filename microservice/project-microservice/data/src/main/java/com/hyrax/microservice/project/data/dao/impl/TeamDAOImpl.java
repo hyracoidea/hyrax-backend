@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @AllArgsConstructor
@@ -29,7 +30,7 @@ public class TeamDAOImpl implements TeamDAO {
     }
 
     @Override
-    public List<String> findAllTeamMemberNameByTeamName(final String teamName) {
+    public Set<String> findAllTeamMemberNameByTeamName(final String teamName) {
         return teamMemberMapper.selectAllUsernameByTeamName(teamName);
     }
 

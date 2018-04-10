@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -17,6 +18,11 @@ public class LabelDAOImpl implements LabelDAO {
     @Override
     public List<LabelEntity> findAllByBoardName(final String boardName) {
         return labelMapper.selectAllByBoardName(boardName);
+    }
+
+    @Override
+    public Optional<LabelEntity> findByLabelId(final String boardName, final Long labelId) {
+        return Optional.ofNullable(labelMapper.selectByLabelId(boardName, labelId));
     }
 
     @Override

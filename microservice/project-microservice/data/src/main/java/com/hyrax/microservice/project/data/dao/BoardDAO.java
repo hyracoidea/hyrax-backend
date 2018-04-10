@@ -4,6 +4,7 @@ import com.hyrax.microservice.project.data.entity.BoardEntity;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface BoardDAO {
 
@@ -11,7 +12,7 @@ public interface BoardDAO {
 
     List<BoardEntity> findAllByUsername(String username);
 
-    List<String> findAllBoardMemberNameByBoardName(String boardName);
+    Set<String> findAllBoardMemberNameByBoardName(String boardName);
 
     void save(String boardName, String ownerUsername);
 
