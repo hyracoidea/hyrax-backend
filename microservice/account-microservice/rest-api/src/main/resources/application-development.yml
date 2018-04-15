@@ -14,7 +14,7 @@ spring:
 swagger:
   api:
     basePackage: com.hyrax.microservice.account.rest.api.controller
-    authRequired: true
+    authRequired: false
 
 logging:
   file: logs/account-microservice.log
